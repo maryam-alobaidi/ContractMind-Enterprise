@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>b0aad8d9-b654-451d-b6e5-30631601b755</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContractMind.BLL\ContractMind.BLL.csproj" />
+    <ProjectReference Include="..\ContractMind.DAL\ContractMind.DAL.csproj" />
+    <ProjectReference Include="..\ContractMindModal\ContractMindModel.csproj" />
+  </ItemGroup>
+
+</Project>
