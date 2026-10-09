@@ -16,6 +16,13 @@ public static class clsUsersData
             command.Parameters.AddWithValue("@Role", role);
             command.Parameters.AddWithValue("@CreatedAt", createdAt);
 
+            SqlParameter idParam = new SqlParameter("@NewAddClass", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(idParam);
+
+            
             return await clsPrimaryFunctions.Add(command);
         }
     }
@@ -46,7 +53,6 @@ public static class clsUsersData
         }
     }
 
-    // استخدام الدالة العامة لجلب قائمة المستخدمين كـ userModel
     public static async Task<List<userModel>> GetAllUsers()
     {
         using (SqlCommand command = new SqlCommand("Sp_GetAllUsers"))
@@ -65,7 +71,6 @@ public static class clsUsersData
         }
     }
 
-    // البحث بواسطة ID وإرجاع الـ Model مباشرة
     public static async Task<userModel> FindByID(int userId)
     {
         userModel model = null;

@@ -16,8 +16,15 @@ public static class clsAuditLogsData
                 command.Parameters.AddWithValue("@Action", Action);
                 command.Parameters.AddWithValue("@Timestamp", Timestamp);
 
-				return await clsPrimaryFunctions.Add(command);
-			}
+            SqlParameter idParam = new SqlParameter("@NewAddClass", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(idParam);
+
+
+            return await clsPrimaryFunctions.Add(command);
+        }
 		}
 
 	public static async Task<bool> DeleteAuditLogs(int LogId ) 
@@ -50,7 +57,7 @@ public static class clsAuditLogsData
     {
         auditLogsModel model = null;
 
-        using (SqlConnection connection = new SqlConnection("Server=.;Database=ContractMindDB;User ID=sa;Password=Haider2016"))
+        using (SqlConnection connection = new SqlConnection(clsSetting.ConnectionString))
         {
             using (SqlCommand command = new SqlCommand("Sp_GetAuditLogsByID", connection))
             {

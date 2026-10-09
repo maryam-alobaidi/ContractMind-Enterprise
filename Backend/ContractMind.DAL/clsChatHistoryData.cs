@@ -2,6 +2,7 @@
 using ContractMindModel;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Reflection;
 
 
 public static class clsChatHistoryData
@@ -15,11 +16,19 @@ public static class clsChatHistoryData
             command.Parameters.AddWithValue("@Sender", sender);
             command.Parameters.AddWithValue("@MessageText", messageText);
             command.Parameters.AddWithValue("@Timestamp", timestamp);
+      
 
-            int? result = await clsPrimaryFunctions.Add(command);
-            return result.HasValue ? (long?)result.Value : null;
+            SqlParameter idParam = new SqlParameter("@NewAddClass", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(idParam);
+
+
+            return await clsPrimaryFunctions.Add(command);
         }
     }
+    
 
     public static async Task<bool> DeleteChatHistory(long messageId)
     {
@@ -31,7 +40,6 @@ public static class clsChatHistoryData
         }
     }
 
-    // استخدام الدالة العامة لتجلب قائمة كاملة باستخدام chatHistoryModel
     public static async Task<List<chatHistoryModel>> GetAllChatHistory()
     {
         using (SqlCommand command = new SqlCommand("Sp_GetAllChatHistory"))

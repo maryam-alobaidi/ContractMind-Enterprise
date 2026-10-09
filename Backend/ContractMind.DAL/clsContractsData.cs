@@ -20,6 +20,13 @@ public static class clsContractsData
             command.Parameters.AddWithValue("@RiskScore", riskScore);
             command.Parameters.AddWithValue("@UploadDate", uploadDate);
 
+            SqlParameter idParam = new SqlParameter("@NewAddClass", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(idParam);
+
+
             return await clsPrimaryFunctions.Add(command);
         }
     }
@@ -33,7 +40,6 @@ public static class clsContractsData
             return await clsPrimaryFunctions.Delete(command);
         }
     }
-
   
     public static async Task<List<contractsModel>> GetAllContracts()
     {
@@ -55,7 +61,6 @@ public static class clsContractsData
         }
     }
 
- 
     public static async Task<contractsModel> FindByID(int contractId)
     {
         contractsModel model = null;

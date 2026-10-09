@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 
 
 
@@ -15,12 +16,15 @@ namespace ContractMind.DAL
                 try
                 {
                     await connection.OpenAsync();
+                    await command.ExecuteNonQueryAsync();
 
-                    object result = await command.ExecuteScalarAsync();
+                    SqlParameter outParam = command.Parameters
+                        .Cast<SqlParameter>()
+                        .FirstOrDefault(p => p.Direction == ParameterDirection.Output);
 
-                    if (result != null && int.TryParse(result.ToString(), out int insertedId))
+                    if (outParam != null && outParam.Value != null && outParam.Value != DBNull.Value)
                     {
-                        return insertedId;
+                        return Convert.ToInt32(outParam.Value);
                     }
                 }
                 catch (Exception ex)
