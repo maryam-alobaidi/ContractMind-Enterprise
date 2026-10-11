@@ -1,0 +1,73 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="brand-logo-container">
+        <img src="favicon.svg" alt="ContractMind Logo" width="40" height="40">
+        <div class="brand-text">
+          <h2>Contract<span>Mind</span></h2>
+          <span class="brand-subtitle">AI Legal Enterprise</span>
+        </div>
+      </div>
+      <p>Secure Enterprise Legal Access</p>
+      
+     
+      @if (loginError) {
+        <div class="alert-danger">
+          {{ loginError }}
+        </div>
+      }
+    </div>
+    
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      
+      
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" formControlName="email" placeholder="attorney@gmail.com" 
+               [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)">
+        
+        <!-- أخطاء البريد الإلكتروني باستخدام @if -->
+        @if (email?.invalid && (email?.dirty || email?.touched)) {
+          <div class="invalid-feedback">
+            @if (email?.errors?.['required']) {
+              <div>Email is required.</div>
+            }
+            @if (email?.errors?.['email']) {
+              <div>Please enter a valid email address.</div>
+            }
+          </div>
+        }
+      </div>
+      
+  
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="••••••••••••"
+               [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)">
+        
+        
+        @if (password?.invalid && (password?.dirty || password?.touched)) {
+          <div class="invalid-feedback">
+            @if (password?.errors?.['required']) {
+              <div>Password is required.</div>
+            }
+            @if (password?.errors?.['minlength']) {
+              <div>Password must be at least 6 characters.</div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="login-actions">
+        <label class="remember-me">
+          <input type="checkbox" formControlName="rememberDevice"> Remember this device
+        </label>
+        <a href="#" class="forgot-pass">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="loginForm.invalid">
+        Sign In to Workspace
+      </button>
+    </form>
+  </div>
+</div>

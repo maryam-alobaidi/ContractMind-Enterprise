@@ -1,0 +1,413 @@
+
+.glass-brand {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;    
+  text-align: center;     
+  gap: 12px;              
+  margin-bottom: 40px;
+}
+
+.glass-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at bottom left, #081118, #06090f);
+  transition: background 0.3s ease;
+}
+
+.glass-sidebar {
+  width: 280px;
+  background: rgba(10, 15, 24, 0.75);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(20, 184, 166, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.glass-brand h2 {
+  color: #f8fafc;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.glass-brand span {
+  color: #14b8a6;
+}
+
+.glass-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.nav-item {
+  color: #94a3b8;
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: rgba(20, 184, 166, 0.1);
+  color: #14b8a6;
+  border-left: 3px solid #14b8a6;
+}
+
+.glass-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-avatar-glass {
+  font-size: 24px;
+  background: rgba(20, 184, 166, 0.1);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.user-meta-glass h4 {
+  font-size: 14px;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.user-meta-glass span {
+  font-size: 12px;
+  color: #14b8a6;
+}
+
+.glass-main {
+  flex-grow: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.glass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 36px;
+}
+
+.header-title-glass h1 {
+  font-size: 28px;
+  color: #f8fafc;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.header-title-glass p {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.header-controls-glass {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* زر تبديل الوضع */
+.btn-theme-toggle {
+  background: rgba(20, 184, 166, 0.1);
+  color: #14b8a6;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-theme-toggle:hover {
+  background: rgba(20, 184, 166, 0.2);
+}
+
+.lang-switch-glass {
+  display: flex;
+  background: rgba(10, 15, 24, 0.75);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lang-pill {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.lang-pill.active, .lang-pill:hover {
+  background: #14b8a6;
+  color: #06090f;
+}
+
+.btn-teal-glow {
+  background: rgba(20, 184, 166, 0.1);
+  color: #f8fafc;
+  border: 1px solid #14b8a6;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
+  transition: all 0.3s ease;
+}
+
+.btn-teal-glow:hover {
+  background: #14b8a6;
+  color: #06090f;
+}
+
+.glass-kpi-grid, .glass-card, .glass-table-wrap {
+  background: rgba(10, 15, 24, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 36px;
+}
+
+.glass-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+.glass-card h3, .glass-card .kpi-sub {
+  color: #94a3b8;
+}
+
+.kpi-num-teal {
+  font-size: 36px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.teal-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.teal-table th, .teal-table td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+}
+
+.teal-table th {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.teal-id {
+  font-family: monospace;
+  color: #14b8a6;
+  font-weight: 700;
+}
+
+.badge-teal.low {
+  background: rgba(20, 184, 166, 0.1);
+  color: #2dd4bf;
+}
+
+.badge-teal.high {
+  background: rgba(244, 63, 94, 0.1);
+  color: #fb7185;
+}
+
+.btn-subtle-teal {
+  background: transparent;
+  color: #e2e8f0;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+/* ==========================================
+   وضع الإضاءة الفاتح (Light Mode Styles)
+   ================================---------- */
+.glass-container.light-mode {
+  background: radial-gradient(circle at bottom left, #f1f5f9, #e2e8f0);
+  color: #0f172a;
+}
+
+.glass-container.light-mode .glass-sidebar {
+  background: rgba(255, 255, 255, 0.85);
+  border-right: 1px solid rgba(20, 184, 166, 0.2);
+}
+
+.glass-container.light-mode .glass-brand h2 {
+  color: #0f172a;
+}
+
+ .light-mode .btn-teal-glow {
+  background: rgba(20, 184, 166, 0.1);
+  color: #3d3e3e;
+  border: 1px solid #14b8a6;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
+  transition: all 0.3s ease;
+}
+
+ .light-mode .btn-teal-glow:hover {
+  background: #14b8a6;
+  color: #e3e5e8;
+}
+
+.glass-container.light-mode .nav-item {
+  color: #475569;
+}
+
+.glass-container.light-mode .nav-item:hover, 
+.glass-container.light-mode .nav-item.active {
+  background: rgba(20, 184, 166, 0.15);
+  color: #0d9488;
+}
+
+.glass-container.light-mode .glass-user {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-container.light-mode .user-meta-glass h4 {
+  color: #0f172a;
+}
+
+.glass-container.light-mode .header-title-glass h1 {
+  color: #0f172a;
+}
+
+.glass-container.light-mode .header-title-glass p {
+  color: #64748b;
+}
+
+.glass-container.light-mode .glass-card,
+.glass-container.light-mode .glass-table-wrap {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.glass-container.light-mode .glass-card h3 {
+  color: #64748b;
+}
+
+.glass-container.light-mode .kpi-num-teal {
+  color: #0f172a;
+}
+
+.glass-container.light-mode .teal-table th,
+.glass-container.light-mode .teal-table td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #1e293b;
+}
+
+.glass-container.light-mode .teal-table th {
+  color: #64748b;
+}
+
+.glass-container.light-mode .btn-subtle-teal {
+  color: #0f172a;
+  border-color: #0d9488;
+}
+
+.glass-container.light-mode .lang-switch-glass {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.glass-container.light-mode .lang-pill {
+  color: #475569;
+}
+
+/* ==========================================
+   تعديلات التجاوب مع الشاشات المتوسطة (Tablet)
+   ========================================== */
+@media (max-width: 1024px) {
+  .glass-kpi-grid {
+    grid-template-columns: repeat(2, 1fr); /* جعل البطاقات عمودين بدلاً من ثلاثة */
+  }
+}
+
+/* ==========================================
+   تعديلات التجاوب مع الهواتف المحمولة (Mobile)
+   ========================================== */
+@media (max-width: 768px) {
+  /* تحويل الحاوية الرئيسية إلى عمود رأسي */
+  .glass-container {
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  /* جعل الشريط الجانبي يأخذ العرض كاملًا في الأعلى */
+  .glass-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(20, 184, 166, 0.1);
+    padding: 16px;
+  }
+
+  .glass-brand h2 {
+    margin-bottom: 20px;
+  }
+
+  /* تصغير مساحة العمل الرئيسية والهوامش */
+  .glass-main {
+    padding: 20px;
+  }
+
+  /* جعل شبكة البطاقات عموداً واحداً */
+  .glass-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ترتيب الهيدر وأزرار التحكم بشكل عمودي إذا لزم الأمر */
+  .glass-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .header-controls-glass {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  /* جعل الجدول قابلاً للتمرير أفقياً لكي لا يتخربط في الشاشات الصغيرة */
+  .glass-table-wrap {
+    overflow-x: auto;
+  }
+  
+  .teal-table {
+    min-width: 600px;
+  }
+}

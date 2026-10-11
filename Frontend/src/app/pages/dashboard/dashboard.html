@@ -1,0 +1,97 @@
+<div class="glass-container" [class.light-mode]="isLightMode">
+<!-- القائمة الجانبية -->
+<aside class="glass-sidebar">
+ <div class="glass-brand ">
+    <img src="favicon.svg" title="ContractMind Logo" alt="ContractMind Logo" width="75" height="75">
+    <h2>Contract<span>Mind</span></h2>
+   </div>
+ <nav class="glass-nav">
+   <a href="#" class="nav-item active">Dashboard</a>
+   <a href="#" class="nav-item">Contracts Archive</a>
+   <a href="#" class="nav-item">AI Legal Assistant</a>
+   <a href="#" class="nav-item">Audit Logs</a>
+ </nav>
+ <div class="glass-user">
+    <div class="user-avatar-glass">👩‍⚖️</div>
+    <div class="user-meta-glass">
+      <h4>Attorney Sarah</h4>
+      <span>Senior Legal Counsel</span>
+    </div>
+ </div>
+</aside>
+
+<main class="glass-main">
+ <header class="glass-header">
+    <div class="header-title-glass">
+     <h1>Workspace Dashboard</h1>
+     <p>Intelligent contract analysis & secure management</p>
+    </div>
+    <div class="header-controls-glass">
+      <!-- زر تبديل الوضع (فاتح / داكن) -->
+      <button class="btn-theme-toggle" (click)="toggleTheme()">
+     {{ isLightMode ? '🌙 Dark' : '☀️ Light' }}
+      </button>
+      <div class="lang-switch-glass">
+       <button class="lang-pill active">EN</button>
+       <button class="lang-pill">ES</button>
+      </div>
+      <button class="btn-teal-glow">
+        <span>+</span> Upload New Contract
+      </button>
+    </div>
+</header>
+ 
+   <section class="glass-kpi-grid">
+    <div class="glass-card">
+     <h3>Total Active Contracts</h3>
+     <p class="kpi-num-teal">24</p>
+     <span class="kpi-sub">Secured Vault</span>
+    </div>
+    <div class="glass-card">
+     <h3>Pending Review</h3>
+     <p class="kpi-num-teal">5</p>
+     <span class="kpi-sub">In AI Queue</span>
+    </div>
+    <div class="glass-card">
+     <h3>Risk Flag</h3>
+     <p class="kpi-num-teal alert">2</p>
+     <span class="kpi-sub alert">Requires Action</span>
+    </div>
+ </section>
+ <!-- الجدول -->
+ <section class="glass-table-wrap">
+    <div class="table-header-glass">
+     <h3>Document Intelligence Stream</h3>
+     <span class="table-meta-glass">Real-time records</span>
+    </div>
+    <table class="teal-table">
+       <thead>
+         <tr>
+           <th>ID</th>
+           <th>Client / Document Name</th>
+           <th>Risk Level</th>
+           <th>Date</th>
+           <th>Action</th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr>
+           <td class="teal-id">#101</td>
+           <td>Tech Supply Agreement - Tech Corp</td>
+           <td><span class="badge-teal low">Low Risk (15%)</span></td>
+           <td>2026-10-09</td>
+           <td><button class="btn-subtle-teal">View Report</button></td>
+         </tr>
+         <tr>
+           <td class="teal-id">#102</td>
+           <td>Non-Disclosure Agreement - NDA</td>
+           <td><span class="badge-teal high">High Risk (85%)</span></td>
+           <td>2026-10-08</td>
+           <td><button class="btn-subtle-teal">View Report</button></td>
+         </tr>
+       </tbody>
+    </table>
+ </section>
+ </main>
+</div>
+
