@@ -9,24 +9,16 @@
         </div>
       </div>
       <p>Secure Enterprise Legal Access</p>
-      
-     
-      @if (loginError) {
-        <div class="alert-danger">
-          {{ loginError }}
-        </div>
-      }
     </div>
     
+    
     <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
-      
       
       <div class="input-group">
         <label>Email Address</label>
         <input type="email" formControlName="email" placeholder="attorney@gmail.com" 
                [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)">
         
-        <!-- أخطاء البريد الإلكتروني باستخدام @if -->
         @if (email?.invalid && (email?.dirty || email?.touched)) {
           <div class="invalid-feedback">
             @if (email?.errors?.['required']) {
@@ -39,12 +31,10 @@
         }
       </div>
       
-  
       <div class="input-group">
         <label>Password</label>
-        <input type="password" formControlName="password" placeholder="••••••••••••"
+        <input type="password" formControlName="password" placeholder="••••••••••"
                [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)">
-        
         
         @if (password?.invalid && (password?.dirty || password?.touched)) {
           <div class="invalid-feedback">
@@ -52,7 +42,7 @@
               <div>Password is required.</div>
             }
             @if (password?.errors?.['minlength']) {
-              <div>Password must be at least 6 characters.</div>
+              <div>Password must be at least 8 characters.</div>
             }
           </div>
         }
@@ -62,12 +52,17 @@
         <label class="remember-me">
           <input type="checkbox" formControlName="rememberDevice"> Remember this device
         </label>
-        <a href="#" class="forgot-pass">Forgot password?</a>
+        <a href="/forgot-password" class="forgot-pass">Forgot password?</a>
       </div>
 
       <button type="submit" class="btn-login" [disabled]="loginForm.invalid">
         Sign In to Workspace
       </button>
     </form>
+      @if (loginError()) {
+      <div class="alert error-alert">
+        {{ loginError() }}
+      </div>
+    }
   </div>
 </div>

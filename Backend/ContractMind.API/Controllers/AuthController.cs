@@ -1,7 +1,9 @@
 ﻿using ContractMind.BLL;
+using ContractMind.BLL.Services;
 using ContractMindModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Generators;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,10 +15,12 @@ namespace ContractMind.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IEmailSender _emailSender;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration,IEmailSender emailSender)
         {
             _configuration = configuration;
+            _emailSender = emailSender;
         }
 
         [HttpPost("login")]
@@ -39,7 +43,7 @@ namespace ContractMind.API.Controllers
                 return Unauthorized(new { message = "Invalid user data." });
             }
 
-           
+
             bool isPasswordValid = clsPasswordHelper.VerifyPassword(user.PasswordHash, model.Password);
 
             if (!isPasswordValid)
@@ -90,6 +94,62 @@ namespace ContractMind.API.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] forgotPasswordDto model)
+        {
+            if (string.IsNullOrEmpty(model.Email))
+            {
+                return BadRequest(new { message = "Email is required." });
+            }
+
+            var user=await clsUsers.FindByEmailAsync(model.Email);
+
+            if (user==null)
+            {
+                return Ok(new { message = "If your email is registered, you will receive a password reset link." });
+            }
+
+
+
+          
+            var resetToken = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N"); 
+            var tokenExpires = DateTime.UtcNow.AddHours(1); 
+
+           
+            await clsUsers.SavePasswordResetToken(model.Email, resetToken, tokenExpires);
+
+
+            var resetLink = $"http://localhost:4200/reset-password?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(resetToken)}";
+
+            //send email
+            var subject = "ContractMind - Password Reset Request";
+            var message = $"<h3>Reset Your Password</h3><p>Click the link below to reset your password:</p><p><a href='{resetLink}'>Reset Password</a></p>";
+
+            await _emailSender.SendEmailAsync(model.Email, subject, message);
+
+            return Ok(new { message = "If your email is registered, you will receive a password reset link." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var user = await clsUsers.FindByEmailAsync(model.Email);
+
+            if (user == null || user.ResetToken != model.Token || user.ResetTokenExpires < DateTime.UtcNow)
+            {
+                return BadRequest(new { message = "Invalid or expired password reset token." });
+            }
+
+
+            string newPasswordHash = clsPasswordHelper.HashPassword(model.NewPassword);
+
+         
+            await clsUsersData.ResetPasswordAsync(model.Email, newPasswordHash);
+
+            return Ok(new { message = "Password has been successfully reset." });
         }
     }
 }

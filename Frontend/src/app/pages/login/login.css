@@ -152,6 +152,21 @@
   font-weight: 600;
 }
 
+.error-alert{
+  background-color: rgba(244, 63, 94, 0.15);
+  color: #f43f5e;
+  border: 1px solid #f43f5e;
+}
+
+.alert {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+
 /* للشاشات اللوحية (الآيباد) والهواتف المتوسطة */
 @media (max-width: 768px) {
   .login-wrapper {

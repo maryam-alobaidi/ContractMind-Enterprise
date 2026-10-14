@@ -10,5 +10,7 @@ namespace ContractMindModel
         public string PasswordHash {get;set;}
         public string Role { get; set; }
         public DateTime? CreatedAt  { get; set; }
+        public string? ResetToken { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
@@ -12,39 +12,35 @@ import { CommonModule } from '@angular/common';
 })
 export class Login implements OnInit {
 
-  private fb=inject(FormBuilder);
-  private router=inject(Router);
-  private authService=inject(Auth);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(Auth);
 
-  loginError:string|null=null;
+  loginError = signal<string | null>(null);
 
+  loginForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    rememberDevice: [false]
+  });
 
-  loginForm:FormGroup=this.fb.group({
-    email:['',[Validators.required,Validators.email]],
-    password:['', [Validators.required, Validators.minLength(8)]],
-    rememberDevice:[false]
-  })
-
-   ngOnInit(): void {
-    const savedEmail=localStorage.getItem('rememberedEmail');
-    if(savedEmail)
-    {
-     
+  ngOnInit(): void {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
       this.loginForm.patchValue({
-         email:savedEmail,
-         rememberDevice:true
-      })
+        email: savedEmail,
+        rememberDevice: true
+      });
     }
   }
 
-  get email(){
+  get email() {
     return this.loginForm.get('email');
   }
 
-  get password(){
+  get password() {
     return this.loginForm.get('password');
   }
-
 
   onLogin() {
     if (this.loginForm.invalid) {
@@ -52,10 +48,9 @@ export class Login implements OnInit {
       return;
     }
 
-    this.loginError = null; 
+    this.loginError.set(null);
     const formValues = this.loginForm.value;
 
-   
     if (formValues.rememberDevice) {
       localStorage.setItem('rememberedEmail', formValues.email);
     } else {
@@ -65,16 +60,17 @@ export class Login implements OnInit {
     const credentials = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
-      rememberDevice:this.loginForm.value.rememberDevice
+      rememberDevice: this.loginForm.value.rememberDevice
     };
 
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        
-        this.router.navigate(['/dashboard']); 
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.loginError = err.error?.message || 'Invalid email or password.';
+      
+        const errorMsg = err.error?.message || 'Invalid email or password. Please try again.';
+        this.loginError.set(errorMsg);
         console.error('Login Failed', err);
       }
     });

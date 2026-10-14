@@ -1,12 +1,13 @@
 
-using ContractMindModel; 
+using ContractMindModel;
+using System.Reflection;
 
 public class clsUsers
 {
     public enum enMode { addNew = 0, update = 1 }
     public enMode Mode = enMode.addNew;
 
- 
+
     public userModel Model { get; set; }
 
     public int UserId
@@ -110,5 +111,16 @@ public class clsUsers
     public static async Task<List<userModel>> GetAllUsers()
     {
         return await clsUsersData.GetAllUsers();
+    }
+
+
+    public static async Task<userModel> FindByEmailAsync(string email)
+    {
+        return await clsUsersData.FindByEmailAsync(email);
+    }
+
+    public static async Task<bool> SavePasswordResetToken(string email, string resetToken, DateTime resetTokenExpires)
+    {
+        return await clsUsersData.SavePasswordResetToken(email, resetToken, resetTokenExpires);
     }
 }

@@ -15,10 +15,10 @@ export class Auth {
   private http=inject(HttpClient);
 
 
-  private apiUrl="https://localhost:7221/api/Auth/login";
+  private apiUrl="https://localhost:7221/api/Auth";
 
   login(credentials:{email:string;password:string,rememberDevice?:boolean}):Observable<any>{
-    return this.http.post<any>(this.apiUrl,credentials).pipe(
+    return this.http.post<any>(`${this.apiUrl}/login`,credentials).pipe(
       tap(response=>{
         if(response && response.token){
 
@@ -39,6 +39,10 @@ export class Auth {
     localStorage.removeItem('authToken');
     localStorage.removeItem('currentUser');
     this.router.navigate(['/login']);
+  }
+
+  forgotPassword(email: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/forgot-password`,{email});
   }
   
 

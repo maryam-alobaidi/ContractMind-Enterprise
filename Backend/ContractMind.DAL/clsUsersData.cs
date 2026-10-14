@@ -22,7 +22,6 @@ public static class clsUsersData
             };
             command.Parameters.Add(idParam);
 
-            
             return await clsPrimaryFunctions.Add(command);
         }
     }
@@ -66,7 +65,9 @@ public static class clsUsersData
                 Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
                 PasswordHash = reader["PasswordHash"] != DBNull.Value ? reader["PasswordHash"].ToString() : string.Empty,
                 Role = reader["Role"] != DBNull.Value ? reader["Role"].ToString() : string.Empty,
-                CreatedAt = reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : null
+                CreatedAt = reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : null,
+                ResetToken = reader["ResetToken"] != DBNull.Value ? reader["ResetToken"].ToString() : null,
+                ResetTokenExpires = reader["ResetTokenExpires"] != DBNull.Value ? Convert.ToDateTime(reader["ResetTokenExpires"]) : null
             });
         }
     }
@@ -94,7 +95,9 @@ public static class clsUsersData
                                 Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
                                 PasswordHash = reader["PasswordHash"] != DBNull.Value ? reader["PasswordHash"].ToString() : string.Empty,
                                 Role = reader["Role"] != DBNull.Value ? reader["Role"].ToString() : string.Empty,
-                                CreatedAt = reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : null
+                                CreatedAt = reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : null,
+                                ResetToken = reader["ResetToken"] != DBNull.Value ? reader["ResetToken"].ToString() : null,
+                                ResetTokenExpires = reader["ResetTokenExpires"] != DBNull.Value ? Convert.ToDateTime(reader["ResetTokenExpires"]) : null
                             };
                         }
                     }
@@ -106,5 +109,70 @@ public static class clsUsersData
             }
         }
         return model;
+    }
+
+    public static async Task<userModel> FindByEmailAsync(string email)
+    {
+        userModel model = null;
+        using (SqlConnection connection = new SqlConnection(clsSetting.ConnectionString))
+        {
+            using (SqlCommand command = new SqlCommand("Sp_GetUserByEmail", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@Email", email);
+                try
+                {
+                    await connection.OpenAsync();
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            model = new userModel
+                            {
+                                UserId = reader["UserId"] != DBNull.Value ? Convert.ToInt32(reader["UserId"]) : -1,
+                                FullName = reader["FullName"] != DBNull.Value ? reader["FullName"].ToString() : string.Empty,
+                                Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
+                                PasswordHash = reader["PasswordHash"] != DBNull.Value ? reader["PasswordHash"].ToString() : string.Empty,
+                                Role = reader["Role"] != DBNull.Value ? reader["Role"].ToString() : string.Empty,
+                                CreatedAt = reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : null,
+                                ResetToken = reader["ResetToken"] != DBNull.Value ? reader["ResetToken"].ToString() : null,
+                                ResetTokenExpires = reader["ResetTokenExpires"] != DBNull.Value ? Convert.ToDateTime(reader["ResetTokenExpires"]) : null
+                            };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    clsPrimaryFunctions.EntireInfoToEventLoge(ex.Message);
+                }
+            }
+        }
+        return model;
+    }
+
+
+    public static async Task<bool> SavePasswordResetToken(string email, string resetToken, DateTime resetTokenExpires)
+    {
+        using (SqlCommand command = new SqlCommand("Sp_UpdatePasswordResetToken"))
+        {
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@Email", email);
+            command.Parameters.AddWithValue("@ResetToken", resetToken);
+            command.Parameters.AddWithValue("@ResetTokenExpires", resetTokenExpires);
+
+            return await clsPrimaryFunctions.Update(command) ?? false;
+        }
+    }
+
+    public static async Task<bool> ResetPasswordAsync(string email, string newPasswordHash)
+    {
+        using (SqlCommand command = new SqlCommand("Sp_ResetPassword"))
+        {
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@Email", email);
+            command.Parameters.AddWithValue("@PasswordHash", newPasswordHash);
+
+            return await clsPrimaryFunctions.Update(command) ?? false;
+        }
     }
 }

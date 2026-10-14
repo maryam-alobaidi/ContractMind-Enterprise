@@ -1,4 +1,6 @@
 ﻿
+
+using ContractMind.BLL.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -48,6 +50,10 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+
+//add email sender 
+builder.Services.AddTransient<ContractMind.BLL.Services.IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
