@@ -1,0 +1,79 @@
+<div class="report-page-container">
+  <div class="report-page-card">
+    
+    <!-- رأس الصفحة -->
+    <div class="modal-header">
+      <div class="flex items-center gap-3">
+        <button class="btn-back" (click)="goBack()">← Back</button>
+        <h3>Contract Analysis Report</h3>
+      </div>
+      @if (contract()) {
+        <span class="teal-id">#{{ contract().contractId || contract().id }}</span>
+      }
+    </div>
+
+    @if (isLoading()) {
+      <div class="text-center py-12 text-gray-400">Loading contract report...</div>
+    } @else if (errorMessage()) {
+      <div class="text-center py-12 text-red-400">{{ errorMessage() }}</div>
+    } @else {
+      <!-- محتوى التقرير (قابل للطباعة) -->
+      <div class="printable-area space-y-4 mb-6">
+        
+        <!-- معلومات العقد -->
+        <div class="report-meta-box">
+          <div class="meta-item">
+            <span class="text-gray-400 text-sm">Document Name:</span>
+            <strong class="text-white text-sm font-medium">{{ contract().fileName || contract().FileName || 'Legal Contract Document' }}</strong>
+          </div>
+          <div class="meta-item">
+            <span class="text-gray-400 text-sm">Upload Date:</span>
+            <span class="text-gray-300 text-sm">{{ (contract().createdAt || contract().CreatedAt) ? ((contract().createdAt || contract().CreatedAt) | date:'yyyy-MM-dd HH:mm') : 'Just now' }}</span>
+          </div>
+        </div>
+
+        <!-- مؤشر المخاطر -->
+        <div class="risk-score-box">
+          <span class="text-gray-300 text-sm font-semibold">AI Risk Assessment:</span>
+          <span class="badge-teal" 
+                [class.low]="(contract().riskScore ?? contract().RiskScore) <= 50" 
+                [class.high]="(contract().riskScore ?? contract().RiskScore) > 50">
+            {{ (contract().riskScore ?? contract().RiskScore) <= 50 ? 'Low Risk' : 'High Risk' }} ({{ contract().riskScore ?? contract().RiskScore }}%)
+          </span>
+        </div>
+
+        <!-- ملخص الذكاء الاصطناعي التنفيذي -->
+        <div class="ai-summary-box">
+          <h4 class="text-teal-400 font-semibold text-sm mb-2">🤖 AI Executive Summary</h4>
+          <p class="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+            {{ contract().summary || contract().Summary || 'No summary available for this contract.' }}
+          </p>
+        </div>
+
+      </div>
+
+   
+<div class="report-actions pt-4 border-t border-gray-800 flex justify-between items-center flex-wrap gap-3">
+  
+  <!-- مجموعة أزرار التحميل والطباعة في جهة -->
+  <div class="flex items-center gap-2.5 flex-wrap">
+    <button class="btn-print" (click)="printReport()">
+      🖨️ Print Report
+    </button>
+    
+    <button class="btn-print" (click)="exportReport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span>Download PDF</span>
+    </button>
+  </div>
+
+
+</div>
+    }
+
+  </div>
+</div>

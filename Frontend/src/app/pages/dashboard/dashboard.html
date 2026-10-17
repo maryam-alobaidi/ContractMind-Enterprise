@@ -1,4 +1,4 @@
-<div class="glass-container" [class.light-mode]="isLightMode">
+<div class="glass-container">
 <!-- القائمة الجانبية -->
 <aside class="glass-sidebar">
  <div class="glass-brand ">
@@ -14,7 +14,7 @@
  <div class="glass-user">
     <div class="user-avatar-glass">👩‍⚖️</div>
     <div class="user-meta-glass">
-      <h4>Attorney Sarah</h4>
+      <h4>{{userName()}}</h4>
       <span>Senior Legal Counsel</span>
     </div>
  </div>
@@ -27,24 +27,38 @@
      <p>Intelligent contract analysis & secure management</p>
     </div>
     <div class="header-controls-glass">
-      <!-- زر تبديل الوضع (فاتح / داكن) -->
+      
       <button class="btn-theme-toggle" (click)="toggleTheme()">
-     {{ isLightMode ? '🌙 Dark' : '☀️ Light' }}
+     <span class="icon">{{ themeService.isDarkMode() ? '☀️' : '🌙' }}</span> 
+       {{ themeService.isDarkMode() ? 'Light' : 'Dark' }}
       </button>
+     
       <div class="lang-switch-glass">
-       <button class="lang-pill active">EN</button>
-       <button class="lang-pill">ES</button>
-      </div>
-      <button class="btn-teal-glow">
-        <span>+</span> Upload New Contract
-      </button>
+  <button 
+    class="lang-pill" 
+    [class.active]="languageService.currentLanguage() === 'en'" 
+    (click)="languageService.setLanguage('en')">EN</button>
+    
+  <button 
+    class="lang-pill" 
+    [class.active]="languageService.currentLanguage() === 'es'" 
+    (click)="languageService.setLanguage('es')">ES</button>
+    
+  <button 
+    class="lang-pill" 
+    [class.active]="languageService.currentLanguage() === 'ar'" 
+    (click)="languageService.setLanguage('ar')">AR</button>
+</div>
+           <button class="btn-teal-glow" (click)="onUploadClick()">
+          <span>+</span> Upload New Contract
+        </button>  
     </div>
 </header>
  
    <section class="glass-kpi-grid">
     <div class="glass-card">
      <h3>Total Active Contracts</h3>
-     <p class="kpi-num-teal">24</p>
+     <p class="kpi-num-teal">{{contracts().length}}</p>
      <span class="kpi-sub">Secured Vault</span>
     </div>
     <div class="glass-card">
@@ -60,38 +74,59 @@
  </section>
  <!-- الجدول -->
  <section class="glass-table-wrap">
-    <div class="table-header-glass">
-     <h3>Document Intelligence Stream</h3>
-     <span class="table-meta-glass">Real-time records</span>
-    </div>
-    <table class="teal-table">
-       <thead>
-         <tr>
-           <th>ID</th>
-           <th>Client / Document Name</th>
-           <th>Risk Level</th>
-           <th>Date</th>
-           <th>Action</th>
-         </tr>
-       </thead>
-       <tbody>
-         <tr>
-           <td class="teal-id">#101</td>
-           <td>Tech Supply Agreement - Tech Corp</td>
-           <td><span class="badge-teal low">Low Risk (15%)</span></td>
-           <td>2026-10-09</td>
-           <td><button class="btn-subtle-teal">View Report</button></td>
-         </tr>
-         <tr>
-           <td class="teal-id">#102</td>
-           <td>Non-Disclosure Agreement - NDA</td>
-           <td><span class="badge-teal high">High Risk (85%)</span></td>
-           <td>2026-10-08</td>
-           <td><button class="btn-subtle-teal">View Report</button></td>
-         </tr>
-       </tbody>
-    </table>
- </section>
+  <div class="table-header-glass">
+    <h3>Document Intelligence Stream</h3>
+    <span class="table-meta-glass">Real-time records</span>
+  </div>
+  <table class="teal-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Client / Document Name</th>
+        <th>Risk Level</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (contracts().length === 0) {
+        <tr>
+          <td colspan="5" class="text-center py-4 text-gray-400" style="text-align: center; padding: 20px;">
+            No contracts found in vault. Upload your first contract to begin analysis.
+          </td>
+        </tr>
+      } @else {
+       @for (contract of contracts(); track contract.id || $index) {
+           <tr>
+            <td class="teal-id">#{{ contract.id }}</td>
+            <td>{{ contract.fileName || 'Legal Contract Document' }}</td>
+            
+              
+              <td>
+                <span class="badge-teal" 
+                      [class.low]="contract.riskScore <= 50" 
+                      [class.high]="contract.riskScore > 50">
+                  {{ contract.riskScore <= 50 ? 'Low Risk' : 'High Risk' }} ({{ contract.riskScore }}%)
+                </span>
+              </td>
+            
+            <td>{{ contract.createdAt ? (contract.createdAt | date:'yyyy-MM-dd') : 'Just now' }}</td>
+            <td>
+              <button class="btn-subtle-teal" (click)="viewReport(contract)" >View Report</button>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</section>
  </main>
 </div>
 
+
+@if (showUploadModal()) {
+  <app-upload-modal 
+    (close)="showUploadModal.set(false)"
+    (uploadSuccess)="handleUploadSuccess($event)">
+  </app-upload-modal>
+}

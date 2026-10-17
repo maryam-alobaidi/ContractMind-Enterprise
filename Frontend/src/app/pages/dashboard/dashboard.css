@@ -282,69 +282,72 @@
   background: #14b8a6;
   color: #e3e5e8;
 }
+/* ==========================================
+   وضع الإضاءة الفاتح (Light Mode عبر الـ Service)
+   ========================================== */
+html.light-theme .glass-container {
+  background: radial-gradient(circle at bottom left, #f1f5f9, #e2e8f0);
+  color: #0f172a;
+}
 
-.glass-container.light-mode .nav-item {
+html.light-theme .glass-sidebar {
+  background: rgba(255, 255, 255, 0.85);
+  border-right: 1px solid rgba(20, 184, 166, 0.2);
+}
+
+html.light-theme .glass-brand h2 {
+  color: #0f172a;
+}
+
+html.light-theme .nav-item {
   color: #475569;
 }
 
-.glass-container.light-mode .nav-item:hover, 
-.glass-container.light-mode .nav-item.active {
+html.light-theme .nav-item:hover, 
+html.light-theme .nav-item.active {
   background: rgba(20, 184, 166, 0.15);
   color: #0d9488;
 }
 
-.glass-container.light-mode .glass-user {
+html.light-theme .glass-user {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.glass-container.light-mode .user-meta-glass h4 {
+html.light-theme .user-meta-glass h4 {
   color: #0f172a;
 }
 
-.glass-container.light-mode .header-title-glass h1 {
+html.light-theme .header-title-glass h1 {
   color: #0f172a;
 }
 
-.glass-container.light-mode .header-title-glass p {
+html.light-theme .header-title-glass p {
   color: #64748b;
 }
 
-.glass-container.light-mode .glass-card,
-.glass-container.light-mode .glass-table-wrap {
+html.light-theme .glass-card,
+html.light-theme .glass-table-wrap {
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.glass-container.light-mode .glass-card h3 {
+html.light-theme .glass-card h3 {
   color: #64748b;
 }
 
-.glass-container.light-mode .kpi-num-teal {
+html.light-theme .kpi-num-teal {
   color: #0f172a;
 }
 
-.glass-container.light-mode .teal-table th,
-.glass-container.light-mode .teal-table td {
+html.light-theme .teal-table th,
+html.light-theme .teal-table td {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   color: #1e293b;
 }
 
-.glass-container.light-mode .teal-table th {
+html.light-theme .teal-table th {
   color: #64748b;
-}
-
-.glass-container.light-mode .btn-subtle-teal {
-  color: #0f172a;
-  border-color: #0d9488;
-}
-
-.glass-container.light-mode .lang-switch-glass {
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.glass-container.light-mode .lang-pill {
-  color: #475569;
 }
 
 /* ==========================================

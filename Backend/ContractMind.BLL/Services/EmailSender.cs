@@ -1,18 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ContractMind.BLL.Interface;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ContractMind.BLL.Services
 {
-    public interface IEmailSender
-    {
-        Task SendEmailAsync(string email, string subject, string message);
-    }
+   
 
     public class EmailSender : IEmailSender
     {

@@ -5,7 +5,7 @@ public class clsContracts
     public enum enMode { addNew = 0, update = 1 }
     public enMode Mode = enMode.addNew;
 
-    // استخدام الـ Model لتخزين البيانات مباشرة
+  
     public contractsModel Model { get; set; }
 
     public int ContractId
@@ -82,12 +82,25 @@ public class clsContracts
 
     private async Task<bool> _AddNewContracts()
     {
-        int? newId = await clsContractsData.AddNewContracts(this.UserId, this.FileName, this.FilePath, this.ExtractedText, this.Summary, this.RiskScore ?? 0, this.UploadDate ?? DateTime.Now);
-        if (newId.HasValue)
+        int? newId = await clsContractsData.AddNewContracts(
+            this.UserId,
+            this.FileName,
+            this.FilePath,
+            this.ExtractedText,
+            this.Summary,
+            this.RiskScore ?? 0,
+            this.UploadDate ?? DateTime.Now
+        );
+
+        if (newId.HasValue && newId.Value > 0)
         {
             this.ContractId = newId.Value;
+            return true; // نجاح الحفظ وتم جلب الأيدي الجديد
         }
-        return (this.ContractId != -1);
+
+        // فشل الحفظ
+        this.ContractId = -1;
+        return false;
     }
 
     private async Task<bool> _UpdateContracts()

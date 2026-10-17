@@ -1,9 +1,9 @@
 ﻿using ContractMind.BLL;
+using ContractMind.BLL.Interface;
 using ContractMind.BLL.Services;
 using ContractMindModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Crypto.Generators;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -113,9 +113,8 @@ namespace ContractMind.API.Controllers
             }
 
 
+            var resetToken = Guid.NewGuid().ToString();
 
-          
-            var resetToken = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N"); 
             var tokenExpires = DateTime.UtcNow.AddHours(1); 
 
            

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Inject, Injectable, OnInit } from '@angular/core';
+import { inject, Inject, Injectable, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
@@ -14,6 +14,8 @@ export class Auth {
   private router = inject(Router);
   private http=inject(HttpClient);
 
+  userName = signal<string>('User');
+  userId=signal<number>(-1);
 
   private apiUrl="https://localhost:7221/api/Auth";
 
@@ -27,8 +29,14 @@ export class Auth {
           localStorage.removeItem('authToken');
           sessionStorage.removeItem('authToken');
 
+       
+
           storage.setItem('authToken', response.token);
           storage.setItem('currentUser', JSON.stringify(response.user));
+          this.userName.set(response.user.name);
+          this.userId.set(response.user.id);
+
+         
         }
       })
     );

@@ -1,0 +1,226 @@
+/* --- الحاوية الرئيسية للخلفية والنافذة المنبثقة (Modal) --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(6, 9, 15, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 480px; /* عرض مناسب للنافذة المنبثقة */
+  padding: 2.5rem;
+  background: radial-gradient(circle at center, #081118, #06090f);
+  color: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+  box-sizing: border-box;
+  box-shadow: 0 0 30px 10px rgba(20, 184, 166, 0.25);
+}
+
+/* --- رأس النافذة المنبثقة --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-close:hover {
+  color: #f8fafc;
+}
+
+/* --- تصميم اختيار اللغة (AI Summary Language) --- */
+.lang-container {
+  margin-bottom: 1.5rem;
+}
+
+.lang-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.lang-switch-glass {
+  display: flex;
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.lang-pill {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lang-pill:hover {
+  color: #f8fafc;
+}
+
+.lang-pill.active {
+  background: rgba(20, 184, 166, 0.2);
+  color: #14b8a6;
+  border: 1px solid rgba(20, 184, 166, 0.4);
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.15);
+}
+
+/* --- منطقة سحب وإفلات الملفات (Dropzone) --- */
+.upload-dropzone {
+  margin-bottom: 1.5rem;
+  border: 2px dashed #334155;
+  background-color: #0f172a;
+  border-radius: 8px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.upload-dropzone:hover {
+  border-color: #14b8a6;
+  background-color: rgba(15, 23, 42, 0.8);
+}
+
+.dropzone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.dropzone-label strong {
+  color: #14b8a6;
+}
+
+.dropzone-label small {
+  margin-top: 0.4rem;
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.file-name {
+  color: #34d399;
+  font-weight: 500;
+}
+
+/* --- شريط التقدم (Progress Bar) --- */
+.progress-container {
+  margin-bottom: 1.5rem;
+  background-color: #0f172a;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  overflow: hidden;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.progress-bar {
+  height: 6px;
+  background: linear-gradient(90deg, #0d9488, #14b8a6);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.5);
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-gray-500 {
+  color: #94a3b8;
+}
+
+/* --- أزرار التحكم السفلى --- */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #1e293b;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+.btn-submit {
+  background: rgba(20, 184, 166, 0.15);
+  color: #f8fafc;
+  border: 1px solid #14b8a6;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.2);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #14b8a6;
+  color: #06090f;
+  box-shadow: 0 0 25px rgba(20, 184, 166, 0.5);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --- الاستجابة للشاشات الصغيرة --- */
+@media (max-width: 480px) {
+  .modal-card {
+    padding: 1.5rem;
+  }
+}

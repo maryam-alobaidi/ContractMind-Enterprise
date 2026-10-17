@@ -1,4 +1,4 @@
-* {
+/* * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -11,4 +11,29 @@ body, html {
   height: 100%;
   width: 100%;
   overflow: hidden;
+} */
+
+/* الثيم الافتراضي (Dark Theme) */
+:root {
+  --bg-main: #0b0f19;
+  --bg-card: #111827;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --border-color: #1f2937;
+}
+
+/* الثيم المضيء (Light Theme) */
+html.light-theme {
+  --bg-main: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --border-color: #e5e7eb;
+}
+
+/* تطبيق المتغيرات على جسم التطبيق */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
