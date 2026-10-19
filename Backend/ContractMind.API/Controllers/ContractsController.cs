@@ -28,9 +28,25 @@ namespace ContractMind.API.Controllers
             {
                 return NotFound(new { message = "No contracts found." });
             }
-            return Ok(contractsList);
+
+            var contracts = contractsList.OrderByDescending(c => c.UploadDate)
+               .ToList();
+
+            return Ok(contracts);
         }
 
+        [HttpGet("resent")]
+        public async Task<IActionResult> GetResentContracts()
+        {
+            List<contractsModel> contractsList = await clsContracts.GetAllContracts();
+            if (contractsList == null || !contractsList.Any())
+            {
+                return NotFound(new { message = "No contracts found." });
+            }
+              var contracts=contractsList.OrderByDescending(c => c.UploadDate).Take(10)
+                .ToList();
+            return Ok(contracts);
+        }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetContractById(int id)
@@ -254,5 +270,41 @@ namespace ContractMind.API.Controllers
             }
             return textBuilder.ToString();
         }
+
+
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetDeshboardStats()
+        {
+            var contracts = await clsContracts.GetAllContracts();
+            var totalActive = contracts.Count();
+
+            var pendingReview = 0;
+            var riskFlagsCount = contracts.Count(c => c.RiskScore > 50);
+
+            return Ok(new
+            {
+                totalActiveContracts = totalActive,
+                pendingReview = pendingReview,
+                riskFlag = riskFlagsCount
+            });
+        }
+
+
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecentContracts()
+        {
+            var contracts = await clsContracts.GetAllContracts();
+
+            if(contracts==null || !contracts.Any())
+            {
+                return NotFound(new { message = "No contracts found." });
+            }
+
+
+           var recentContracts= contracts.OrderByDescending(c => c.UploadDate) 
+                .Take(10).ToList();
+            return Ok(recentContracts);
+        }
+
     }
 }

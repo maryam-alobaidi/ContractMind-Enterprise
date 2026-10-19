@@ -150,5 +150,7 @@ namespace ContractMind.API.Controllers
 
             return Ok(new { message = "Password has been successfully reset." });
         }
+
+
     }
 }

@@ -1,39 +1,53 @@
-/* * {
+/* إعدادات عامة */
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-body, html {
-  background-color: #06090f;
-  color: #e2e8f0;
+html, body {
   height: 100%;
   width: 100%;
-  overflow: hidden;
-} */
-
-/* الثيم الافتراضي (Dark Theme) */
-:root {
-  --bg-main: #0b0f19;
-  --bg-card: #111827;
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --border-color: #1f2937;
+  overflow-x: hidden;
 }
 
-/* الثيم المضيء (Light Theme) */
+/* ==========================================
+   1. الثيم الداكن (Dark Theme - الافتراضي)
+   ========================================== */
+:root, html.dark-theme {
+  --bg-main: #06090f;
+  --bg-card: rgba(10, 15, 24, 0.75);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(20, 184, 166, 0.1);
+  --glass-sidebar: rgba(10, 15, 24, 0.75);
+}
+
+/* ==========================================
+   2. الثيم الفاتح (Light Theme)
+   ========================================== */
 html.light-theme {
   --bg-main: #f3f4f6;
-  --bg-card: #ffffff;
+  --bg-card: #ffffff; /* أبيض صافي للكروت والجداول */
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --border-color: #e5e7eb;
+  --glass-sidebar: #ffffff;
 }
 
-/* تطبيق المتغيرات على جسم التطبيق */
+/* تطبيق المتغيرات العامة على جسم التطبيق بالكامل */
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* فرض لون الكروت والجداول الحاكمة في الوضع الفاتح */
+html.light-theme .glass-card,
+html.light-theme .glass-table-wrap {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }

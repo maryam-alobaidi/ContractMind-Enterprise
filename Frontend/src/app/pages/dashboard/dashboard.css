@@ -1,179 +1,44 @@
 
-.glass-brand {
-  display: flex;
-  flex-direction: column; 
-  align-items: center;    
-  text-align: center;     
-  gap: 12px;              
-  margin-bottom: 40px;
-}
 
-.glass-container {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-  background: radial-gradient(circle at bottom left, #081118, #06090f);
-  transition: background 0.3s ease;
-}
-
-.glass-sidebar {
-  width: 280px;
-  background: rgba(10, 15, 24, 0.75);
-  backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(20, 184, 166, 0.1);
+/* تنسيق ترويسة الجداول والبطاقات */
+.table-header-glass {
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  gap: 6px;
+  margin-bottom: 20px;
+  grid-column: 1 / -1; /* لكي تمتد الترويسة على كامل عرض الشبكة إذا كانت داخل Grid */
 }
 
-.glass-brand h2 {
-  color: #f8fafc;
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 40px;
-}
-
-.glass-brand span {
-  color: #14b8a6;
-}
-
-.glass-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-grow: 1;
-}
-
-.nav-item {
-  color: #94a3b8;
-  text-decoration: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.nav-item:hover, .nav-item.active {
-  background: rgba(20, 184, 166, 0.1);
-  color: #14b8a6;
-  border-left: 3px solid #14b8a6;
-}
-
-.glass-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.user-avatar-glass {
+.table-header-glass h1 {
   font-size: 24px;
-  background: rgba(20, 184, 166, 0.1);
-  padding: 8px;
-  border-radius: 50%;
-}
-
-.user-meta-glass h4 {
-  font-size: 14px;
-  color: #f8fafc;
   font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-.user-meta-glass span {
-  font-size: 12px;
-  color: #14b8a6;
+.table-header-glass h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-.glass-main {
-  flex-grow: 1;
-  padding: 40px;
-  overflow-y: auto;
+.table-header-glass p,
+.table-meta-glass {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
-.glass-header {
+/* إذا أردت جعل الترويسة تحتوي على عناصر بجانب بعضها (العنوان يميناً والمتا يساراً مثلاً) */
+.table-header-glass-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 36px;
-}
-
-.header-title-glass h1 {
-  font-size: 28px;
-  color: #f8fafc;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.header-title-glass p {
-  font-size: 14px;
-  color: #94a3b8;
-}
-
-.header-controls-glass {
-  display: flex;
   align-items: center;
-  gap: 16px;
+  margin-bottom: 20px;
+  grid-column: 1 / -1;
 }
 
-/* زر تبديل الوضع */
-.btn-theme-toggle {
-  background: rgba(20, 184, 166, 0.1);
-  color: #14b8a6;
-  border: 1px solid rgba(20, 184, 166, 0.3);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-theme-toggle:hover {
-  background: rgba(20, 184, 166, 0.2);
-}
-
-.lang-switch-glass {
-  display: flex;
-  background: rgba(10, 15, 24, 0.75);
-  border: 1px solid rgba(20, 184, 166, 0.2);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.lang-pill {
-  background: transparent;
-  color: #94a3b8;
-  border: none;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.lang-pill.active, .lang-pill:hover {
-  background: #14b8a6;
-  color: #06090f;
-}
-
-.btn-teal-glow {
-  background: rgba(20, 184, 166, 0.1);
-  color: #f8fafc;
-  border: 1px solid #14b8a6;
-  padding: 12px 22px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
-  transition: all 0.3s ease;
-}
-
-.btn-teal-glow:hover {
-  background: #14b8a6;
-  color: #06090f;
-}
 
 .glass-kpi-grid, .glass-card, .glass-table-wrap {
   background: rgba(10, 15, 24, 0.6);
@@ -194,13 +59,13 @@
 }
 
 .glass-card h3, .glass-card .kpi-sub {
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .kpi-num-teal {
   font-size: 36px;
   font-weight: 800;
-  color: #f8fafc;
+ color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
@@ -213,7 +78,7 @@
 .teal-table th, .teal-table td {
   padding: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: #e2e8f0;
+ color: var(--text-secondary);
 }
 
 .teal-table th {
@@ -239,14 +104,24 @@
 }
 
 .btn-subtle-teal {
-  background: transparent;
-  color: #e2e8f0;
+  background: rgba(20, 184, 166, 0.05); /* إعطاء خلفية خفيفة شفافة جداً ليكون مرئياً في الوضع الليلي */
+  color: var(--text-primary);
   border: 1px solid rgba(20, 184, 166, 0.3);
   padding: 8px 16px;
   border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
+.btn-subtle-teal:hover {
+  background: rgba(20, 184, 166, 0.2); /* زيادة وضوح الخلفية عند الهوفر في الوضع الليلي */
+  border-color: #14b8a6;
+  color: #14b8a6;
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.2); /* إضافة توهج خفيف يظهر التفاعل بوضوح */
+  transform: translateY(-1px); /* حركة رفع خفيفة تدل على التفاعل */
+}
 
 /* ==========================================
    وضع الإضاءة الفاتح (Light Mode Styles)
@@ -280,76 +155,148 @@
 
  .light-mode .btn-teal-glow:hover {
   background: #14b8a6;
-  color: #e3e5e8;
+  color: #19191a;
 }
 /* ==========================================
-   وضع الإضاءة الفاتح (Light Mode عبر الـ Service)
+   وضع الإضاءة الفاتح المطور (Enhanced Light Mode)
    ========================================== */
-html.light-theme .glass-container {
-  background: radial-gradient(circle at bottom left, #f1f5f9, #e2e8f0);
+
+/* 1. الحاوية الرئيسية والتدرج الخلفي */
+html.light-theme .glass-container,
+.glass-container.light-mode {
+  background: radial-gradient(circle at 10% 20%, #f8fafc, #e2e8f0, #cbd5e1);
   color: #0f172a;
 }
 
-html.light-theme .glass-sidebar {
-  background: rgba(255, 255, 255, 0.85);
-  border-right: 1px solid rgba(20, 184, 166, 0.2);
+/* 2. الشريط الجانبي (Sidebar) بتأثير زجاجي أنيق */
+html.light-theme .glass-sidebar,
+.glass-container.light-mode .glass-sidebar {
+  background: rgba(255, 255, 255, 0.826);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.03);
 }
 
-html.light-theme .glass-brand h2 {
+/* 3. النصوص والعناوين الرئيسية */
+html.light-theme .glass-brand h2,
+html.light-theme .header-title-glass h1,
+html.light-theme .user-meta-glass h4,
+html.light-theme .kpi-num-teal,
+.glass-container.light-mode .glass-brand h2 {
   color: #0f172a;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
+html.light-theme .header-title-glass p,
+html.light-theme .glass-card h3,
+html.light-theme .teal-table th {
+  color: #151515;
+  font-weight: 600;
+}
+
+/* 4. عناصر الملاحة (Nav Items) */
 html.light-theme .nav-item {
-  color: #475569;
+  color: #050f1e;
 }
 
 html.light-theme .nav-item:hover, 
 html.light-theme .nav-item.active {
-  background: rgba(20, 184, 166, 0.15);
+  background: rgba(13, 148, 136, 0.12);
   color: #0d9488;
+  border-left: 3px solid #0d9488;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.08);
 }
 
-html.light-theme .glass-user {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-html.light-theme .user-meta-glass h4 {
-  color: #0f172a;
-}
-
-html.light-theme .header-title-glass h1 {
-  color: #0f172a;
-}
-
-html.light-theme .header-title-glass p {
-  color: #64748b;
-}
-
+/* 5. البطاقات والجداول (Cards & Tables) */
 html.light-theme .glass-card,
 html.light-theme .glass-table-wrap {
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-html.light-theme .glass-card h3 {
-  color: #64748b;
-}
-
-html.light-theme .kpi-num-teal {
-  color: #0f172a;
+ background: rgba(255, 255, 255, 0.85)!important; /* خلفية بيضاء زجاجية صافية */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(20, 184, 166, 0.2); /* إطار تيال خفيف وأنيق */
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05),
+              0 8px 10px -6px rgba(15, 23, 42, 0.03);
 }
 
 html.light-theme .teal-table th,
 html.light-theme .teal-table td {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  color: #1e293b;
+  border-bottom: 1px solid rgba(162, 165, 169, 0.8);
+  color: #1c1d1e;
 }
 
-html.light-theme .teal-table th {
-  color: #64748b;
+html.light-theme .teal-id {
+  color: #0d9488;
 }
 
+/* 6. تحسين الأزرار في الوضع الفاتح */
+
+/* زر الإضاءة وزر اللغة */
+html.light-theme .btn-theme-toggle,
+html.light-theme .lang-switch-glass {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+html.light-theme .lang-pill {
+  color: #67707b;
+}
+
+html.light-theme .lang-pill.active,
+html.light-theme .lang-pill:hover {
+  background: #0d9488;
+  color: #a3a1a1;
+}
+
+/* الأزرار التفاعلية (Glow Button) */
+html.light-theme .btn-teal-glow,
+.light-mode .btn-teal-glow {
+  background: #0d9488;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+}
+
+html.light-theme .btn-teal-glow:hover,
+.light-mode .btn-teal-glow:hover {
+  background: #0f766e;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.45);
+  transform: translateY(-1px);
+}
+
+html.light-theme .btn-subtle-teal {
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  border: 1px solid rgba(13, 148, 136, 0.3);
+}
+
+html.light-theme .btn-subtle-teal:hover {
+  background: rgba(13, 148, 136, 0.1);
+  color: #0d9488;
+}
+
+/* الشارات (Badges) */
+html.light-theme .badge-teal.low {
+  background: rgba(13, 148, 136, 0.15);
+  color: #0d9488;
+}
+
+html.light-theme .badge-teal.high {
+  background: rgba(225, 29, 72, 0.12);
+  color: #e11d48;
+}
+
+/* قسم المستخدم */
+html.light-theme .glass-user {
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+html.light-theme .user-avatar-glass {
+  background: rgba(13, 148, 136, 0.12);
+  color: #0d9488;
+}
 /* ==========================================
    تعديلات التجاوب مع الشاشات المتوسطة (Tablet)
    ========================================== */

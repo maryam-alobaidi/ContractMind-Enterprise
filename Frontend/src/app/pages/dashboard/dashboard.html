@@ -1,74 +1,23 @@
-<div class="glass-container">
-<!-- القائمة الجانبية -->
-<aside class="glass-sidebar">
- <div class="glass-brand ">
-    <img src="favicon.svg" title="ContractMind Logo" alt="ContractMind Logo" width="75" height="75">
-    <h2>Contract<span>Mind</span></h2>
-   </div>
- <nav class="glass-nav">
-   <a href="#" class="nav-item active">Dashboard</a>
-   <a href="#" class="nav-item">Contracts Archive</a>
-   <a href="#" class="nav-item">AI Legal Assistant</a>
-   <a href="#" class="nav-item">Audit Logs</a>
- </nav>
- <div class="glass-user">
-    <div class="user-avatar-glass">👩‍⚖️</div>
-    <div class="user-meta-glass">
-      <h4>{{userName()}}</h4>
-      <span>Senior Legal Counsel</span>
-    </div>
- </div>
-</aside>
 
-<main class="glass-main">
- <header class="glass-header">
-    <div class="header-title-glass">
+ 
+   <section class="glass-kpi-grid">
+      <div class="table-header-glass">
      <h1>Workspace Dashboard</h1>
      <p>Intelligent contract analysis & secure management</p>
     </div>
-    <div class="header-controls-glass">
-      
-      <button class="btn-theme-toggle" (click)="toggleTheme()">
-     <span class="icon">{{ themeService.isDarkMode() ? '☀️' : '🌙' }}</span> 
-       {{ themeService.isDarkMode() ? 'Light' : 'Dark' }}
-      </button>
-     
-      <div class="lang-switch-glass">
-  <button 
-    class="lang-pill" 
-    [class.active]="languageService.currentLanguage() === 'en'" 
-    (click)="languageService.setLanguage('en')">EN</button>
-    
-  <button 
-    class="lang-pill" 
-    [class.active]="languageService.currentLanguage() === 'es'" 
-    (click)="languageService.setLanguage('es')">ES</button>
-    
-  <button 
-    class="lang-pill" 
-    [class.active]="languageService.currentLanguage() === 'ar'" 
-    (click)="languageService.setLanguage('ar')">AR</button>
-</div>
-           <button class="btn-teal-glow" (click)="onUploadClick()">
-          <span>+</span> Upload New Contract
-        </button>  
-    </div>
-</header>
- 
-   <section class="glass-kpi-grid">
     <div class="glass-card">
      <h3>Total Active Contracts</h3>
-     <p class="kpi-num-teal">{{contracts().length}}</p>
+     <p class="kpi-num-teal">{{totalActive()}}</p>
      <span class="kpi-sub">Secured Vault</span>
     </div>
     <div class="glass-card">
      <h3>Pending Review</h3>
-     <p class="kpi-num-teal">5</p>
+     <p class="kpi-num-teal">{{pendingReview()}}</p>
      <span class="kpi-sub">In AI Queue</span>
     </div>
     <div class="glass-card">
      <h3>Risk Flag</h3>
-     <p class="kpi-num-teal alert">2</p>
+     <p class="kpi-num-teal alert">{{riskFlag()}}</p>
      <span class="kpi-sub alert">Requires Action</span>
     </div>
  </section>
@@ -96,7 +45,7 @@
           </td>
         </tr>
       } @else {
-       @for (contract of contracts(); track contract.id || $index) {
+       @for (contract of resentContracts(); track contract.id || $index) {
            <tr>
             <td class="teal-id">#{{ contract.id }}</td>
             <td>{{ contract.fileName || 'Legal Contract Document' }}</td>
@@ -110,7 +59,7 @@
                 </span>
               </td>
             
-            <td>{{ contract.createdAt ? (contract.createdAt | date:'yyyy-MM-dd') : 'Just now' }}</td>
+            <td>{{ contract.uploadDate ? (contract.uploadDate | date:'yyyy-MM-dd') : 'Just now' }}</td>
             <td>
               <button class="btn-subtle-teal" (click)="viewReport(contract)" >View Report</button>
             </td>
@@ -120,13 +69,13 @@
     </tbody>
   </table>
 </section>
- </main>
-</div>
 
 
 @if (showUploadModal()) {
   <app-upload-modal 
-    (close)="showUploadModal.set(false)"
+    (close)="showUploadModal.set(false); loadContracts(); loadStats();"
     (uploadSuccess)="handleUploadSuccess($event)">
   </app-upload-modal>
 }
+
+

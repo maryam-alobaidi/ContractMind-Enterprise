@@ -1,0 +1,90 @@
+<div class="archive-container">
+  <!-- ترويسة صفحة الأرشيف -->
+  <div class="archive-header">
+    <div>
+      <h2>Contracts Archive</h2>
+      <p>Manage, search, and review all historical and active company contracts.</p>
+    </div>
+  
+  </div>
+
+  <!-- شريط البحث والفلترة -->
+  <div class="archive-filters glass-card">
+    <div class="search-box">
+      <input type="text" placeholder="Search by contract title..." class="teal-input"  (input)="searchTerm.set($any($event.target).value)"/>
+    </div>
+   <div class="filter-dropdowns">
+  <!-- فلترة حسب مستوى المخاطر -->
+  <select class="teal-select" (change)="selectedRisk.set($any($event.target).value)">
+    <option value="">All Risk Levels</option>
+    <option value="low">Low Risk (0 - 50%)</option>
+    <option value="high">High Risk (51% - 100%)oooooooo
+      
+    </option>
+  </select>
+
+  <!-- فلترة حسب التاريخ (من تاريخ) -->
+  <div class="date-filter-wrap">
+    <label for="startDate" class="date-label">From:</label>
+   <div class="custom-date-wrapper">
+  <input type="date" id="startDate" class="teal-input" (change)="startDate.set($any($event.target).value)" />
+</div>
+  </div>
+
+  <!-- فلترة حسب التاريخ (إلى تاريخ) -->
+  <div class="date-filter-wrap">
+    <label for="endDate" class="date-label">To:</label>
+    <div class="custom-date-wrapper">
+    <input type="date" id="endDate" class="teal-input" (change)="endDate.set($any($event.target).value)"/>
+  </div>
+  </div>
+</div>
+  </div>
+
+   <!-- الجدول -->
+ <section class="glass-table-wrap">
+
+  <table class="teal-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Client / Document Name</th>
+        <th>Risk Level</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (filteredContracts().length === 0) {
+        <tr>
+          <td colspan="5" class="text-center py-4 text-gray-400" style="text-align: center; padding: 20px;">
+           No matching contracts found in vault.
+          </td>
+        </tr>
+      } @else {
+       @for (contract of filteredContracts(); track contract.id || $index) {
+           <tr>
+            <td class="teal-id">#{{ contract.id }}</td>
+            <td>{{ contract.fileName || 'Legal Contract Document' }}</td>
+            
+              
+              <td>
+                <span class="badge-teal" 
+                      [class.low]="contract.riskScore <= 50" 
+                      [class.high]="contract.riskScore > 50">
+                  {{ contract.riskScore <= 50 ? 'Low Risk' : 'High Risk' }} ({{ contract.riskScore }}%)
+                </span>
+              </td>
+            
+            <td>{{ contract.uploadDate ? (contract.uploadDate | date:'yyyy-MM-dd') : 'Just now' }}</td>
+            <td>
+              <button class="btn-subtle-teal" (click)="viewReport(contract)" >View Report</button>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</section>
+
+</div>

@@ -42,6 +42,8 @@ export class Login implements OnInit {
     return this.loginForm.get('password');
   }
 
+
+
   onLogin() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -65,10 +67,18 @@ export class Login implements OnInit {
 
     this.authService.login(credentials).subscribe({
       next: (response) => {
+       
+        if (response && response.userName) {
+          localStorage.setItem('userName', response.userName);
+        }
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+        }
+        // =========================================================================
+
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-      
         const errorMsg = err.error?.message || 'Invalid email or password. Please try again.';
         this.loginError.set(errorMsg);
         console.error('Login Failed', err);

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class Contract {
-private http = inject(HttpClient);
+  private http = inject(HttpClient);
   private apiUrl = 'https://localhost:7221/api/Contracts'; 
 
   uploadAndAnalyze(file: File, userId: number|null, language: string): Observable<any> {
@@ -29,4 +29,13 @@ private http = inject(HttpClient);
   getContractById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+
+  getStats():Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/stats`);
+  }
+
+  getResentContracts():Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/recent`);
+  }
+
 }
