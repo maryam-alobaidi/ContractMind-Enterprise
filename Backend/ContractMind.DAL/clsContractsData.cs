@@ -36,7 +36,7 @@ public static class clsContractsData
         using (SqlCommand command = new SqlCommand("Sp_DeleteContracts"))
         {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@ContractId", contractId);
+            command.Parameters.AddWithValue("@ID", contractId);
             return await clsPrimaryFunctions.Delete(command);
         }
     }

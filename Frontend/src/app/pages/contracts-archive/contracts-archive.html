@@ -5,69 +5,60 @@
       <h2>Contracts Archive</h2>
       <p>Manage, search, and review all historical and active company contracts.</p>
     </div>
-  
   </div>
 
   <!-- شريط البحث والفلترة -->
   <div class="archive-filters glass-card">
     <div class="search-box">
-      <input type="text" placeholder="Search by contract title..." class="teal-input"  (input)="searchTerm.set($any($event.target).value)"/>
+      <input type="text" placeholder="Search by contract title..." class="teal-input" (input)="searchTerm.set($any($event.target).value)"/>
     </div>
-   <div class="filter-dropdowns">
-  <!-- فلترة حسب مستوى المخاطر -->
-  <select class="teal-select" (change)="selectedRisk.set($any($event.target).value)">
-    <option value="">All Risk Levels</option>
-    <option value="low">Low Risk (0 - 50%)</option>
-    <option value="high">High Risk (51% - 100%)oooooooo
-      
-    </option>
-  </select>
+    <div class="filter-dropdowns">
+      <select class="teal-select" (change)="selectedRisk.set($any($event.target).value)">
+        <option value="">All Risk Levels</option>
+        <option value="low">Low Risk (0 - 50%)</option>
+        <option value="high">High Risk (51% - 100%)</option>
+      </select>
 
-  <!-- فلترة حسب التاريخ (من تاريخ) -->
-  <div class="date-filter-wrap">
-    <label for="startDate" class="date-label">From:</label>
-   <div class="custom-date-wrapper">
-  <input type="date" id="startDate" class="teal-input" (change)="startDate.set($any($event.target).value)" />
-</div>
+      <div class="date-filter-wrap">
+        <label for="startDate" class="date-label">From:</label>
+        <div class="custom-date-wrapper">
+          <input type="date" id="startDate" class="teal-input" (change)="startDate.set($any($event.target).value)" />
+        </div>
+      </div>
+
+      <div class="date-filter-wrap">
+        <label for="endDate" class="date-label">To:</label>
+        <div class="custom-date-wrapper">
+          <input type="date" id="endDate" class="teal-input" (change)="endDate.set($any($event.target).value)"/>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- فلترة حسب التاريخ (إلى تاريخ) -->
-  <div class="date-filter-wrap">
-    <label for="endDate" class="date-label">To:</label>
-    <div class="custom-date-wrapper">
-    <input type="date" id="endDate" class="teal-input" (change)="endDate.set($any($event.target).value)"/>
-  </div>
-  </div>
-</div>
-  </div>
-
-   <!-- الجدول -->
- <section class="glass-table-wrap">
-
-  <table class="teal-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Client / Document Name</th>
-        <th>Risk Level</th>
-        <th>Date</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      @if (filteredContracts().length === 0) {
+  <!-- الجدول -->
+  <section class="glass-table-wrap">
+    <table class="teal-table">
+      <thead>
         <tr>
-          <td colspan="5" class="text-center py-4 text-gray-400" style="text-align: center; padding: 20px;">
-           No matching contracts found in vault.
-          </td>
+          <th>ID</th>
+          <th>Client / Document Name</th>
+          <th>Risk Level</th>
+          <th>Date</th>
+          <th>Action</th>
         </tr>
-      } @else {
-       @for (contract of filteredContracts(); track contract.id || $index) {
-           <tr>
-            <td class="teal-id">#{{ contract.id }}</td>
-            <td>{{ contract.fileName || 'Legal Contract Document' }}</td>
-            
-              
+      </thead>
+      <tbody>
+        @if (filteredContracts().length === 0) {
+          <tr>
+            <td colspan="5" class="text-center py-4 text-gray-400" style="text-align: center; padding: 20px;">
+              No matching contracts found in vault.
+            </td>
+          </tr>
+        } @else {
+          @for (contract of filteredContracts(); track contract.id || contract.contractId || $index) {
+            <tr>
+              <td class="teal-id">#{{ contract.id || contract.contractId }}</td>
+              <td>{{ contract.fileName || 'Legal Contract Document' }}</td>
               <td>
                 <span class="badge-teal" 
                       [class.low]="contract.riskScore <= 50" 
@@ -75,16 +66,47 @@
                   {{ contract.riskScore <= 50 ? 'Low Risk' : 'High Risk' }} ({{ contract.riskScore }}%)
                 </span>
               </td>
-            
-            <td>{{ contract.uploadDate ? (contract.uploadDate | date:'yyyy-MM-dd') : 'Just now' }}</td>
-            <td>
-              <button class="btn-subtle-teal" (click)="viewReport(contract)" >View Report</button>
-            </td>
-          </tr>
+              <td>{{ contract.uploadDate ? (contract.uploadDate | date:'yyyy-MM-dd') : 'Just now' }}</td>
+              <td>
+                <div class="action-btn-group">
+                  <button class="btn-subtle-teal" (click)="viewReport(contract)">View Report</button>
+                  <button class="btn-delete-red" (click)="confirmDelete(contract)" title="Delete Contract">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
         }
-      }
-    </tbody>
-  </table>
-</section>
-
+      </tbody>
+    </table>
+  </section>
 </div>
+
+<!-- نافذة تأكيد الحذف المنبثقة -->
+@if (showDeleteModal()) {
+  <div class="modal-backdrop">
+    <div class="glass-modal">
+      <h3>Delete Contract</h3>
+      <p>Are you sure you want to delete <strong>"{{ contractToDelete()?.fileName || 'this contract' }}"</strong>? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-subtle-teal" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-delete-red-solid" (click)="executeDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- إشعار النجاح العائم (Toast) في أسفل اليمين -->
+@if (showToast()) {
+  <div class="teal-toast-notification">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span>{{ toastMessage() }}</span>
+  </div>
+}

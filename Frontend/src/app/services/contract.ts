@@ -38,4 +38,8 @@ export class Contract {
     return this.http.get<any>(`${this.apiUrl}/recent`);
   }
 
+  deleteContract(id: number | string) {
+  return this.http.delete(`${this.apiUrl}/${id}`);
+}
+
 }
