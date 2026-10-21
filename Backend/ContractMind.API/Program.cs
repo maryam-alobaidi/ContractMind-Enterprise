@@ -56,6 +56,7 @@ builder.Services.AddCors(options =>
 //Add service
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IOpenAIService, OpenAIService>();
+builder.Services.AddScoped<IPrivacyService, PrivacyService>();
 
 var app = builder.Build();
 

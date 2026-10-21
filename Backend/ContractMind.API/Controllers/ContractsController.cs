@@ -1,4 +1,5 @@
 ﻿using ContractMind.BLL.Interface;
+using ContractMind.BLL.Services;
 using ContractMindModel;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace ContractMind.API.Controllers
     {
 
         private readonly IOpenAIService _aiService;
+        private readonly IPrivacyService _privacyService;
 
-        public ContractsController(IOpenAIService aiService)
+        public ContractsController(IOpenAIService aiService, IPrivacyService privacyService)
         {
             _aiService = aiService;
+            _privacyService = privacyService;
         }
 
 
@@ -211,16 +214,20 @@ namespace ContractMind.API.Controllers
                     return BadRequest(new { message = "Could not extract text from this file." });
                 }
 
+                //regex all sensitive text
+                string safeTextForAI = _privacyService.MaskSensitiveData(extractedText);
+
+
+                Console.WriteLine("SSSSave Data ==>" +safeTextForAI);
                 // 3. تحليل OpenAI
-                var aiResult = await _aiService.AnalyzeContractTextAsync(extractedText, language);
+                var aiResult = await _aiService.AnalyzeContractTextAsync(safeTextForAI, language);
 
                 if (aiResult == null)
                 {
                     return StatusCode(500, new { message = "AI service failed to analyze the contract." });
                 }
 
-                Console.WriteLine("AI Summary Result: " + aiResult.Summary);
-                Console.WriteLine("AI Risk Score Result: " + aiResult.RiskScore);
+              
 
                 // 4. حفظ قاعدة البيانات
                 clsContracts newContract = new clsContracts
