@@ -32,6 +32,22 @@ export class Login implements OnInit {
         rememberDevice: true
       });
     }
+     this.initializeTheme();
+  }
+
+
+  initializeTheme() {
+    // 1. البحث عن الثيم المخزن مسبقاً في الـ localStorage (مثلاً مفتاح 'theme' أو 'user-theme')
+    const savedTheme = localStorage.getItem('theme') || 'dark'; // افترضنا الداكن كافتراضي
+
+    // 2. تطبيق الكلاس المناسب على عنصر الـ html
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.classList.remove('light-theme');
+    } else {
+      document.documentElement.classList.add('light-theme');
+      document.documentElement.classList.remove('dark-theme');
+    }
   }
 
   get email() {

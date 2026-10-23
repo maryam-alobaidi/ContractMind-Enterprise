@@ -423,3 +423,66 @@ html.light-theme .custom-date-wrapper,
   from { transform: scale(0.95); }
   to { transform: scale(1); }
 }
+
+
+/* ==========================================================================
+   Minimalist AI Chat Button Style
+   ========================================================================== */
+
+.btn-chatAi-minimal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  
+  /* ألوان وتأثيرات هادئة جداً */
+  color: var(--text-primary);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  .ai-icon {
+    color: var(--text-secondary);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  /* تأثير التحويم البسيط (Hover) */
+  &:hover {
+    background-color: var(--bg-main);
+    border-color: var(--text-secondary);
+    
+    .ai-icon {
+      color: var(--accent-color);
+      transform: scale(1.08);
+    }
+  }
+
+  /* تأثير الضغط (Active) */
+  &:active {
+    transform: scale(0.99);
+  }
+
+  /* حالة التعطيل (Disabled) */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+  }
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 640px) {
+  .btn-chatAi-minimal {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.825rem;
+  }
+}

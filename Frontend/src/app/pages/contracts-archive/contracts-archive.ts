@@ -127,4 +127,14 @@ export class ContractsArchive implements OnInit {
        }
      });
    }
+
+
+   chatWithAi(contract:any){
+     const id = contract?.contractId || contract?.id;
+     if (id) {
+       this.router.navigate(['/ai-legal-assistant', id]);
+     } else {
+       console.error('Contract ID is missing or undefined:', contract);
+     }
+   }
 }

@@ -108,4 +108,41 @@ public static class clsChatHistoryData
             return await clsPrimaryFunctions.Update(command);
         }
     }
+
+
+    public static async Task<List<chatHistoryModel>> GetChatHistoryByContractId(int contractId)
+    {
+ 
+        var chatHistoryList = new List<chatHistoryModel>();
+
+        using (SqlConnection connection = new SqlConnection(clsSetting.ConnectionString))
+        {
+            using (SqlCommand command = new SqlCommand("sp_GetChatHistoryByContractId", connection))
+            {
+                // تحديد نوع الأمر بأنه Stored Procedure
+                command.CommandType = CommandType.StoredProcedure;
+
+                // تمرير البارامتر
+                command.Parameters.AddWithValue("@ContractId", contractId);
+
+                await connection.OpenAsync();
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        chatHistoryList.Add(new chatHistoryModel
+                        {
+                            MessageId = reader.GetInt64(reader.GetOrdinal("MessageId")),
+                            ContractId = reader.GetInt32(reader.GetOrdinal("ContractId")),
+                            Sender = reader.GetString(reader.GetOrdinal("Sender")),
+                            MessageText = reader.GetString(reader.GetOrdinal("MessageText")),
+                            Timestamp = reader.GetDateTime(reader.GetOrdinal("Timestamp"))
+                        });
+                    }
+                }
+            }
+        }
+
+        return chatHistoryList;
+    }
 }

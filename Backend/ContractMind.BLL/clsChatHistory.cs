@@ -104,4 +104,9 @@ public class clsChatHistory
     {
         return await clsChatHistoryData.GetAllChatHistory();
     }
+
+    public static async Task<List<chatHistoryModel>> GetChatHistoryByContractId(int contractId)
+    {
+        return await clsChatHistoryData.GetChatHistoryByContractId(contractId);
+    }
 }

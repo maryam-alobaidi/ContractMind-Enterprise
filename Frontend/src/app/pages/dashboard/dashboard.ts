@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,UploadModal,ContractReport],
+  imports: [CommonModule,UploadModal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

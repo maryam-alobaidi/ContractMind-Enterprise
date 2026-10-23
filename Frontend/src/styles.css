@@ -1,5 +1,5 @@
 /* إعدادات عامة */
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -13,15 +13,16 @@ html, body {
 }
 
 /* ==========================================
-   1. الثيم الداكن (Dark Theme - الافتراضي)
+   1. الثيم الداكن (Dark Theme - المحدث بألوان الدردشة الفاخرة)
    ========================================== */
 :root, html.dark-theme {
-  --bg-main: #06090f;
-  --bg-card: rgba(10, 15, 24, 0.75);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border-color: rgba(20, 184, 166, 0.1);
-  --glass-sidebar: rgba(10, 15, 24, 0.75);
+  --bg-main: #0f172a;        /* الخلفية العامة للتطبيق (نفس خلفية الشات) */
+  --bg-card: #1e293b;        /* خلفية الكروت والأسطح (تشابه --chat-surface) */
+  --text-primary: #f8fafc;   /* النصوص الأساسية بوضوح تام */
+  --text-secondary: #94a3b8; /* النصوص الفرعية المريحة للعين */
+  --border-color: #334155;   /* الحدود الأنيقة الفاصلة بين العناصر */
+  --glass-sidebar: #1e293b;  /* خلفية القوائم الجانبية إن وجدت */
+  --accent-color: #14b8a6;   /* اللون المميز (الأزرق الحيوي للأزرار والروابط) */
 }
 
 /* ==========================================
@@ -29,11 +30,12 @@ html, body {
    ========================================== */
 html.light-theme {
   --bg-main: #f3f4f6;
-  --bg-card: #ffffff; /* أبيض صافي للكروت والجداول */
+  --bg-card: #ffffff;        /* أبيض صافي للكروت والجداول */
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --border-color: #e5e7eb;
   --glass-sidebar: #ffffff;
+  --accent-color: #14b8a6;
 }
 
 /* تطبيق المتغيرات العامة على جسم التطبيق بالكامل */
@@ -43,11 +45,12 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* فرض لون الكروت والجداول الحاكمة في الوضع الفاتح */
-html.light-theme .glass-card,
-html.light-theme .glass-table-wrap {
-  background: #ffffff !important;
-  color: #111827 !important;
-  border: 1px solid #e5e7eb !important;
+/* فرض لون الكروت والجداول العامة ديناميكياً بناءً على الثيم النشط */
+.glass-card,
+.glass-table-wrap {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }

@@ -1,5 +1,6 @@
-﻿using ContractMind.BLL.Interface;
-using ContractMind.BLL.Services;
+﻿using ContractMind.BLL;
+using ContractMind.BLL.Interface;
+using System.Linq;
 using ContractMindModel;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.AspNetCore.Mvc;
@@ -46,8 +47,8 @@ namespace ContractMind.API.Controllers
             {
                 return NotFound(new { message = "No contracts found." });
             }
-              var contracts=contractsList.OrderByDescending(c => c.UploadDate).Take(10)
-                .ToList();
+            var contracts = contractsList.OrderByDescending(c => c.UploadDate).Take(10)
+              .ToList();
             return Ok(contracts);
         }
 
@@ -136,6 +137,8 @@ namespace ContractMind.API.Controllers
             return Ok(new { message = "Contract deleted successfully." });
         }
 
+
+
         [HttpPost("upload-and-analyze")]
         public async Task<IActionResult> UploadAndAnalyzeContract(
         [FromForm] IFormFile file,
@@ -218,7 +221,7 @@ namespace ContractMind.API.Controllers
                 string safeTextForAI = _privacyService.MaskSensitiveData(extractedText);
 
 
-                Console.WriteLine("SSSSave Data ==>" +safeTextForAI);
+
                 // 3. تحليل OpenAI
                 var aiResult = await _aiService.AnalyzeContractTextAsync(safeTextForAI, language);
 
@@ -227,7 +230,7 @@ namespace ContractMind.API.Controllers
                     return StatusCode(500, new { message = "AI service failed to analyze the contract." });
                 }
 
-              
+
 
                 // 4. حفظ قاعدة البيانات
                 clsContracts newContract = new clsContracts
@@ -245,6 +248,20 @@ namespace ContractMind.API.Controllers
                 if (!isSaved)
                 {
                     return StatusCode(500, new { message = "Failed to save to database." });
+                }
+
+                clsAuditLogs auditLogs = new clsAuditLogs
+                {
+                    UserId = userId > 0 ? userId : -1,
+                    Action = "Upload file",
+                    Timestamp = DateTime.Now,
+                };
+
+                bool isSaveAuditLogs = await auditLogs.Save();
+
+                if (!isSaveAuditLogs)
+                {
+                    return StatusCode(500, new { message = "Failed to save to database auditLogs." });
                 }
 
                 return Ok(new
@@ -302,16 +319,93 @@ namespace ContractMind.API.Controllers
         {
             var contracts = await clsContracts.GetAllContracts();
 
-            if(contracts==null || !contracts.Any())
+            if (contracts == null || !contracts.Any())
             {
                 return NotFound(new { message = "No contracts found." });
             }
 
 
-           var recentContracts= contracts.OrderByDescending(c => c.UploadDate) 
-                .Take(10).ToList();
+            var recentContracts = contracts.OrderByDescending(c => c.UploadDate)
+                 .Take(10).ToList();
             return Ok(recentContracts);
         }
 
+
+        [HttpPost("Chat")]
+        public async Task<IActionResult> ChatWithContract([FromBody] ChatRequestDto request)
+        {
+
+            try
+            {
+                // 1. جلب العقد من قاعدة البيانات باستخدام ContractId
+                var contract = await clsContracts.Find(request.ContractId);
+                if (contract == null)
+                {
+                    return NotFound(new { message = "Contract not found." });
+                }
+
+                // 2. تعقيم نص العقد حماية للخصوصية
+                string safeContractText = _privacyService.MaskSensitiveData(contract.ExtractedText);
+
+                // 3. جلب آخر سجلات المحادثة السابقة من جدول ChatHistory لضمان استمرار السياق
+                // 1. جلب كافة رسائل المحادثة الخاصة بهذا العقد على شكل قائمة
+                var previousChatRecords = await clsChatHistory.GetChatHistoryByContractId(request.ContractId); 
+
+                // 2. تحويلها إلى قائمة من نوع ChatMessageItemModel (التي أنشأناها سابقاً لـ OpenAI)
+                var previousMessagesForAI = previousChatRecords.Select(r => new ChatMessageItemModel
+                {
+                    Sender = r.Sender,
+                    MessageText = r.MessageText
+                }).ToList();
+
+                // 4. استدعاء OpenAI للحصول على الإجابة
+                string aiResponse = await _aiService.ChatWithContractAsync(safeContractText, request.UserQuery, previousMessagesForAI, request.Language);
+
+                // 5. حفظ سؤال المستخدم في جدول ChatHistory
+                var userMessageLog = new clsChatHistory
+                {
+                    ContractId = request.ContractId,
+                    Sender = "User",
+                    MessageText = request.UserQuery,
+                    Timestamp = DateTime.Now
+                };
+                await userMessageLog.Save();
+
+                // 6. حفظ إجابة المساعد الذكي في جدول ChatHistory
+                var aiMessageLog = new clsChatHistory
+                {
+                    ContractId = request.ContractId,
+                    Sender = "Assistant",
+                    MessageText = aiResponse,
+                    Timestamp = DateTime.Now
+                };
+                await aiMessageLog.Save();
+
+                return Ok(new
+                {
+                    success = true,
+                    response = aiResponse
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during the chat.", error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("History/{contractId}")]
+        public async Task<IActionResult> GetChatHistoryByContractId(int contractId)
+        {
+
+            var chatHistoryList = await clsChatHistory.GetChatHistoryByContractId(contractId);
+
+            if (chatHistoryList == null || !chatHistoryList.Any())
+            {
+                return Ok(new List<object>()); 
+            }
+
+            return Ok(chatHistoryList);
+        }
     }
 }

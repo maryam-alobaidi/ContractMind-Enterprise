@@ -5,26 +5,29 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(6, 9, 15, 0.8);
-  backdrop-filter: blur(5px);
+ 
+  background: rgba(15, 23, 42, 0.65); 
+  backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 1rem;
   box-sizing: border-box;
   z-index: 1000;
+  transition: opacity 0.3s ease;
 }
 
 .modal-card {
   width: 100%;
-  max-width: 480px; /* عرض مناسب للنافذة المنبثقة */
+  max-width: 480px;
   padding: 2.5rem;
-  background: radial-gradient(circle at center, #081118, #06090f);
-  color: #f8fafc;
+  background: var(--bg-card);
+  color: var(--text-primary);
   border-radius: 12px;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--border-color);
   box-sizing: border-box;
-  box-shadow: 0 0 30px 10px rgba(20, 184, 166, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- رأس النافذة المنبثقة --- */
@@ -39,20 +42,20 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .btn-close {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 1.5rem;
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .btn-close:hover {
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 /* --- تصميم اختيار اللغة (AI Summary Language) --- */
@@ -64,13 +67,13 @@
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: #cbd5e1;
+  color: var(--text-secondary);
 }
 
 .lang-switch-glass {
   display: flex;
-  background-color: #0f172a;
-  border: 1px solid #334155;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 4px;
   gap: 4px;
@@ -81,7 +84,7 @@
   flex: 1;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-secondary);
   padding: 8px;
   font-size: 0.875rem;
   font-weight: 600;
@@ -91,28 +94,27 @@
 }
 
 .lang-pill:hover {
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .lang-pill.active {
-  background: rgba(20, 184, 166, 0.2);
-  color: #14b8a6;
-  border: 1px solid rgba(20, 184, 166, 0.4);
-  box-shadow: 0 0 10px rgba(20, 184, 166, 0.15);
+  background: var(--accent-color);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
 }
 
 /* --- منطقة سحب وإفلات الملفات (Dropzone) --- */
 .upload-dropzone {
   margin-bottom: 1.5rem;
-  border: 2px dashed #334155;
-  background-color: #0f172a;
+  border: 2px dashed var(--border-color);
+  background-color: var(--bg-main);
   border-radius: 8px;
   transition: border-color 0.2s, background-color 0.2s;
 }
 
 .upload-dropzone:hover {
-  border-color: #14b8a6;
-  background-color: rgba(15, 23, 42, 0.8);
+  border-color: var(--accent-color);
+  background-color: var(--bg-card);
 }
 
 .dropzone-label {
@@ -123,31 +125,31 @@
   padding: 2rem 1rem;
   text-align: center;
   cursor: pointer;
-  color: #cbd5e1;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 .dropzone-label strong {
-  color: #14b8a6;
+  color: var(--accent-color);
 }
 
 .dropzone-label small {
   margin-top: 0.4rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.75rem;
 }
 
 .file-name {
-  color: #34d399;
+  color: #10b981; /* أخضر ناصع لاسم الملف المحمل بنجاح */
   font-weight: 500;
 }
 
 /* --- شريط التقدم (Progress Bar) --- */
 .progress-container {
   margin-bottom: 1.5rem;
-  background-color: #0f172a;
+  background-color: var(--bg-main);
   border-radius: 8px;
-  border: 1px solid #334155;
+  border: 1px solid var(--border-color);
   overflow: hidden;
   padding: 3px;
   box-sizing: border-box;
@@ -155,10 +157,9 @@
 
 .progress-bar {
   height: 6px;
-  background: linear-gradient(90deg, #0d9488, #14b8a6);
+  background: var(--accent-color);
   border-radius: 4px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 10px rgba(20, 184, 166, 0.5);
 }
 
 .text-xs {
@@ -166,7 +167,7 @@
 }
 
 .text-gray-500 {
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 /* --- أزرار التحكم السفلى --- */
@@ -175,13 +176,13 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid var(--border-color);
 }
 
 .btn-cancel {
   background: transparent;
-  color: #cbd5e1;
-  border: 1px solid #334155;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -190,31 +191,29 @@
 }
 
 .btn-cancel:hover {
-  background-color: #1e293b;
-  color: #f8fafc;
+  background-color: var(--bg-main);
 }
 
 .btn-submit {
-  background: rgba(20, 184, 166, 0.15);
-  color: #f8fafc;
-  border: 1px solid #14b8a6;
+  background: var(--accent-color);
+  color: #ffffff;
+  border: 1px solid var(--accent-color);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 700;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 0 15px rgba(20, 184, 166, 0.2);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #14b8a6;
-  color: #06090f;
-  box-shadow: 0 0 25px rgba(20, 184, 166, 0.5);
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .btn-submit:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 

@@ -42,4 +42,8 @@ export class Contract {
   return this.http.delete(`${this.apiUrl}/${id}`);
 }
 
+getChatHistory(contractId: number): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/History/${contractId}`);
+}
+
 }

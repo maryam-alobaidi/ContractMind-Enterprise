@@ -65,5 +65,62 @@ namespace ContractMind.BLL.Services
                 return new AiAnalysisResultModel { Summary = "Error during AI analysis: " + ex.Message, RiskScore = 0 };
             }
         }
+
+        public async Task<string> ChatWithContractAsync(string safeContractText, string userQuery, List<ChatMessageItemModel> previousMessages, string language = "en")
+        {
+            try
+            {
+                string targetLanguageName = language switch
+                {
+                    "es" => "Spanish (Español)",
+                    "ar" => "Arabic (العربية)",
+                    _ => "English"
+                };
+
+                // التعليمات الأساسية الموجهة للمساعد الذكي
+                string systemInstruction = $@"You are 'ContractMind AI Legal Assistant', an expert legal AI.
+                                    You have access to the anonymized content of a legal document provided below.
+                                    Answer the user's questions accurately, professionally, and concisely based ONLY on the provided contract text.
+                                    Always respond in {targetLanguageName}.
+                                    
+                                    DOCUMENT CONTENT:
+                                    {safeContractText}";
+
+                // تجهيز قائمة الرسائل بالترتيب (النظام + المحادثات السابقة + السؤال الجديد)
+                var messagesList = new List<ChatMessage>
+                    {
+                         new SystemChatMessage(systemInstruction)
+                    };
+
+                if (previousMessages != null)
+                {
+                    foreach (var msg in previousMessages)
+                    {
+                        if (msg.Sender.Equals("User", StringComparison.OrdinalIgnoreCase))
+                        {
+                            messagesList.Add(new UserChatMessage(msg.MessageText));
+                        }
+                        else
+                        {
+                            messagesList.Add(new AssistantChatMessage(msg.MessageText));
+                        }
+                    }
+                }
+
+                // إضافة السؤال الحالي الجديد
+                messagesList.Add(new UserChatMessage(userQuery));
+
+                var result = await _chatClient.CompleteChatAsync(messagesList);
+
+                // استخراج النص مباشرة
+                string responseText = result.Value.Content[0].Text;
+
+                return responseText;
+            }
+            catch (Exception ex)
+            {
+                return $"Error during chat: {ex.Message}";
+            }
+        }
     }
 }

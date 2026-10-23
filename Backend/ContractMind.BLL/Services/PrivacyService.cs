@@ -48,7 +48,21 @@ namespace ContractMind.BLL.Services
             // 6. الألقاب والأسماء العربية والإنجليزية
             string[] legalTitlesOther = {
                 "الطرف الأول", "الطرف الثاني", "السيد", "السيدة", "المكلف", "الموكل",
-                "First Party", "Second Party", "Client", "Mr.", "Mrs."
+                "العميل السيد", "المدعي", "المدعى عليه", "المواطن", "الوكيل",
+
+                // --- اللغة الإنجليزية ---
+                "First Party", "Second Party", "Client", "Mr.", "Mrs.", "Plaintiff", "Defendant",
+
+                // --- اللغة الإسبانية (عامة وأطراف وتوثيق وعقود) ---
+                "Primer Parte", "Segunda Parte", "Don", "Doña", "Sr.", "Sra.",
+                "Señor", "Señora", "Cliente", "Demandante", "Demandado",
+                "comparece", "reúnen", "actúa",
+
+                // الإيجار والبيع والتمويل والتوثيق
+                "Arrendador", "Arrendadora", "Arrendatario", "Arrendataria",
+                "Comprador", "Compradora", "Vendedor", "Vendedora",
+                "Prestamista", "Prestatario", "Prestataria",
+                "Notario", "Notaria", "Apoderado", "Apoderada", "Testigo"
             };
             foreach (var title in legalTitlesOther)
             {
