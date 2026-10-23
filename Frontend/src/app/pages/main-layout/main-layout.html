@@ -6,7 +6,7 @@
     <h2>Contract<span>Mind</span></h2>
    </div>
 <nav class="glass-nav">
-  <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">Dashboard</a>
+
   <a routerLink="/contracts-archive" routerLinkActive="active" class="nav-item">Contracts Archive</a>
   <a routerLink="/ai-legal-assistant" routerLinkActive="active" class="nav-item">AI Legal Assistant</a>
   <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item">Audit Logs</a>
@@ -59,7 +59,7 @@
 
 @if (showUploadModal()) {
   <app-upload-modal 
-    (close)="showUploadModal.set(false)"
+    (close)="showUploadModal.set(false)" 
     (uploadSuccess)="handleUploadSuccess($event)">
   </app-upload-modal>
 }

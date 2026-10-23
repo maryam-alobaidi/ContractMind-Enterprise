@@ -92,7 +92,7 @@ export class Login implements OnInit {
         }
         // =========================================================================
 
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/contracts-archive']);
       },
       error: (err) => {
         const errorMsg = err.error?.message || 'Invalid email or password. Please try again.';

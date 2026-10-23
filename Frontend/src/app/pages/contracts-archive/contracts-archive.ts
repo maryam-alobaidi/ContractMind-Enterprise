@@ -120,6 +120,8 @@ export class ContractsArchive implements OnInit {
 
      
          this.triggerToast('Contract deleted successfully');
+
+         
        },
        error: (err) => {
          console.error('Error deleting contract:', err);

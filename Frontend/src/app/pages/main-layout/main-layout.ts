@@ -2,12 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { Theme } from '../../services/theme';
 import { Language } from '../../services/language';
 import { Auth } from '../../services/auth';
+import { Contract } from '../../services/contract'; // استدعاء سيرفس العقود
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { UploadModal } from '../upload-modal/upload-modal'; // استدعاء مودل الرفع إذا كان يفتح من الهيدر
+import { UploadModal } from '../upload-modal/upload-modal'; 
 
 @Component({
   selector: 'app-main-layout',
+  standalone: true,
   imports: [
     CommonModule,
     RouterOutlet,        
@@ -23,6 +25,7 @@ export class MainLayout {
   public themeService = inject(Theme);
   public languageService = inject(Language);
   private authService = inject(Auth);
+  private contractService = inject(Contract);
   private router = inject(Router);
 
   userName = this.authService.userName;
@@ -36,10 +39,22 @@ export class MainLayout {
     this.showUploadModal.set(true);
   }
 
- 
+  // عند نجاح عملية الرفع
   handleUploadSuccess(newContract: any) {
-    console.log('Contract uploaded successfully from layout header');
     this.showUploadModal.set(false);
     
+    if (newContract) {
+      this.contractService.nodifyContractAdded(newContract);
+    }
+
+    setTimeout(() => {
+      this.contractService.nodifyContractAdded({ refreshed: true });
+    }, 300);
+  }
+
+  
+  handleModalClose() {
+    this.showUploadModal.set(false);
+   
   }
 }

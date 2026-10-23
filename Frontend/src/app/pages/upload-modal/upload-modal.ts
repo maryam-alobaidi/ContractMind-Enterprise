@@ -6,6 +6,7 @@ import { Language } from '../../services/language';
 import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-upload-modal',
+  standalone: true,
   imports: [CommonModule,FormsModule],
   templateUrl: './upload-modal.html',
   styleUrl: './upload-modal.css',
@@ -62,4 +63,6 @@ private langService = inject(Language);
       }
     });
   }
+
+  
 }

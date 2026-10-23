@@ -106,18 +106,16 @@
   min-width: 700px; /* لضمان عدم تداخل الأعمدة في الشاشات الصغيرة */
 }
 
-.teal-table th, .teal-table td {
-  padding: 16px;
+th, td {
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
+  font-size: 14px;
 }
 
-.teal-table th {
+th {
+  background-color: var(--bg-main);
+  font-weight: 600;
   color: var(--text-secondary);
-  font-size: 12px;
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .teal-id {

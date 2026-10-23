@@ -161,13 +161,23 @@ export class AiLegalAssistant implements OnInit, AfterViewChecked {
   }
 
 
-  handleModalClose() {
-    if (!this.contractId()) {
-      this.router.navigate(['/dashboard']);
+handleModalClose() {
+    this.showSelectModal.set(false);
+
+  
+    const currentId = this.contractId();
+    if (currentId) {
+      this.router.navigate(['/ai-legal-assistant', currentId], { replaceUrl: true }).then(() => {
+     
+        this.loadContractDetails(currentId);
+        this.loadContractChatHistory(currentId);
+      });
     } else {
-      this.showSelectModal.set(false);
+     
+      this.router.navigate(['/contracts-archive']);
     }
   }
+
 
   loadContractDetails(id: number) {
    this.contractText.set('Loading contract text...');

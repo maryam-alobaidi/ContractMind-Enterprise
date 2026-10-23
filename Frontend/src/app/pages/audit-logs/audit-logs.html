@@ -1,0 +1,107 @@
+<div class="audit-container animate-fade-in">
+  <!-- رأس الصفحة -->
+  <div class="audit-header">
+    <div>
+      <h2>Audit Logs</h2>
+      <p>Monitor system activities, contract operations, and AI interactions in real-time.</p>
+    </div>
+    <button class="refresh-btn" (click)="loadLogs()" [disabled]="isLoading()">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading()"></i> 
+      <span>{{ isLoading() ? 'Updating...' : 'Refresh' }}</span>
+    </button>
+  </div>
+
+  <!-- شريط البحث والتصفية (باستخدام Signals للربط الثنائي الفوري) -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        [value]="searchTerm()" 
+        (input)="searchTerm.set($any($event.target).value); filterLogs()"
+        placeholder="Search by action details or user ID..." 
+      />
+      @if (searchTerm()) {
+        <button class="clear-search" (click)="searchTerm.set(''); filterLogs()">
+          <i class="fas fa-times"></i>
+        </button>
+      }
+    </div>
+
+    <div class="filter-dropdown">
+      <select [value]="selectedAction()" (change)="selectedAction.set($any($event.target).value); filterLogs()">
+        <option value="ALL">🔍 All Actions</option>
+        <option value="UPLOAD">📁 Upload Contracts</option>
+        <option value="DELETE">🗑️ Delete Contracts</option>
+        <option value="AI_CHAT">🤖 AI Chat Interactions</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- جدول السجلات الحديث والمتجاوب -->
+  <div class="table-card">
+    @if (isLoading() && filteredLogs().length === 0) {
+      <!-- حالة التحميل الأولية -->
+      <div class="loading-state">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p>Loading audit records...</p>
+      </div>
+    } @else if (filteredLogs().length === 0) {
+      <!-- حالة عدم وجود بيانات -->
+      <div class="empty-state">
+        <i class="fas fa-folder-open fa-2x"></i>
+        <p>No audit logs found matching your criteria.</p>
+      </div>
+    } @else {
+      <!-- عرض الجدول مع خاصية الـ Track By الحديثة -->
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Log ID</th>
+              <th>User ID</th>
+              <th>Action Details</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of filteredLogs(); track log.logId || log.id; let idx = $index) {
+              <tr class="table-row">
+                <td class="font-mono">#{{ log.logId || log.id }}</td>
+                <td>
+                  <span class="user-badge">
+                    <i class="fas fa-user-circle"></i> User #{{ log.userId || '1' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="action-badge" [ngClass]="{
+                    'badge-ai': log.action?.includes('AI_CHAT'),
+                    'badge-delete': log.action?.includes('DELETE'),
+                    'badge-upload': log.action?.includes('UPLOAD')
+                  }">
+                    @if (log.action?.includes('AI_CHAT')) {
+                      <i class="fas fa-robot"></i>
+                    } @else if (log.action?.includes('DELETE')) {
+                      <i class="fas fa-trash-alt"></i>
+                    } @else {
+                      <i class="fas fa-file-upload"></i>
+                    }
+                    {{ log.action }}
+                  </span>
+                </td>
+                <td class="date-cell">
+                  <i class="far fa-clock"></i> {{ log.timestamp | date:'medium' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- شريط معلومات إحصائية سفلي -->
+      <div class="table-footer">
+        <span>Showing <strong>{{ filteredLogs().length }}</strong> records</span>
+      </div>
+    }
+  </div>
+</div>

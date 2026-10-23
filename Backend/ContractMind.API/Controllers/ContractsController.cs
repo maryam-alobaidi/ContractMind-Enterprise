@@ -1,10 +1,11 @@
 ﻿using ContractMind.BLL;
 using ContractMind.BLL.Interface;
-using System.Linq;
 using ContractMindModel;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Text;
 
 namespace ContractMind.API.Controllers
@@ -128,11 +129,31 @@ namespace ContractMind.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteContract(int id)
         {
+            var contract = await clsContracts.Find(id);
+            if (contract == null)
+            {
+                return NotFound("Contract not found..");
+            }
+
             bool isDeleted = await clsContracts.Delete(id);
             if (!isDeleted)
             {
                 return NotFound(new { message = $"Contract with ID {id} was not found or could not be deleted." });
             }
+
+            var fileName = contract.FileName?.Length > 60
+    ? contract.FileName.Substring(0, 60) + "..."
+    : contract.FileName;
+
+            clsAuditLogs auditLogs = new clsAuditLogs()
+            {
+                UserId = contract.UserId,
+                Action= $"DELETE / {fileName}",
+                Timestamp=DateTime.Now
+
+            };
+
+            auditLogs.Save();
 
             return Ok(new { message = "Contract deleted successfully." });
         }
@@ -250,10 +271,14 @@ namespace ContractMind.API.Controllers
                     return StatusCode(500, new { message = "Failed to save to database." });
                 }
 
+                var fileName = uniqueFileName?.Length > 60
+                  ? uniqueFileName.Substring(0, 60) + "..."
+                  : uniqueFileName;
+
                 clsAuditLogs auditLogs = new clsAuditLogs
                 {
                     UserId = userId > 0 ? userId : -1,
-                    Action = "Upload file",
+                    Action = $"UPLOAD / {fileName}",
                     Timestamp = DateTime.Now,
                 };
 
@@ -380,6 +405,19 @@ namespace ContractMind.API.Controllers
                     Timestamp = DateTime.Now
                 };
                 await aiMessageLog.Save();
+
+
+               var fileName = contract.FileName?.Length > 60
+                  ? contract.FileName.Substring(0, 60) + "..."
+                  : contract.FileName;
+                var auditLog = new clsAuditLogs
+                {
+                    UserId = contract.UserId,
+                    Action = $"AI_CHAT / {fileName}",
+
+                    Timestamp = DateTime.Now
+                };
+                await auditLog.Save();
 
                 return Ok(new
                 {
