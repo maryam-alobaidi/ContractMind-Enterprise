@@ -1,4 +1,4 @@
-using ContractMind.DAL;
+﻿using ContractMind.DAL;
 using ContractMindModel;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -90,7 +90,7 @@ public static class clsAuditLogsData
         return model;
     }
 
-public static async Task<bool?> UpdateAuditLogs(int LogId, int UserId, string Action, DateTime Timestamp)
+    public static async Task<bool?> UpdateAuditLogs(int LogId, int UserId, string Action, DateTime Timestamp)
 	{
 		using(SqlCommand command = new SqlCommand("Sp_UpdateAuditLogs"))
 		{
@@ -103,5 +103,21 @@ public static async Task<bool?> UpdateAuditLogs(int LogId, int UserId, string Ac
 		return await clsPrimaryFunctions.Update(command);
 		}
 	}
+
+    public static async Task<bool?>   DeleteLogsByDateRange(string startDate, string endDate)
+    {
+        using (SqlCommand command = new SqlCommand("Sp_DeleteAuditLogsByDateRange"))
+        {
+            command.CommandType = CommandType.StoredProcedure;
+
+            // تمرير البارامترات للـ Stored Procedure
+            command.Parameters.AddWithValue("@StartDate", startDate);
+            command.Parameters.AddWithValue("@EndDate", endDate);
+
+            // استخدام دالة الحذف العامة من طبقة الدوال الأساسية لديك
+            return await clsPrimaryFunctions.Delete(command);
+        }
+    }
+
 
 }

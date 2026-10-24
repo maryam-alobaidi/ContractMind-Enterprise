@@ -1,83 +1,136 @@
 <div class="audit-container animate-fade-in">
+  
   <!-- رأس الصفحة -->
   <div class="audit-header">
     <div>
       <h2>Audit Logs</h2>
       <p>Monitor system activities, contract operations, and AI interactions in real-time.</p>
     </div>
-    <button class="refresh-btn" (click)="loadLogs()" [disabled]="isLoading()">
+    <button class="refresh-btn" (click)="loadLogs(true)" [disabled]="isLoading()">
       <i class="fas fa-sync-alt" [class.fa-spin]="isLoading()"></i> 
       <span>{{ isLoading() ? 'Updating...' : 'Refresh' }}</span>
     </button>
   </div>
 
-  <!-- شريط البحث والتصفية (باستخدام Signals للربط الثنائي الفوري) -->
+  <!-- شريط البحث، التصفية، وفلاتر التواريخ والأزرار الإضافية -->
   <div class="filters-bar">
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input 
-        type="text" 
-        [value]="searchTerm()" 
-        (input)="searchTerm.set($any($event.target).value); filterLogs()"
-        placeholder="Search by action details or user ID..." 
-      />
-      @if (searchTerm()) {
-        <button class="clear-search" (click)="searchTerm.set(''); filterLogs()">
-          <i class="fas fa-times"></i>
-        </button>
-      }
-    </div>
+  <!-- البحث -->
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" [value]="searchTerm()" (input)="onSearchChange($event)" placeholder="Search by action details.." />
+    @if (searchTerm()) {
+      <button class="clear-search" (click)="searchTerm.set(''); filterLogs()">
+        <i class="fas fa-times"></i>
+      </button>
+    }
+  </div>
 
-    <div class="filter-dropdown">
-      <select [value]="selectedAction()" (change)="selectedAction.set($any($event.target).value); filterLogs()">
-        <option value="ALL">🔍 All Actions</option>
-        <option value="UPLOAD">📁 Upload Contracts</option>
-        <option value="DELETE">🗑️ Delete Contracts</option>
-        <option value="AI_CHAT">🤖 AI Chat Interactions</option>
-      </select>
+  <!-- فلتر النوع -->
+  <div class="filter-dropdown">
+    <select [value]="selectedAction()" (change)="onActionFilterChange($event)">
+      <option value="ALL">🔍 All Actions</option>
+      <option value="UPLOAD">📁 Upload Contracts</option>
+      <option value="DELETE">🗑️ Delete Contracts</option>
+      <option value="AI_CHAT">🤖 AI Chat Interactions</option>
+    </select>
+  </div>
+
+  <!-- فلاتر التاريخ المتطابقة مع أرشيف العقود -->
+  <div class="date-filter-wrap">
+    <label for="startDate" class="date-label">From:</label>
+    <div class="custom-date-wrapper">
+      <input 
+        type="date" 
+        id="startDate" 
+        class="teal-input" 
+        [ngModel]="startDate()" 
+        (ngModelChange)="startDate.set($event); filterLogs()" />
     </div>
   </div>
+
+  <div class="date-filter-wrap">
+    <label for="endDate" class="date-label">To:</label>
+    <div class="custom-date-wrapper">
+      <input 
+        type="date" 
+        id="endDate" 
+        class="teal-input" 
+        [ngModel]="endDate()" 
+        (ngModelChange)="endDate.set($event); filterLogs()" />
+    </div>
+  </div>
+ <!-- أزرار الإجراءات (تصدير، طباعة، حذف نطاق) -->
+<div class="action-buttons-group">
+  <!-- زر التصدير (معطل إذا لم تكن هناك سجلات) -->
+  <button 
+    (click)="exportLogs()" 
+    [disabled]="filteredLogs().length === 0" 
+    class="action-icon-btn export-btn" 
+    title="Export CSV">
+    📊
+  </button>
+
+  <!-- زر الطباعة (معطل إذا لم تكن هناك سجلات) -->
+  <button 
+    (click)="printLogs()" 
+    [disabled]="filteredLogs().length === 0" 
+    class="action-icon-btn print-btn" 
+    title="Print Logs">
+    🖨️
+  </button>
+
+  <!-- زر الحذف (معطل إذا لم تكن هناك سجلات أو لم يتم اختيار التواريخ) -->
+  <button 
+    type="button" 
+    (click)="openDeleteModal()" 
+    [disabled]="filteredLogs().length === 0" 
+    class="action-icon-btn delete-range-btn" 
+    title="Clear Range">
+    <span style="font-size: 16px;">🗑️</span>
+  </button> 
+</div>
+</div>
 
   <!-- جدول السجلات الحديث والمتجاوب -->
   <div class="table-card">
     @if (isLoading() && filteredLogs().length === 0) {
       <!-- حالة التحميل الأولية -->
-      <div class="loading-state">
-        <i class="fas fa-spinner fa-spin fa-2x"></i>
-        <p>Loading audit records...</p>
+      <div class="loading-state py-12 text-center">
+        <i class="fas fa-spinner fa-spin fa-2x text-emerald-500 mb-2"></i>
+        <p class="text-gray-500">Loading audit records...</p>
       </div>
     } @else if (filteredLogs().length === 0) {
       <!-- حالة عدم وجود بيانات -->
-      <div class="empty-state">
-        <i class="fas fa-folder-open fa-2x"></i>
-        <p>No audit logs found matching your criteria.</p>
+      <div class="empty-state py-12 text-center">
+        <i class="fas fa-folder-open fa-2x text-gray-400 mb-2"></i>
+        <p class="text-gray-500">No audit logs found matching your criteria.</p>
       </div>
     } @else {
       <!-- عرض الجدول مع خاصية الـ Track By الحديثة -->
-      <div class="table-responsive">
-        <table>
+      <div class="table-responsive overflow-x-auto">
+        <table class="w-full text-left border-collapse">
           <thead>
-            <tr>
-              <th>Log ID</th>
-              <th>User ID</th>
-              <th>Action Details</th>
-              <th>Date</th>
+            <tr class="border-b border-gray-100 dark:border-gray-700 text-xs text-gray-400 uppercase">
+              <th class="p-3">Log ID</th>
+              <th class="p-3">User ID</th>
+              <th class="p-3">Action Details</th>
+              <th class="p-3">Date</th>
             </tr>
           </thead>
           <tbody>
             @for (log of filteredLogs(); track log.logId || log.id; let idx = $index) {
-              <tr class="table-row">
-                <td class="font-mono">#{{ log.logId || log.id }}</td>
-                <td>
-                  <span class="user-badge">
+              <tr class="table-row border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors">
+                <td class="p-3 font-mono text-sm">#{{ log.logId || log.id }}</td>
+                <td class="p-3">
+                  <span class="user-badge inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                     <i class="fas fa-user-circle"></i> User #{{ log.userId || '1' }}
                   </span>
                 </td>
-                <td>
-                  <span class="action-badge" [ngClass]="{
-                    'badge-ai': log.action?.includes('AI_CHAT'),
-                    'badge-delete': log.action?.includes('DELETE'),
-                    'badge-upload': log.action?.includes('UPLOAD')
+                <td class="p-3">
+                  <span class="action-badge inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium" [ngClass]="{
+                    'badge-ai bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300': log.action?.includes('AI_CHAT'),
+                    'badge-delete bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300': log.action?.includes('DELETE'),
+                    'badge-upload bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300': log.action?.includes('UPLOAD')
                   }">
                     @if (log.action?.includes('AI_CHAT')) {
                       <i class="fas fa-robot"></i>
@@ -89,8 +142,8 @@
                     {{ log.action }}
                   </span>
                 </td>
-                <td class="date-cell">
-                  <i class="far fa-clock"></i> {{ log.timestamp | date:'medium' }}
+                <td class="date-cell p-3 text-sm text-gray-500 dark:text-gray-400">
+                  <i class="far fa-clock mr-1"></i> {{ log.timestamp || log.createdAt | date:'medium' }}
                 </td>
               </tr>
             }
@@ -99,9 +152,39 @@
       </div>
       
       <!-- شريط معلومات إحصائية سفلي -->
-      <div class="table-footer">
+      <div class="table-footer p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs text-gray-500">
         <span>Showing <strong>{{ filteredLogs().length }}</strong> records</span>
       </div>
     }
   </div>
 </div>
+
+@if (showDeleteModal()) {
+  <div class="modal-backdrop">
+    <div class="glass-modal">
+      <h3>Delete Audit Logs</h3>
+      <p>
+        Are you sure you want to delete audit logs from 
+        <strong>{{ startDate() }}</strong> to <strong>{{ endDate() }}</strong>? 
+        This action cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cancelDeleteRange()">Cancel</button>
+        <button type="button" class="btn-danger" (click)="confirmDeleteRange()">Delete Range</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (toastMessage()) {
+  <div class="teal-toast-notification">
+    <span style="font-size: 18px;">
+      @if (toastType() === 'success') {
+        ✅
+      } @else {
+        ⚠️
+      }
+    </span>
+    <span>{{ toastMessage() }}</span>
+  </div>
+}

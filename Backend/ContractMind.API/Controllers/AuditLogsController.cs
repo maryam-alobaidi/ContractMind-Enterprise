@@ -1,5 +1,7 @@
-﻿using ContractMindModel;
+﻿using ContractMind.BLL;
+using ContractMindModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace ContractMind.API.Controllers
 {
@@ -16,7 +18,9 @@ namespace ContractMind.API.Controllers
             {
                 return NotFound(new { message = "No audit logs found." });
             }
-            return Ok(logsList);
+
+            var logs = logsList.OrderByDescending(o => o.Timestamp);
+            return Ok(logs);
         }
 
       
@@ -65,6 +69,28 @@ namespace ContractMind.API.Controllers
             }
 
             return Ok(new { message = "Audit log deleted successfully." });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteLogsByDateRange([FromQuery] string startDate, [FromQuery] string endDate)
+        {
+            if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+            {
+                return BadRequest(new { message = "Start date and end date are required." });
+            }
+
+            try
+            {
+                // تنفيذ الحذف
+                await clsAuditLogsData.DeleteLogsByDateRange(startDate, endDate);
+
+             
+                return Ok(new { message = "Audit logs deleted successfully for the specified range." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
         }
     }
 }

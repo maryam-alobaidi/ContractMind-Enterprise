@@ -243,3 +243,329 @@ th {
     width: 100%;
   }
 }
+
+
+/* ==========================================
+   تنسيق فلاتر التاريخ والأزرار الجديدة المتوافقة مع الثيم
+   ========================================== */
+
+/* filter */
+.date-filter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.date-filter-wrap input[type="date"] {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  outline: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* غلاف حقل التاريخ */
+.custom-date-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* إخفاء الأيقونة الافتراضية المزعجة تماماً */
+.custom-date-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* وضع أيقونة مخصصة (تظهر بوضوح في الوضع الداكن - الافتراضي) */
+.custom-date-wrapper {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314b8a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: left 12px center; /* مكان الأيقونة (يسار للحفظ باللغة العربية) */
+  background-size: 18px;
+}
+
+.custom-date-wrapper input[type="date"] {
+  padding-left: 40px !important; /* ترك مساحة للأيقونة الجديدة لكي لا يتداخل النص معها */
+}
+
+/* تغيير لون الأيقونة لتتناسب تلقائياً مع الوضع الفاتح (Light Mode) */
+html.light-theme .custom-date-wrapper,
+.glass-container.light-mode .custom-date-wrapper {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d9488' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e");
+}
+
+
+/* مجموعة أزرار الإجراءات (تصدير، طباعة، حذف) */
+.action-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* الأزرار المربعة للإجراءات بتصميم متناسق مع الأزرار العامة */
+.action-icon-btn {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-icon-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+/* ألوان مميزة خفيفة عند الـ Hover لأزرار التصدير والحذف والطباعة */
+.action-icon-btn.export-btn:hover {
+  border-color: #10b981;
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.action-icon-btn.print-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.action-icon-btn.delete-range-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* اجعل الأيقونة داخل الزر تتأثر بلون النص الخاص بالزر تلقائياً */
+.action-icon-btn i {
+  transition: color 0.2s ease;
+}
+
+/* ضمان تطبيق لون الـ Hover على الأيقونة أيضاً */
+.action-icon-btn.export-btn:hover i {
+  color: #10b981;
+}
+
+.action-icon-btn.print-btn:hover i {
+  color: #3b82f6;
+}
+
+.action-icon-btn.delete-range-btn:hover i {
+  color: #ef4444;
+}
+
+/* ==========================================
+   إعدادات الطباعة الاحترافية والمنظمة
+   ========================================== */
+@media print {
+  /* إخفاء عناصر الصفحة بالكامل عدا بطاقة الجدول */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* إظهار الجدول ومحتوياته فقط */
+  .table-card, .table-card * {
+    visibility: visible;
+  }
+  
+  /* إعادة تموضع الجدول ليملأ ورقة الطباعة بشكل نظيف */
+  .table-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none !important;
+    border: none !important;
+    background-color: transparent !important;
+  }
+
+  /* إخفاء أزرار الإجراءات، الفلاتر، وشريط التحديث نهائياً عند الطباعة */
+  .filters-bar, 
+  .audit-header, 
+  .table-footer, 
+  button, 
+  .action-buttons-group {
+    display: none !important;
+  }
+
+  /* تنسيق جدول الطباعة ليكون واضحاً بالأبيض والأسود */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border-bottom: 1px solid #ddd !important;
+    color: #000 !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+  }
+
+  th {
+    background-color: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* تصميم الإشعار العائم */
+.teal-toast-notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(20, 184, 166, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  color: #14b8a6;
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  z-index: 1050;
+  font-weight: 500;
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* حركة دخول الإشعار من اليمين */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==========================================
+   نافذة تأكيد الحذف (Glassmorphic Delete Modal)
+   ========================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.glass-modal {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  padding: 28px;
+  border-radius: 20px;
+  width: 440px;
+  max-width: 90%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  color: var(--text-primary);
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-modal h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #14b8a6; /* لون التيل المميز للمشروع */
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.glass-modal p {
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.glass-modal strong {
+  color: var(--text-primary);
+  background: rgba(20, 184, 166, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* أزرار النافذة (Modal Actions) */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* زر الإلغاء */
+.glass-modal .btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-color, #d1d5db);
+  color: var(--text-primary);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glass-modal .btn-secondary:hover {
+  background: rgba(107, 114, 128, 0.1);
+  transform: translateY(-1px);
+}
+
+/* زر الحذف الخطير */
+.glass-modal .btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: none;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transition: all 0.2s ease;
+}
+
+.glass-modal .btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+/* الحركات التجميلية للنافذة */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

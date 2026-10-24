@@ -86,5 +86,11 @@ namespace ContractMind.BLL
             }
             return false;
         }
+
+
+        public static async Task<bool?> DeleteLogsByDateRange( string startDate, string endDate)
+        {
+            return await clsAuditLogsData.DeleteLogsByDateRange(startDate, endDate);
+        }
     }
 }
