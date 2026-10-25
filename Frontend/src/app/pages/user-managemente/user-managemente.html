@@ -1,0 +1,180 @@
+<div class="user-management-container">
+  
+  <!-- المخطط البياني في الأعلى مع مؤشرات الأدوار -->
+  <div class="analytics-card">
+    <div class="chart-section">
+      <div class="chart-wrapper">
+        <canvas #roleChartCanvas></canvas>
+        <div class="chart-center-text">
+          <span class="total-num">{{ totalUsers() }}</span>
+          <span class="total-label">Total Users</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roles-breakdown">
+      <h3 class="section-title">Roles & Access Distribution</h3>
+      <div class="stats-grid">
+        <div class="stat-box admin-box">
+          <div class="stat-header">
+            <span class="badge red">Admin</span>
+            <span class="stat-count">{{ adminCount() }}</span>
+          </div>
+          <p class="stat-desc">Full system access & user management</p>
+        </div>
+
+        <div class="stat-box manager-box">
+          <div class="stat-header">
+            <span class="badge blue">Manager</span>
+            <span class="stat-count">{{ managerCount() }}</span>
+          </div>
+          <p class="stat-desc">Contract management & read-only audit logs</p>
+        </div>
+
+        <div class="stat-box user-box">
+          <div class="stat-header">
+            <span class="badge green">User</span>
+            <span class="stat-count">{{ userCount() }}</span>
+          </div>
+          <p class="stat-desc">Contract viewing & AI Chat interaction</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- شريط البحث والتحكم -->
+  <div class="controls-bar">
+    <div class="search-filter-group">
+      <input 
+        type="text" 
+        class="teal-input search-input" 
+        placeholder="Search by name or email..." 
+        [ngModel]="searchTerm()" 
+        (ngModelChange)="searchTerm.set($event)" />
+
+    <select 
+  class="teal-input select-input" 
+  [ngModel]="selectedRoleFilter()" 
+  (ngModelChange)="selectedRoleFilter.set($event)">
+  <option value="ALL">⚪ All Roles</option>
+  <option value="Admin">🔴 Admin</option>
+  <option value="Manager">🔵 Manager</option>
+  <option value="User">🟢 User</option>
+</select>
+       <button class="refresh-icon-btn" (click)="loadUsers()" [disabled]="isLoading()" title="Refresh Users">
+           <span class="refresh-emoji" [class.is-spinning]="isLoading()">🔄</span>
+       </button>
+    </div>
+
+    <button class="btn-primary" (click)="openAddModal()">
+      <i class="fas fa-user-plus"></i> Add New User
+    </button>
+  </div>
+
+  <!-- جدول البيانات الزجاجي الحديث -->
+  <div class="table-card glass-panel">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined Date</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- استخدام المعيار الحديث @for مع track -->
+          @for (u of filteredUsers(); track u.userId || $index) {
+            <tr>
+              <td>
+                <div class="user-info">
+                  <div class="avatar-circle">{{ u.fullName.charAt(0).toUpperCase() }}</div>
+                  <span class="user-name">{{ u.fullName }}</span>
+                </div>
+              </td>
+              <td>{{ u.email }}</td>
+              <td>
+                <span class="role-badge" [ngClass]="{
+                  'badge-admin': u.role === 'Admin',
+                  'badge-manager': u.role === 'Manager',
+                  'badge-user': u.role === 'User'
+                }">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td>{{ u.createdAt | date:'shortDate' }}</td>
+              <td class="text-end">
+                <button class="icon-action-btn edit-btn" (click)="openEditModal(u)" title="Edit">✏️</button>
+                <button class="icon-action-btn delete-btn" (click)="openDeleteModal(u)" title="Delete">🗑️</button>
+              </td>
+            </tr>
+          } @empty {
+            <!-- استخدام المعيار الحديث @empty للنتائج الفارغة -->
+            <tr>
+              <td colspan="5" class="empty-state">
+                No users found matching your criteria.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal إضافة / تعديل مستخدم باستخدام المعيار الحديث @if -->
+  @if (isFormModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card glass-panel">
+        <h2>{{ isEditMode() ? 'Edit User' : 'Add New User' }}</h2>
+        
+        <form (ngSubmit)="saveUser()">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="teal-input" [(ngModel)]="currentUserForm().fullName" name="fullName" required />
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" class="teal-input" [(ngModel)]="currentUserForm().email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label>Password {{ isEditMode() ? '(Leave blank to keep unchanged)' : '' }}</label>
+            <input type="password" class="teal-input" [(ngModel)]="currentUserForm().passwordHash" name="password" [required]="!isEditMode()" />
+          </div>
+
+          <div class="form-group">
+            <label>Role</label>
+            <select class="teal-input" [(ngModel)]="currentUserForm().role" name="role">
+              <option value="Admin">Admin</option>
+              <option value="Manager">Manager</option>
+              <option value="User">User</option>
+            </select>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" (click)="closeFormModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Modal تأكيد الحذف -->
+  @if (isDeleteModalOpen()) {
+    <div class="modal-backdrop">
+      <div class="modal-card glass-panel text-center">
+        <h3>Delete User</h3>
+        <p>Are you sure you want to delete <strong>{{ userToDelete()?.fullName }}</strong>?</p>
+        <div class="modal-actions center">
+          <button class="btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+          <button class="btn-danger" (click)="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

@@ -6,10 +6,7 @@
       <h2>Audit Logs</h2>
       <p>Monitor system activities, contract operations, and AI interactions in real-time.</p>
     </div>
-    <button class="refresh-btn" (click)="loadLogs(true)" [disabled]="isLoading()">
-      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading()"></i> 
-      <span>{{ isLoading() ? 'Updating...' : 'Refresh' }}</span>
-    </button>
+
   </div>
 
   <!-- شريط البحث، التصفية، وفلاتر التواريخ والأزرار الإضافية -->
@@ -61,6 +58,11 @@
   </div>
  <!-- أزرار الإجراءات (تصدير، طباعة، حذف نطاق) -->
 <div class="action-buttons-group">
+
+      <button class="action-icon-btn refresh-btn" style="display: inline-block;" (click)="loadLogs(true)" [disabled]="isLoading()">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading()"></i> 
+      🔄
+    </button>
   <!-- زر التصدير (معطل إذا لم تكن هناك سجلات) -->
   <button 
     (click)="exportLogs()" 

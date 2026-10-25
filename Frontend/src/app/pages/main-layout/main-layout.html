@@ -10,6 +10,7 @@
   <a routerLink="/contracts-archive" routerLinkActive="active" class="nav-item">Contracts Archive</a>
   <a routerLink="/ai-legal-assistant" routerLinkActive="active" class="nav-item">AI Legal Assistant</a>
   <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item">Audit Logs</a>
+  <a routerLink="/user-management" routerLinkActive="active" class="nav-item">User Management</a>
 </nav>
  <div class="glass-user">
     <div class="user-avatar-glass">👩‍⚖️</div>
@@ -56,10 +57,9 @@
 </main>
 </div>
 
-
 @if (showUploadModal()) {
   <app-upload-modal 
-    (close)="showUploadModal.set(false)" 
+    (close)="onModalCloseAttempt()" 
     (uploadSuccess)="handleUploadSuccess($event)">
   </app-upload-modal>
 }

@@ -52,9 +52,15 @@ export class MainLayout {
     }, 300);
   }
 
+  isModalUploading = signal(false); 
   
-  handleModalClose() {
-    this.showUploadModal.set(false);
-   
+onModalCloseAttempt() {
+
+  if (this.isModalUploading()) {
+    console.log("Upload in progress, closing blocked!");
+    return; 
   }
+
+  this.showUploadModal.set(false);
+}
 }

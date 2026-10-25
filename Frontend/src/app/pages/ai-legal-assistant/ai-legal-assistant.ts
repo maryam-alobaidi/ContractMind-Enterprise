@@ -24,6 +24,7 @@ export class AiLegalAssistant implements OnInit, AfterViewChecked {
   
   contractId = signal<number | null>(null);
   contractText = signal<string>('');
+  contractFileName=signal<string>('');
   messages = signal<any[]>([]);
   suggestedQuestions = signal<string[]>([
     "What are the termination conditions?",
@@ -161,7 +162,7 @@ export class AiLegalAssistant implements OnInit, AfterViewChecked {
   }
 
 
-handleModalClose() {
+    handleModalClose() {
     this.showSelectModal.set(false);
 
   
@@ -180,9 +181,10 @@ handleModalClose() {
 
 
   loadContractDetails(id: number) {
-   this.contractText.set('Loading contract text...');
-    this.contractService.getContractById(id).subscribe(res => this.contractText.set(res.extractedText));
-    
+   this.contractService.getContractById(id).subscribe(res => {
+      this.contractText.set(res.extractedText);
+      this.contractFileName.set(res.fileName);
+    });
     this.loadContractChatHistory(id);
   }
 

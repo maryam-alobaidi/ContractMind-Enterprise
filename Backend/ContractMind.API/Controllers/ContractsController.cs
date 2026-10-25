@@ -2,11 +2,9 @@
 using ContractMind.BLL.Interface;
 using ContractMindModel;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Text;
+using Tesseract;
 
 namespace ContractMind.API.Controllers
 {
@@ -158,13 +156,11 @@ namespace ContractMind.API.Controllers
             return Ok(new { message = "Contract deleted successfully." });
         }
 
-
-
         [HttpPost("upload-and-analyze")]
         public async Task<IActionResult> UploadAndAnalyzeContract(
-        [FromForm] IFormFile file,
-        [FromForm] int userId,
-        [FromForm] string language = "en")
+    [FromForm] IFormFile file,
+    [FromForm] int userId,
+    [FromForm] string language = "en")
         {
             try
             {
@@ -173,12 +169,8 @@ namespace ContractMind.API.Controllers
                     return BadRequest(new { message = "Please upload a valid file." });
                 }
 
-                // 1. فحص مجلد uploads
                 string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -188,72 +180,110 @@ namespace ContractMind.API.Controllers
                     await file.CopyToAsync(fileStream);
                 }
 
-
                 string extractedText = string.Empty;
                 string fileExtension = Path.GetExtension(file.FileName).ToLower();
+
                 try
                 {
                     using (var stream = file.OpenReadStream())
                     {
                         if (fileExtension == ".pdf")
                         {
-                            using (var pdfReader = new iText.Kernel.Pdf.PdfReader(stream))
+                            using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
                             {
-                                using (var pdfDoc = new iText.Kernel.Pdf.PdfDocument(pdfReader))
+                                var textBuilder = new System.Text.StringBuilder();
+                                foreach (var page in pdfDocument.GetPages())
                                 {
-                                    var textBuilder = new System.Text.StringBuilder();
-                                    int numberOfPages = pdfDoc.GetNumberOfPages();
-
-                                    for (int i = 1; i <= numberOfPages; i++)
-                                    {
-                                        var page = pdfDoc.GetPage(i);
-                                        string pageText = iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(
-                                            page,
-                                            new iText.Kernel.Pdf.Canvas.Parser.Listener.SimpleTextExtractionStrategy()
-                                        );
-                                        textBuilder.AppendLine(pageText);
-                                    }
-                                    extractedText = textBuilder.ToString();
+                                    textBuilder.AppendLine(page.Text);
                                 }
+                                extractedText = textBuilder.ToString();
                             }
                         }
                         else if (fileExtension == ".docx")
                         {
                             extractedText = ExtractTextFromDocx(stream);
                         }
-                        else
-                        {
-                            return BadRequest(new { message = "Unsupported file format. Please upload PDF or DOCX files only." });
-                        }
                     }
                 }
-                catch (Exception parseEx)
+                catch (Exception) { }
+
+                // تفعيل الـ OCR إذا كان النص بحاجة לכך
+                if (string.IsNullOrWhiteSpace(extractedText) || extractedText.Contains("ѧ") || extractedText.Contains("؂") || extractedText.Length < 100)
                 {
-                    Console.WriteLine("File Parsing Error: " + parseEx.Message);
-                    return BadRequest(new { message = "Failed to read the file. It might be corrupted or protected." });
+                    try
+                    {
+                        string tessDataPath = Path.Combine(Directory.GetCurrentDirectory(), "tessdata");
+
+                        if (fileExtension == ".png" || fileExtension == ".jpg" || fileExtension == ".jpeg")
+                        {
+                            using (var engine = new TesseractEngine(tessDataPath, "ara", EngineMode.Default))
+                            {
+                                using (var img = Tesseract.Pix.LoadFromFile(filePath))
+                                {
+                                    using (var page = engine.Process(img))
+                                    {
+                                        extractedText = page.GetText();
+                                    }
+                                }
+                            }
+                        }
+                        else if (fileExtension == ".pdf")
+                        {
+                            using (var pdfDoc = PdfiumViewer.PdfDocument.Load(filePath))
+                            {
+                                // مصفوفة لتخزين نصوص الصفحات بترتيبها الصحيح لتجنب مشاكل التداخل
+                                string[] pageTexts = new string[pdfDoc.PageCount];
+
+                                // استخدام Parallel.For لمعالجة عدة صفحات في نفس الوقت عبر أنوية المعالج (CPU)
+                                Parallel.For(0, pdfDoc.PageCount, i =>
+                                {
+                                    // إنشاء محرك Tesseract خاص بكل خيط (Thread) لأنه غير آمن للمشاركة المباشرة
+                                    using (var localEngine = new TesseractEngine(tessDataPath, "ara", EngineMode.Default))
+                                    {
+                                        using (var bitmap = pdfDoc.Render(i, 150, 150, PdfiumViewer.PdfRenderFlags.CorrectFromDpi))
+                                        {
+                                            string tempImgPath = Path.Combine(uploadsFolder, $"page_{i}_{Guid.NewGuid()}.png");
+                                            bitmap.Save(tempImgPath, System.Drawing.Imaging.ImageFormat.Png);
+
+                                            using (var pix = Tesseract.Pix.LoadFromFile(tempImgPath))
+                                            {
+                                                using (var ocrPage = localEngine.Process(pix))
+                                                {
+                                                    pageTexts[i] = ocrPage.GetText();
+                                                }
+                                            }
+
+                                            if (System.IO.File.Exists(tempImgPath))
+                                            {
+                                                System.IO.File.Delete(tempImgPath);
+                                            }
+                                        }
+                                    }
+                                });
+
+                                extractedText = string.Join("\n", pageTexts);
+                            }
+                        }
+                    }
+                    catch (Exception ocrEx)
+                    {
+                        return StatusCode(500, new { message = "OCR Processing Error: " + ocrEx.Message });
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(extractedText))
                 {
-                    return BadRequest(new { message = "Could not extract text from this file." });
+                    return BadRequest(new { message = "Failed to extract readable text via OCR. Please check file format." });
                 }
 
-                //regex all sensitive text
                 string safeTextForAI = _privacyService.MaskSensitiveData(extractedText);
-
-
-
-                // 3. تحليل OpenAI
                 var aiResult = await _aiService.AnalyzeContractTextAsync(safeTextForAI, language);
 
                 if (aiResult == null)
                 {
-                    return StatusCode(500, new { message = "AI service failed to analyze the contract." });
+                    return StatusCode(500, new { message = "AI analysis failed." });
                 }
 
-
-
-                // 4. حفظ قاعدة البيانات
                 clsContracts newContract = new clsContracts
                 {
                     UserId = userId > 0 ? userId : -1,
@@ -265,29 +295,7 @@ namespace ContractMind.API.Controllers
                     UploadDate = DateTime.Now
                 };
 
-                bool isSaved = await newContract.Save();
-                if (!isSaved)
-                {
-                    return StatusCode(500, new { message = "Failed to save to database." });
-                }
-
-                var fileName = uniqueFileName?.Length > 60
-                  ? uniqueFileName.Substring(0, 60) + "..."
-                  : uniqueFileName;
-
-                clsAuditLogs auditLogs = new clsAuditLogs
-                {
-                    UserId = userId > 0 ? userId : -1,
-                    Action = $"UPLOAD / {fileName}",
-                    Timestamp = DateTime.Now,
-                };
-
-                bool isSaveAuditLogs = await auditLogs.Save();
-
-                if (!isSaveAuditLogs)
-                {
-                    return StatusCode(500, new { message = "Failed to save to database auditLogs." });
-                }
+                await newContract.Save();
 
                 return Ok(new
                 {
@@ -298,11 +306,9 @@ namespace ContractMind.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Server Error: " + ex.ToString());
-                return StatusCode(500, new { message = "Server Exception: " + ex.Message, stackTrace = ex.StackTrace });
+                return StatusCode(500, new { message = "Server Exception: " + ex.Message });
             }
         }
-
         public static string ExtractTextFromDocx(Stream stream)
         {
             var textBuilder = new StringBuilder();

@@ -19,6 +19,7 @@ private langService = inject(Language);
 
   @Output() close = new EventEmitter<void>();
   @Output() uploadSuccess = new EventEmitter<any>();
+  @Output() uploadingChange = new EventEmitter<boolean>();
 
   selectedFile = signal<File | null>(null);
   selectedLanguage =signal<string>( this.langService.currentLanguage());
@@ -28,7 +29,12 @@ private langService = inject(Language);
 
   userId = this.authService.userName;
 
-  closeModal() {
+
+
+closeModal() {
+    if (this.isUploading()) {
+      return;
+    }
     this.close.emit();
   }
 
@@ -45,24 +51,27 @@ private langService = inject(Language);
     if (!file) return;
 
     this.isUploading.set(true);
+    this.uploadingChange.emit(true);
     this.uploadProgress.set(0);
     this.errorMessage.set(null);
 
-    // استخدام اللغة المختارة من أزرار المودال (selectedLanguage) مباشرة
     const language = this.selectedLanguage(); 
-     const userId = this.authService.userId ? this.authService.userId() : null;
+    const userId = this.authService.userId ? this.authService.userId() : null;
+
     this.contractService.uploadAndAnalyze(file, userId, language).subscribe({
       next: (response) => {
         this.isUploading.set(false);
+        this.uploadingChange.emit(false);
         this.uploadSuccess.emit(response); 
-        this.closeModal(); 
+        this.close.emit(); // <--- يتم الإغلاق هنا فقط بعد اكتمال الـ OCR والـ AI ونجاح كل شيء!
       },
       error: (err) => {
         this.isUploading.set(false);
+        this.uploadingChange.emit(false); 
         this.errorMessage.set(err.error?.message || 'An error occurred while uploading and analyzing the file.');
+        // ملاحظة: لا نستدعي closeModal() هنا ليبقى المودل مفتوحاً ويرى المستخدم رسالة الخطأ إن حدث خطأ.
       }
     });
   }
-
   
 }

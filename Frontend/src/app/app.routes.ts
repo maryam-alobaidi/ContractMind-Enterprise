@@ -7,6 +7,7 @@ import { ContractReport } from './pages/contract-report/contract-report';
 import { MainLayout } from './pages/main-layout/main-layout';
 import { AiLegalAssistant } from './pages/ai-legal-assistant/ai-legal-assistant';
 import { AuditLogs } from './pages/audit-logs/audit-logs';
+import { UserManagemente } from './pages/user-managemente/user-managemente';
 
 export const routes: Routes = [
     
@@ -25,7 +26,8 @@ export const routes: Routes = [
             { path: 'contract-report/:id', component: ContractReport },
             { path: 'ai-legal-assistant', component: AiLegalAssistant },        
             { path: 'ai-legal-assistant/:id', component: AiLegalAssistant },
-            { path: 'audit-logs',component:AuditLogs}    
+            { path: 'audit-logs',component:AuditLogs}    ,
+            { path:'user-management',component:UserManagemente}
         ]
     },
 
