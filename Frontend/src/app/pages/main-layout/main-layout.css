@@ -246,3 +246,107 @@
     min-width: 600px;
   }
 }
+
+app-upload-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+
+
+/* الحاوية الخاصة ببيانات المستخدم وزر الخروج */
+.glass-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--user-card-bg, rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--user-card-border, rgba(0, 0, 0, 0.08));
+  margin-top: auto;
+}
+
+.user-meta-glass {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+/* لون اسم المستخدم: يتكيف تلقائياً (داكن في اللايت مود، وأبيض في الدارك مود) */
+.user-meta-glass h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color); /* لون داكن وواضح للوضع الفاتح */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-meta-glass span {
+  font-size: 11px;
+  color: var(--text-muted); /* لون رمادي هادئ ومقروء */
+}
+
+/* 🟢 زر الخروج بحجم متوسط وأنيق */
+.logout-circle-btn {
+  width: 44px;  
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  flex-shrink: 0;
+  
+  
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.466), 
+              inset 0 0 10px rgba(239, 68, 68, 0.15);
+}
+
+
+.logout-circle-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5), 
+              0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+
+
+/* 🌙 دعم الوضع الداكن (Dark Mode) في حال كان مشروعك يفعله عبر فئة .dark أو .dark-mode */
+.dark .user-meta-glass h4,
+body.dark-mode .user-meta-glass h4,
+[data-theme="dark"] .user-meta-glass h4 {
+  color: #ffffff; /* يتحول للأبيض تلقائياً في الدارك مود */
+}
+
+.dark .user-meta-glass span,
+body.dark-mode .user-meta-glass span,
+[data-theme="dark"] .user-meta-glass span {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* التجاوب مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .glass-user {
+    padding: 10px;
+    justify-content: center;
+  }
+  .user-meta-glass {
+    display: none; /* إخفاء النص في الجوال والاحتفاظ بالصورة والزر بحجمه المتوسط */
+  }
+}

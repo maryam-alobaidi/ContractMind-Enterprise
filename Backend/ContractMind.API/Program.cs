@@ -61,14 +61,19 @@ builder.Services.AddScoped<IPrivacyService, PrivacyService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
-app.UseCors("AllowAngular");
 app.UseHttpsRedirection();
+
+
+app.UseCors("AllowAngular");
+// -----------------------------------------------------------
+
 app.UseAuthentication();
 app.UseAuthorization();
 

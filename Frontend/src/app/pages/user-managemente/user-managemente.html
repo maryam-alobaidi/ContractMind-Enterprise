@@ -123,11 +123,18 @@
     </div>
   </div>
 
-  <!-- Modal إضافة / تعديل مستخدم باستخدام المعيار الحديث @if -->
+ <!-- Modal إضافة / تعديل مستخدم باستخدام المعيار الحديث @if -->
   @if (isFormModalOpen()) {
     <div class="modal-backdrop">
       <div class="modal-card glass-panel">
         <h2>{{ isEditMode() ? 'Edit User' : 'Add New User' }}</h2>
+        
+        <!-- 🔴 إظهار رسالة الخطأ إن وجدت -->
+        @if (formError()) {
+          <div class="error-alert" style="background-color: #fee2e2; color: #ef4444; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; text-align: center; border: 1px solid #f87171;">
+            {{ formError() }}
+          </div>
+        }
         
         <form (ngSubmit)="saveUser()">
           <div class="form-group">
@@ -147,10 +154,10 @@
 
           <div class="form-group">
             <label>Role</label>
-            <select class="teal-input" [(ngModel)]="currentUserForm().role" name="role">
-              <option value="Admin">Admin</option>
-              <option value="Manager">Manager</option>
-              <option value="User">User</option>
+            <select class="teal-input teal-select" [(ngModel)]="currentUserForm().role" name="role">
+              <option value="Admin">🔴 Admin</option>
+              <option value="Manager">🔵 Manager</option>
+              <option value="User">🟢 User</option>
             </select>
           </div>
 

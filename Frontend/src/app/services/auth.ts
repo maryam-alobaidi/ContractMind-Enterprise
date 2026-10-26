@@ -12,6 +12,7 @@ export class Auth {
 
   userName = signal<string>('User');
   userId = signal<number>(-1);
+  userRole=signal<string|null>(null);
 
   private apiUrl = "https://localhost:7221/api/Auth";
 
@@ -23,6 +24,7 @@ export class Auth {
         if (user) {
           this.userName.set(user.name || 'User');
           this.userId.set(user.id || -1);
+          
         }
       } catch (error) {
         console.error('Error parsing saved user from storage', error);
@@ -48,6 +50,8 @@ export class Auth {
           
           this.userName.set(response.user.name);
           this.userId.set(response.user.id);
+          this.userRole.set(response.user.role);
+          
         }
       })
     );

@@ -517,3 +517,17 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+
+/* إذا كان التطبيق يعتمد على فئة dark في الـ body أو الـ html للوضع الداكن */
+.teal-input, .teal-select{
+  width: 30%;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}

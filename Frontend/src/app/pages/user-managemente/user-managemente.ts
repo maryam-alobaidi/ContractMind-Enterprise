@@ -87,6 +87,10 @@ export class UserManagemente implements OnInit, AfterViewInit {
   }
 
   loadUsers() {
+
+  this.searchTerm.set('');
+  this.selectedRoleFilter.set('ALL');
+
     this.isLoading.set(true);
    return this.userService.loadUsers().subscribe({
       next: (data) => {
@@ -138,12 +142,14 @@ export class UserManagemente implements OnInit, AfterViewInit {
   }
 
   openAddModal(): void {
+      this.formError.set('');
     this.isEditMode.set(false);
     this.currentUserForm.set({ fullName: '', email: '', passwordHash: '', role: 'User' });
     this.isFormModalOpen.set(true);
   }
 
   openEditModal(user: UserModel): void {
+    this.formError.set('');
     this.isEditMode.set(true);
     this.currentUserForm.set({
       userId: user.userId,
@@ -157,20 +163,55 @@ export class UserManagemente implements OnInit, AfterViewInit {
 
   closeFormModal(): void { this.isFormModalOpen.set(false); }
 
-  saveUser(): void {
-    const formData = this.currentUserForm();
+ 
+  formError = signal<string | null>(null);
 
-    if (this.isEditMode() && formData.userId) {
-      this.userService.updateUser(formData.userId, formData).subscribe({
-        next: () => { this.loadUsers(); this.closeFormModal(); },
-        error: (err) => console.error('Error updating user:', err)
-      });
-    } else {
-      this.userService.createUser(formData).subscribe({
-        next: () => { this.loadUsers(); this.closeFormModal(); },
-        error: (err) => console.error('Error creating user:', err)
-      });
-    }
+  saveUser(): void {
+  const formData = this.currentUserForm();
+  this.formError.set(null);
+
+
+  if (!formData.fullName || formData.fullName.trim() === '') {
+    this.formError.set('Please enter the full name.');
+    return;
+  }
+
+  // 2. التحقق من صحة البريد الإلكتروني (باستخدام Regex بسيط)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formData.email || !emailRegex.test(formData.email)) {
+    this.formError.set('Please enter a valid email address.');
+    return;
+  }
+
+  if (formData.passwordHash && formData.passwordHash.trim() !== '' && formData.passwordHash.length < 8) {
+    this.formError.set('Password must be at least 8 characters long.');
+    return;
+  }
+
+
+  if (this.isEditMode() && formData.userId) {
+    this.userService.updateUser(formData.userId, formData).subscribe({
+      next: () => { 
+        this.loadUsers(); 
+        this.closeFormModal(); 
+      },
+      error: (err) => {
+        console.error('Error updating user:', err);
+        this.formError.set(err.error?.message || 'Failed to update user.');
+      }
+    });
+  } else {
+    this.userService.createUser(formData).subscribe({
+      next: () => { 
+        this.loadUsers(); 
+        this.closeFormModal(); 
+      },
+      error: (err) => {
+        console.error('Error creating user:', err);
+        this.formError.set(err.error?.message || 'Failed to create user.');
+      }
+    });
+  }
   }
 
   openDeleteModal(user: UserModel): void {

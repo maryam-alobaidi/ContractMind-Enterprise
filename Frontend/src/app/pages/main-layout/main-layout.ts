@@ -30,6 +30,7 @@ export class MainLayout {
 
   userName = this.authService.userName;
   showUploadModal = signal(false); 
+  userRole=signal<string|null>( this.authService.userRole());
 
   toggleTheme() {
     this.themeService.toggleTheme();
@@ -54,7 +55,7 @@ export class MainLayout {
 
   isModalUploading = signal(false); 
   
-onModalCloseAttempt() {
+  onModalCloseAttempt() {
 
   if (this.isModalUploading()) {
     console.log("Upload in progress, closing blocked!");
@@ -62,5 +63,9 @@ onModalCloseAttempt() {
   }
 
   this.showUploadModal.set(false);
-}
+  }
+
+  logout(){
+  return this.authService.logout();
+  }
 }
