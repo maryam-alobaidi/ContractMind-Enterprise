@@ -2,6 +2,7 @@
 using ContractMind.BLL.Interface;
 using ContractMindModel;
 using DocumentFormat.OpenXml.Packaging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using Tesseract;
@@ -64,6 +65,7 @@ namespace ContractMind.API.Controllers
 
 
         [HttpPost]
+        [Authorize]// for every one who login the program
         public async Task<IActionResult> CreateContract([FromBody] contractsModel model)
         {
             if (model == null)
@@ -125,6 +127,7 @@ namespace ContractMind.API.Controllers
 
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteContract(int id)
         {
             var contract = await clsContracts.Find(id);
@@ -158,9 +161,9 @@ namespace ContractMind.API.Controllers
 
         [HttpPost("upload-and-analyze")]
         public async Task<IActionResult> UploadAndAnalyzeContract(
-    [FromForm] IFormFile file,
-    [FromForm] int userId,
-    [FromForm] string language = "en")
+             [FromForm] IFormFile file,
+             [FromForm] int userId,
+             [FromForm] string language = "en")
         {
             try
             {
@@ -309,6 +312,9 @@ namespace ContractMind.API.Controllers
                 return StatusCode(500, new { message = "Server Exception: " + ex.Message });
             }
         }
+
+
+
         public static string ExtractTextFromDocx(Stream stream)
         {
             var textBuilder = new StringBuilder();

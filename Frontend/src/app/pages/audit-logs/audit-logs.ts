@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Audit } from '../../services/audit';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-audit-logs',
@@ -12,7 +13,8 @@ import { Audit } from '../../services/audit';
   styleUrl: './audit-logs.css',
 })
 export class AuditLogs implements OnInit {
-  private auditService = inject(Audit);
+   auditService = inject(Audit);
+   authService=inject(Auth);
 
   logs = signal<any[]>([]);
   filteredLogs = signal<any[]>([]);
@@ -129,7 +131,7 @@ export class AuditLogs implements OnInit {
       this.triggerToast('No logs available to print based on the current filter.', 'error');
       return;
     }
-
+  
     const printDate = new Date().toLocaleString('en-US', { 
       year: 'numeric', 
       month: 'short', 

@@ -5,8 +5,14 @@
 .archive-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  padding: 24px;
+  background-color: var(--bg-main, #0f172a);
+  color: var(--text-main, #f8fafc);
+  min-height: 100vh;
+  box-sizing: border-box;
   width: 100%;
+  overflow-x: hidden;
 }
 
 /* ترويسة الأرشيف */
@@ -113,9 +119,13 @@ th, td {
 }
 
 th {
-  background-color: var(--bg-main);
-  font-weight: 600;
-  color: var(--text-secondary);
+  background: rgba(20, 184, 166, 0.08);
+  color: #14b8a6;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 14px 18px;
 }
 
 .teal-id {

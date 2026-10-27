@@ -131,10 +131,16 @@ th, td {
 }
 
 th {
-  background-color: var(--bg-main);
-  font-weight: 600;
-  color: var(--text-secondary);
+  background: rgba(20, 184, 166, 0.08);
+  color: #14b8a6;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 14px 18px;
 }
+
+
 
 /* الخط المميّز لمعرف السجل (Log ID) */
 .font-mono {
@@ -553,4 +559,20 @@ html.light-theme .custom-date-wrapper,
 @keyframes scaleUp {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* تأثير الـ Hover المضمون للصف بأكمله في الجدول */
+tr.table-row {
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* في الوضع العادي (الفاتح) */
+tr.table-row:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* في الوضع الداكن (عندما يكون الـ body يحمل كلاس dark أو dark-mode) */
+.dark tr.table-row:hover,
+[data-theme="dark"] tr.table-row:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
 }

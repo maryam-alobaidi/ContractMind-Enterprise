@@ -78,6 +78,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box; /* لضمان عدم خروج الحواف مع الـ padding */
 
   &:hover {
     border-color: var(--accent-color);
@@ -92,9 +94,19 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;       /* 🌟 ضروري جداً لمنع عناصر الـ Flex من تجاوز الحدود */
+    flex: 1;            /* 🌟 لكي يأخذ المساحة المتبقية فقط */
+    margin-right: 12px; /* مسافة فاصلة عن زر الاختيار في اليمين/اليسار */
 
     .contract-icon {
       font-size: 1.2rem;
+      flex-shrink: 0;   /* لمنع انكماش الأيقونة */
+    }
+
+    /* 🌟 الحاوية النصية للعنوان والتاريخ */
+    & > div {
+      min-width: 0;
+      flex: 1;
     }
 
     h4 {
@@ -102,11 +114,18 @@
       font-size: 0.95rem;
       font-weight: 500;
       color: var(--text-primary);
+      
+      /* 🌟 خصائص ضمان التفاف النص وكسر الكلمات الطويلة داخل الكارد تماماً */
+      white-space: normal;
+      word-break: break-all;     /* كسر الكلمات والروابط الطويلة جداً باللغة الإنجليزية */
+      overflow-wrap: break-word;
     }
 
     small {
       color: var(--text-secondary);
       font-size: 0.75rem;
+      display: block;
+      white-space: nowrap;
     }
   }
 
@@ -117,6 +136,7 @@
     border-radius: 50%;
     position: relative;
     transition: all 0.2s;
+    flex-shrink: 0; /* لمنع تقلص زر الاختيار */
   }
 
   &.selected .radio-indicator {
@@ -125,7 +145,6 @@
     box-shadow: inset 0 0 0 3px var(--bg-card);
   }
 }
-
 .loading-state, .empty-state {
   text-align: center;
   padding: 2rem;

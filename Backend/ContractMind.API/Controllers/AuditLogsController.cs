@@ -1,5 +1,6 @@
 ﻿using ContractMind.BLL;
 using ContractMindModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -59,6 +60,7 @@ namespace ContractMind.API.Controllers
             return CreatedAtAction(nameof(GetAuditLogById), new { id = newId.Value }, createdLog);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAuditLog(int id)
         {

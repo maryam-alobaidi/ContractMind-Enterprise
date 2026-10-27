@@ -298,8 +298,8 @@ app-upload-modal {
 
 /* 🟢 زر الخروج بحجم متوسط وأنيق */
 .logout-circle-btn {
-  width: 44px;  
-  height: 44px;
+  width: 35px;  
+  height: 35px;
   border-radius: 50%;
   border: 1px solid rgba(239, 68, 68, 0.4);
   background: rgba(239, 68, 68, 0.1);
@@ -348,5 +348,243 @@ body.dark-mode .user-meta-glass span,
   }
   .user-meta-glass {
     display: none; /* إخفاء النص في الجوال والاحتفاظ بالصورة والزر بحجمه المتوسط */
+  }
+}
+
+/* 🍔 زر القائمة للرئيسية (مخفي في الشاشات الكبيرة) */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: #14b8a6;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* طبقة تعتيم الخلفية عند فتح القائمة في الجوال */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+/* ==========================================
+   تعديلات التجاوب مع الهواتف والشاشات المتوسطة
+   ========================================== */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex; /* إظهار زر الخطوط في الهواتف */
+  }
+
+  .sidebar-overlay {
+    display: block; /* إظهار التعتيم عند الفتح */
+  }
+
+  .glass-container {
+    flex-direction: row; /* الحفاظ على تخطيط الحاوية */
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* جعل القائمة الجانبية منزلقة (Off-canvas Sidebar) */
+  .glass-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* إخفاء القائمة كلياً خارج الشاشة من اليسار */
+    width: 280px;
+    height: 100%;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+  }
+
+  /* عند تفعيل حالة الفتح، تتحرك القائمة لتظهر داخل الشاشة */
+  .glass-sidebar.open {
+    left: 0;
+  }
+
+  .glass-main {
+    padding: 20px;
+    padding-top: 80px; /* ترك مساحة لزر القائمة العلوي */
+    width: 100%;
+    overflow-y: auto;
+  }
+  
+  .user-meta-glass {
+    display: flex !important; /* إعادة إظهار بيانات المستخدم داخل القائمة المنسدلة بالموبايل لتبدو منظمة */
+  }
+}
+
+
+/* تنسيق الهيدر الافتراضي للشاشات الكبيرة */
+.glass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 36px;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.header-controls-glass {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 📱 تنسيق الشاشات الصغيرة والهواتف (Mobile & Tablet) */
+@media (max-width: 768px) {
+  .glass-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: var(--bg-main);
+    backdrop-filter: blur(10px);
+    z-index: 1050;
+    padding: 12px 60px; /* ترك مساحة في اليمين واليسار للأزرار الثابتة */
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    justify-content: center; /* توسط أزرار التحكم (الثيم والرفع) داخل الهيدر */
+  }
+
+  /* 🍔 زر المنيو ثابت في أقصى اليسار */
+  .mobile-menu-toggle {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1100;
+  }
+
+  /* 🚪 زر الخروج ثابت في أقصى اليمين ومقابل لزر المنيو تماماً */
+  .header-logout-wrapper {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 1100;
+  }
+
+  /* تصغير أزرار التحكم قليلاً في الموبايل لتتخذ وضعاً متناسقاً */
+  .header-controls-glass {
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .btn-theme-toggle {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .btn-teal-glow {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  /* ترك مساحة للمحتوى الرئيسي لكي لا يختفي تحت الهيدر العلوي */
+  .glass-main {
+    padding-top: 80px !important;
+  }
+}
+
+/* ==========================================
+   إصلاح الطبقات (Z-Index Hierarchy) للشاشات الصغيرة
+   ========================================== */
+@media (max-width: 768px) {
+  
+  /* 1. الهيدر العلوي يأخذ طبقة متوسطة */
+  .glass-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: var(--bg-main);
+    backdrop-filter: blur(10px);
+    z-index: 1000; /* طبقة أقل من القائمة */
+    padding: 12px 60px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+  }
+
+  /* 2. طبقة التعتيم (Overlay) يجب أن تكون تحت القائمة مباشرة ولكن فوق الهيدر والمحتوى */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2000; /* 🌟 أعلى من الهيدر لتعتيم الشاشة بالكامل عند الفتح */
+  }
+
+  /* 3. القائمة الجانبية عند فتحها تطفو كلياً في الطبقة العليا فوق الهيدر والكل */
+  .glass-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    z-index: 2100; /* 🌟 أعلى طبقة على الإطلاق لتعلو فوق الهيدر وزر الخروج */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  /* عند تفعيل حالة الفتح، تظهر القائمة فوق كل عناصر الصفحة */
+  .glass-sidebar.open {
+    left: 0;
+  }
+
+  /* 4. أزرار الهيدر الثבתة (المنيو والخروج) */
+  .mobile-menu-toggle {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1050;
+  }
+
+  .header-logout-wrapper {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 1050;
+  }
+
+  .glass-main {
+    padding-top: 80px !important;
   }
 }

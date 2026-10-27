@@ -24,7 +24,7 @@ export class Auth {
         if (user) {
           this.userName.set(user.name || 'User');
           this.userId.set(user.id || -1);
-          
+          this.userRole.set(user.role || null);
         }
       } catch (error) {
         console.error('Error parsing saved user from storage', error);
@@ -65,6 +65,7 @@ export class Auth {
     
     this.userName.set('User');
     this.userId.set(-1);
+    this.userRole.set(null);
 
     this.router.navigate(['/login']);
   }

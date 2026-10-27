@@ -64,6 +64,7 @@
       🔄
     </button>
   <!-- زر التصدير (معطل إذا لم تكن هناك سجلات) -->
+   @if (authService.userRole() === 'Admin' || authService.userRole() === 'Manager') {
   <button 
     (click)="exportLogs()" 
     [disabled]="filteredLogs().length === 0" 
@@ -80,16 +81,16 @@
     title="Print Logs">
     🖨️
   </button>
-
-  <!-- زر الحذف (معطل إذا لم تكن هناك سجلات أو لم يتم اختيار التواريخ) -->
-  <button 
+   }
+  @if(authService.userRole()==='Admin')
+ { <button 
     type="button" 
     (click)="openDeleteModal()" 
     [disabled]="filteredLogs().length === 0" 
     class="action-icon-btn delete-range-btn" 
     title="Clear Range">
     <span style="font-size: 16px;">🗑️</span>
-  </button> 
+  </button> }
 </div>
 </div>
 

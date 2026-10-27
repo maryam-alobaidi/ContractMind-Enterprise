@@ -1,10 +1,12 @@
 ﻿using ContractMind.BLL;
 using ContractMindModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContractMind.API.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowAngular")]

@@ -30,7 +30,22 @@ export class MainLayout {
 
   userName = this.authService.userName;
   showUploadModal = signal(false); 
-  userRole=signal<string|null>( this.authService.userRole());
+  userRole = this.authService.userRole; 
+
+
+  isSidebarOpen = signal<boolean>(false);
+
+  toggleSidebar() {
+    this.isSidebarOpen.update(value => !value);
+  }
+
+  closeSidebarOnMobile() {
+  if (window.innerWidth <= 768) {
+    this.isSidebarOpen.set(false);
+  }
+
+  }
+
 
   toggleTheme() {
     this.themeService.toggleTheme();
@@ -40,7 +55,7 @@ export class MainLayout {
     this.showUploadModal.set(true);
   }
 
-  // عند نجاح عملية الرفع
+
   handleUploadSuccess(newContract: any) {
     this.showUploadModal.set(false);
     

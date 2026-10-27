@@ -26,11 +26,7 @@ export class AiLegalAssistant implements OnInit, AfterViewChecked {
   contractText = signal<string>('');
   contractFileName=signal<string>('');
   messages = signal<any[]>([]);
-  suggestedQuestions = signal<string[]>([
-    "What are the termination conditions?",
-    "Are there any financial penalties?",
-    "What is the duration of this contract?"
-  ]);
+
   
   userQuery = signal<string>('');
   isTyping = signal<boolean>(false);

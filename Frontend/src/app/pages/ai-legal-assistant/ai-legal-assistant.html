@@ -42,16 +42,7 @@
       }
     </div>
 
-    <!-- الأسئلة المقترحة ديناميكياً -->
-    @if (suggestedQuestions.length > 0) {
-      <div class="suggestions-bar">
-        @for (question of suggestedQuestions(); track $index) {
-          <button class="suggestion-chip" (click)="sendPresetQuery(question)">
-            {{ question }}
-          </button>
-        }
-      </div>
-    }
+  
 
     <!-- صندوق إدخال الرسائل -->
     <div class="chat-input-area">

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { Contract } from '../../services/contract';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-contracts-archive',
@@ -14,6 +15,7 @@ export class ContractsArchive implements OnInit {
    isLoading = signal<boolean>(true);
    private contractService = inject(Contract);
    private router = inject(Router);
+    authService=inject(Auth);
 
    ngOnInit() {
      this.loadContracts();
