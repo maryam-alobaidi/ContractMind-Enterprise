@@ -38,16 +38,15 @@
         {{ errorMessage() }}
       </div>
     }
-
-    <!-- شريط التقدم أثناء الرفع والتحليل -->
-   @if (isUploading()) {
-  <div class="progress-container mb-4 text-center">
-    <div class="spinner-border text-emerald-600 mb-2" role="status" style="width: 2rem; height: 2rem;"></div>
-    <p class="text-sm font-semibold text-gray-700">Processing and reading document (OCR) in the background...</p>
-    <small class="text-xs text-gray-500 mt-1 block">Please wait and do not close the page until the upload is complete.</small>
+@if (isUploading()) {
+  <div class="processing-box" role="status" aria-live="polite">
+    <div class="spinner-ring"></div>
+    <div class="processing-text">
+      <strong>Uploading & Analyzing<span class="dots"></span></strong>
+      <small>This may take a moment</small>
+    </div>
   </div>
 }
-
     <!-- أزرار التحكم -->
     <div class="modal-actions flex justify-end gap-2 pt-3 border-t">
       <button class="btn-cancel px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-50 transition-colors" 

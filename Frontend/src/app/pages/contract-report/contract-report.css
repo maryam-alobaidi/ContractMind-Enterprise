@@ -142,7 +142,7 @@
   color: var(--accent-color);
   background: var(--bg-main);
   border-color: var(--accent-color);
-  transform: translateX(-3px); /* حركة بسيطة لليسار إيحاءً بالرجوع */
+  transform: translateX(-1px); /* حركة بسيطة لليسار إيحاءً بالرجوع */
   box-shadow: 0 4px 15px rgba(20, 184, 166, 0.15);
 }
 

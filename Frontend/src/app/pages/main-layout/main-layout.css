@@ -588,3 +588,24 @@ body.dark-mode .user-meta-glass span,
     padding-top: 80px !important;
   }
 }
+
+.glass-brand h2 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0.5rem 0 0.15rem;
+}
+
+.glass-brand h2 span {
+  background: linear-gradient(90deg, #2dd4bf, #14b8a6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-tagline {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}

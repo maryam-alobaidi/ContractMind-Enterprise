@@ -3,6 +3,9 @@ import { Contract } from '../../services/contract';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Auth } from '../../services/auth';
+import { DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { skip } from 'rxjs';
 
 @Component({
   selector: 'app-contracts-archive',
@@ -16,26 +19,37 @@ export class ContractsArchive implements OnInit {
    private contractService = inject(Contract);
    private router = inject(Router);
     authService=inject(Auth);
+private destroyRef = inject(DestroyRef);
 
-   ngOnInit() {
-     this.loadContracts();
-   }
 
-   loadContracts() {
-     this.isLoading.set(true);
-     this.contractService.getAllContracts().subscribe({
-       next: (data) => {
-         this.contracts.set(data);
-         this.isLoading.set(false);
-       },
-       error: (err) => {
-         console.error('Error fetching contracts:', err);
-         this.isLoading.set(false);
-       }
-     });
-   }
 
-   viewReport(contract: any) {
+
+ngOnInit() {
+  this.loadContracts();
+
+
+  this.contractService.contracts$
+    .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+    .subscribe(data => this.contracts.set(data));
+}
+
+    loadContracts(silent = false) {
+  if (!silent) {
+    this.isLoading.set(true);
+  }
+  this.contractService.getAllContracts().subscribe({
+    next: (data) => {
+      this.contracts.set(data);
+      this.isLoading.set(false);
+    },
+    error: (err) => {
+      console.error('Error fetching contracts:', err);
+      this.isLoading.set(false);
+    }
+  });
+    }
+
+       viewReport(contract: any) {
      const id = contract?.contractId || contract?.id;
      if (id) {
        this.router.navigate(['/contract-report', id]);

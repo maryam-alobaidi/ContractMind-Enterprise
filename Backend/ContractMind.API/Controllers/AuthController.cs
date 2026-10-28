@@ -133,6 +133,7 @@ namespace ContractMind.API.Controllers
             return Ok(new { message = "If your email is registered, you will receive a password reset link." });
         }
 
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {

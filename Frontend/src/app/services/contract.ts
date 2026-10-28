@@ -1,6 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams ,HttpEventType} from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, filter, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -28,18 +28,21 @@ export class Contract {
     this.loadAllContracts();
   }
 
-  uploadAndAnalyze(file: File, userId: number | null, language: string): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file);
-    const safeUserId = userId ? userId.toString() : '1';
-    formData.append('userId', safeUserId);
-    formData.append('language', language); 
+ uploadAndAnalyze(file: File, userId: number | null, language: string): Observable<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const safeUserId = userId ? userId.toString() : '1';
+  formData.append('userId', safeUserId);
+  formData.append('language', language);
 
-    return this.http.post<any>(`${this.apiUrl}/upload-and-analyze`, formData, {
-      reportProgress: true,
-      observe: 'events'
-    });
-  }
+  return this.http.post<any>(`${this.apiUrl}/upload-and-analyze`, formData, {
+    reportProgress: true,
+    observe: 'events'
+  }).pipe(
+    filter(event => event.type === HttpEventType.Response),
+    map((event: any) => event.body)
+  );
+}
 
   getAllContracts(): Observable<any[]> {
     const params = new HttpParams().set('_t', new Date().getTime().toString());

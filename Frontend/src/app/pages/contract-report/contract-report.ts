@@ -50,7 +50,7 @@ export class ContractReport implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/contracts-archive']);
   }
 // 🖨️ دالة طباعة تقرير العقد بشكل احترافي
   printReport() {

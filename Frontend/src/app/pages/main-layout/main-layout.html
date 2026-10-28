@@ -16,6 +16,7 @@
     <div class="glass-brand">
       <img src="favicon.svg" title="ContractMind Logo" alt="ContractMind Logo" width="75" height="75">
       <h2>Contract<span>Mind</span></h2>
+      <small class="brand-tagline">AI Contract Intelligence</small>
     </div>
     
     <nav class="glass-nav" (click)="closeSidebarOnMobile()">
@@ -73,6 +74,7 @@
 @if (showUploadModal()) {
   <app-upload-modal 
     (close)="onModalCloseAttempt()" 
+    (uploadingChange)="onUploadingChange($event)"
     (uploadSuccess)="handleUploadSuccess($event)">
   </app-upload-modal>
 }

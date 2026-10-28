@@ -37,8 +37,9 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false, 
-        ValidateAudience = false
+        ValidateIssuer = false, // يمكنك تركها false إذا لم تحدد Issuer عند إنشاء التوكن
+        ValidateAudience = false, // نفس الشيء للـ Audience
+        ValidateLifetime = true // 🌟 مهم جداً: التأكد من أن التوكن لم ينتهي وقته
     };
 });
 
@@ -61,7 +62,6 @@ builder.Services.AddScoped<IPrivacyService, PrivacyService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -70,11 +70,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
+// 1. يجب وضع CORS دائماً قبل المصادقة والتفويض
 app.UseCors("AllowAngular");
-// -----------------------------------------------------------
 
+// 2. تفعيل المصادقة (معرفة من هو المستخدم عبر التوكن)
 app.UseAuthentication();
+
+// 3. تفعيل التفويض (معرفة هل يملك صلاحية دخول هذا المسار أم لا)
 app.UseAuthorization();
 
 app.MapControllers();
