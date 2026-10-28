@@ -49,7 +49,7 @@ private route = inject(ActivatedRoute);
     };
 
     // Submit payload to .NET 9 API endpoint
-    this.http.post('https://localhost:7221/api/auth/reset-password', payload).subscribe({
+    this.http.post('${environment.apiUrl}/reset-password', payload).subscribe({
       next: () => {
         this.successMessage.set('Password has been reset successfully! Redirecting to login...');
         setTimeout(() => {

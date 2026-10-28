@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class Audit {
   private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:7221/api/AuditLogs';
+  private apiUrl = '${environment.apiUrl}/AuditLogs';
 
   
   getAuditLogs(params?: HttpParams): Observable<any[]> {

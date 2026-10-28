@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class User {
 
 private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:7221/api/Users';
+  private apiUrl = '${environment.apiUrl}/Users';
 
   // GET: api/Users
   loadUsers(): Observable<any[]> {

@@ -1,13 +1,14 @@
 import { HttpClient, HttpParams ,HttpEventType} from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, filter, map } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Contract {
   private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:7221/api/Contracts'; 
+  private apiUrl = `${environment.apiUrl}/Contracts`;
 
   
   private contractsSubject = new BehaviorSubject<any[]>([]);

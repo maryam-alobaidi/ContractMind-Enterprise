@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class Auth {
   userId = signal<number>(-1);
   userRole=signal<string|null>(null);
 
-  private apiUrl = "https://localhost:7221/api/Auth";
+    private apiUrl = `${environment.apiUrl}/Auth`;
 
   constructor() {
     const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
