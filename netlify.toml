@@ -1,0 +1,7 @@
+[build]
+  base = "Frontend"
+  command = "npm run build"
+  publish = "dist/contract-mind-frontend/browser"
+
+[build.environment]
+  NODE_VERSION = "24"
