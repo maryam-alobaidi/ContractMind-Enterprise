@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-reset-password',
@@ -49,7 +50,7 @@ private route = inject(ActivatedRoute);
     };
 
     // Submit payload to .NET 9 API endpoint
-    this.http.post('${environment.apiUrl}/reset-password', payload).subscribe({
+    this.http.post(`${environment.apiUrl}/reset-password`, payload).subscribe({
       next: () => {
         this.successMessage.set('Password has been reset successfully! Redirecting to login...');
         setTimeout(() => {
