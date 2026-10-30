@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class User {
 
 private http = inject(HttpClient);
-  private apiUrl = '${environment.apiUrl}/Users';
+  private apiUrl = `${environment.apiUrl}/Users`;
 
   // GET: api/Users
   loadUsers(): Observable<any[]> {

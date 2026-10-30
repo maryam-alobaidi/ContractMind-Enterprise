@@ -13,7 +13,7 @@ export class ContractChat {
   private http=inject(HttpClient);
   private router=inject(Router);
 
-  private apiUrl="${environment.apiUrl}/Contracts";
+  private apiUrl=`${environment.apiUrl}/Contracts`;
 
 
   chatWithContract(contractId: number, userQuery: string, language: string = 'en'): Observable<any> {

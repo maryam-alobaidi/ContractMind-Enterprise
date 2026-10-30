@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export class Audit {
   private http = inject(HttpClient);
-  private apiUrl = '${environment.apiUrl}/AuditLogs';
+  private apiUrl = `${environment.apiUrl}/AuditLogs`;
 
   
   getAuditLogs(params?: HttpParams): Observable<any[]> {
