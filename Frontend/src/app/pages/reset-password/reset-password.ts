@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-reset-password',
@@ -15,7 +16,8 @@ import { environment } from '../../../environments/environment';
 export class ResetPassword implements OnInit {
 private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http = inject(HttpClient);
+
+  private authService=inject(Auth);
 
   // Define reactive state using Angular Signals
   newPassword = signal('');
@@ -50,7 +52,8 @@ private route = inject(ActivatedRoute);
     };
 
     // Submit payload to .NET 9 API endpoint
-    this.http.post(`${environment.apiUrl}/reset-password`, payload).subscribe({
+    
+    this.authService.resetPassword(payload).subscribe({
       next: () => {
         this.successMessage.set('Password has been reset successfully! Redirecting to login...');
         setTimeout(() => {
