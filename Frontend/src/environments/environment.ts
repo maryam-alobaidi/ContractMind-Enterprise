@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://عنوان-الخادم-يوضع-لاحقاً/api'
+  apiUrl: 'https://contractmind-api.runasp.net/api'
 };
