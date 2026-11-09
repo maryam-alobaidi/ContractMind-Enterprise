@@ -1,193 +1,117 @@
-<div class="audit-container animate-fade-in">
-  
-  <!-- رأس الصفحة -->
-  <div class="audit-header">
+<section class="cm-page">
+  <header class="cm-page-head">
     <div>
-      <h2>Audit Logs</h2>
-      <p>Monitor system activities, contract operations, and AI interactions in real-time.</p>
+      <h1>Audit log</h1>
+      <div class="cm-ornament" aria-hidden="true"><span>◆</span></div>
+      <p class="cm-lede">Every upload, deletion and AI question, newest first.</p>
     </div>
+  </header>
 
+  <div class="filters" role="search">
+    <label class="cm-field search">
+      <span class="cm-field-label">Search</span>
+      <input type="search" class="cm-input" [value]="searchTerm()" (input)="onSearchChange($event)" placeholder="Document, user or entry number" />
+    </label>
+
+    <label class="cm-field">
+      <span class="cm-field-label">Action</span>
+      <select class="cm-input" [value]="selectedAction()" (change)="onActionFilterChange($event)">
+        <option value="ALL">All actions</option>
+        <option value="UPLOAD">Uploads</option>
+        <option value="DELETE">Deletions</option>
+        <option value="AI_CHAT">AI questions</option>
+      </select>
+    </label>
+
+    <label class="cm-field">
+      <span class="cm-field-label">From</span>
+      <input type="date" class="cm-input" [ngModel]="startDate()" (ngModelChange)="startDate.set($event); filterLogs()" />
+    </label>
+
+    <label class="cm-field">
+      <span class="cm-field-label">To</span>
+      <input type="date" class="cm-input" [ngModel]="endDate()" (ngModelChange)="endDate.set($event); filterLogs()" />
+    </label>
   </div>
 
-  <!-- شريط البحث، التصفية، وفلاتر التواريخ والأزرار الإضافية -->
-  <div class="filters-bar">
-  <!-- البحث -->
-  <div class="search-box">
-    <i class="fas fa-search"></i>
-    <input type="text" [value]="searchTerm()" (input)="onSearchChange($event)" placeholder="Search by action details.." />
-    @if (searchTerm()) {
-      <button class="clear-search" (click)="searchTerm.set(''); filterLogs()">
-        <i class="fas fa-times"></i>
+  <div class="actions">
+    <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="loadLogs(true)" [disabled]="isLoading()">
+      {{ isLoading() ? 'Refreshing…' : 'Refresh and clear filters' }}
+    </button>
+
+    @if (authService.userRole() === 'Admin' || authService.userRole() === 'Manager') {
+      <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="exportLogs()" [disabled]="filteredLogs().length === 0">Export CSV</button>
+      <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="printLogs()" [disabled]="filteredLogs().length === 0">Print</button>
+    }
+
+    @if (authService.userRole() === 'Admin') {
+      <button class="cm-btn cm-btn--quiet cm-btn--sm danger-btn" type="button" (click)="openDeleteModal()" [disabled]="filteredLogs().length === 0">
+        Delete entries in date range
       </button>
     }
   </div>
 
-  <!-- فلتر النوع -->
-  <div class="filter-dropdown">
-    <select [value]="selectedAction()" (change)="onActionFilterChange($event)">
-      <option value="ALL">🔍 All Actions</option>
-      <option value="UPLOAD">📁 Upload Contracts</option>
-      <option value="DELETE">🗑️ Delete Contracts</option>
-      <option value="AI_CHAT">🤖 AI Chat Interactions</option>
-    </select>
-  </div>
-
-  <!-- فلاتر التاريخ المتطابقة مع أرشيف العقود -->
-  <div class="date-filter-wrap">
-    <label for="startDate" class="date-label">From:</label>
-    <div class="custom-date-wrapper">
-      <input 
-        type="date" 
-        id="startDate" 
-        class="teal-input" 
-        [ngModel]="startDate()" 
-        (ngModelChange)="startDate.set($event); filterLogs()" />
-    </div>
-  </div>
-
-  <div class="date-filter-wrap">
-    <label for="endDate" class="date-label">To:</label>
-    <div class="custom-date-wrapper">
-      <input 
-        type="date" 
-        id="endDate" 
-        class="teal-input" 
-        [ngModel]="endDate()" 
-        (ngModelChange)="endDate.set($event); filterLogs()" />
-    </div>
-  </div>
- <!-- أزرار الإجراءات (تصدير، طباعة، حذف نطاق) -->
-<div class="action-buttons-group">
-
-      <button class="action-icon-btn refresh-btn" style="display: inline-block;" (click)="loadLogs(true)" [disabled]="isLoading()">
-      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading()"></i> 
-      🔄
-    </button>
-  <!-- زر التصدير (معطل إذا لم تكن هناك سجلات) -->
-   @if (authService.userRole() === 'Admin' || authService.userRole() === 'Manager') {
-  <button 
-    (click)="exportLogs()" 
-    [disabled]="filteredLogs().length === 0" 
-    class="action-icon-btn export-btn" 
-    title="Export CSV">
-    📊
-  </button>
-
-  <!-- زر الطباعة (معطل إذا لم تكن هناك سجلات) -->
-  <button 
-    (click)="printLogs()" 
-    [disabled]="filteredLogs().length === 0" 
-    class="action-icon-btn print-btn" 
-    title="Print Logs">
-    🖨️
-  </button>
-   }
-  @if(authService.userRole()==='Admin')
- { <button 
-    type="button" 
-    (click)="openDeleteModal()" 
-    [disabled]="filteredLogs().length === 0" 
-    class="action-icon-btn delete-range-btn" 
-    title="Clear Range">
-    <span style="font-size: 16px;">🗑️</span>
-  </button> }
-</div>
-</div>
-
-  <!-- جدول السجلات الحديث والمتجاوب -->
-  <div class="table-card">
+  <div class="cm-sheet ledger-sheet">
     @if (isLoading() && filteredLogs().length === 0) {
-      <!-- حالة التحميل الأولية -->
-      <div class="loading-state py-12 text-center">
-        <i class="fas fa-spinner fa-spin fa-2x text-emerald-500 mb-2"></i>
-        <p class="text-gray-500">Loading audit records...</p>
+      <p class="cm-empty">Loading the audit log…</p>
+    } @else if (logs().length === 0) {
+      <div class="cm-empty">
+        <p class="cm-empty-title">Nothing recorded yet</p>
+        <p>Entries appear here when someone uploads or deletes a contract, or asks the AI about one.</p>
       </div>
     } @else if (filteredLogs().length === 0) {
-      <!-- حالة عدم وجود بيانات -->
-      <div class="empty-state py-12 text-center">
-        <i class="fas fa-folder-open fa-2x text-gray-400 mb-2"></i>
-        <p class="text-gray-500">No audit logs found matching your criteria.</p>
+      <div class="cm-empty">
+        <p class="cm-empty-title">No entries match these filters</p>
+        <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="clearFilters()">Clear filters</button>
       </div>
     } @else {
-      <!-- عرض الجدول مع خاصية الـ Track By الحديثة -->
-      <div class="table-responsive overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-gray-100 dark:border-gray-700 text-xs text-gray-400 uppercase">
-              <th class="p-3">Log ID</th>
-              <th class="p-3">User ID</th>
-              <th class="p-3">Action Details</th>
-              <th class="p-3">Date</th>
+      <table class="cm-ledger log">
+        <thead>
+          <tr>
+            <th scope="col" class="col-no">No.</th>
+            <th scope="col">When</th>
+            <th scope="col">Action</th>
+            <th scope="col">Document</th>
+            <th scope="col">User</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of filteredLogs(); track log.logId || log.id) {
+            <tr [class.is-flagged]="actionKind(log) === 'delete'">
+              <td class="col-no cm-num">{{ log.logId || log.id }}</td>
+              <td class="col-when">{{ (log.timestamp || log.createdAt) | date:'d MMM y, HH:mm' }}</td>
+              <td class="col-action">
+                <span class="action" [attr.data-kind]="actionKind(log)">{{ actionLabel(log) }}</span>
+              </td>
+              <td class="col-doc"><span dir="auto">{{ actionDocument(log) }}</span></td>
+              <td class="col-user">User {{ log.userId || '–' }}</td>
             </tr>
-          </thead>
-          <tbody>
-            @for (log of filteredLogs(); track log.logId || log.id; let idx = $index) {
-              <tr class="table-row border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors">
-                <td class="p-3 font-mono text-sm">#{{ log.logId || log.id }}</td>
-                <td class="p-3">
-                  <span class="user-badge inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-user-circle"></i> User #{{ log.userId || '1' }}
-                  </span>
-                </td>
-                <td class="p-3">
-                  <span class="action-badge inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium" [ngClass]="{
-                    'badge-ai bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300': log.action?.includes('AI_CHAT'),
-                    'badge-delete bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300': log.action?.includes('DELETE'),
-                    'badge-upload bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300': log.action?.includes('UPLOAD')
-                  }">
-                    @if (log.action?.includes('AI_CHAT')) {
-                      <i class="fas fa-robot"></i>
-                    } @else if (log.action?.includes('DELETE')) {
-                      <i class="fas fa-trash-alt"></i>
-                    } @else {
-                      <i class="fas fa-file-upload"></i>
-                    }
-                    {{ log.action }}
-                  </span>
-                </td>
-                <td class="date-cell p-3 text-sm text-gray-500 dark:text-gray-400">
-                  <i class="far fa-clock mr-1"></i> {{ log.timestamp || log.createdAt | date:'medium' }}
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- شريط معلومات إحصائية سفلي -->
-      <div class="table-footer p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs text-gray-500">
-        <span>Showing <strong>{{ filteredLogs().length }}</strong> records</span>
-      </div>
+          }
+        </tbody>
+      </table>
+      <p class="cm-ledger-foot">
+        Showing {{ filteredLogs().length }} of {{ logs().length }} {{ logs().length === 1 ? 'entry' : 'entries' }}
+      </p>
     }
   </div>
-</div>
+</section>
 
 @if (showDeleteModal()) {
-  <div class="modal-backdrop">
-    <div class="glass-modal">
-      <h3>Delete Audit Logs</h3>
-      <p>
-        Are you sure you want to delete audit logs from 
-        <strong>{{ startDate() }}</strong> to <strong>{{ endDate() }}</strong>? 
-        This action cannot be undone.
+  <div class="cm-backdrop" (click)="cancelDeleteRange()">
+    <div class="cm-dialog cm-dialog--danger" role="alertdialog" aria-modal="true" aria-labelledby="range-title" aria-describedby="range-desc" (click)="$event.stopPropagation()">
+      <h2 id="range-title">Delete audit entries?</h2>
+      <p id="range-desc">
+        Every entry from <strong>{{ startDate() | date:'d MMM y' }}</strong> to <strong>{{ endDate() | date:'d MMM y' }}</strong>
+        will be removed permanently. Export a CSV first if you need a record.
       </p>
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" (click)="cancelDeleteRange()">Cancel</button>
-        <button type="button" class="btn-danger" (click)="confirmDeleteRange()">Delete Range</button>
+      <div class="cm-dialog-actions">
+        <button type="button" class="cm-btn cm-btn--quiet" (click)="cancelDeleteRange()">Cancel</button>
+        <button type="button" class="cm-btn cm-btn--danger" (click)="confirmDeleteRange()">Delete entries</button>
       </div>
     </div>
   </div>
 }
 
 @if (toastMessage()) {
-  <div class="teal-toast-notification">
-    <span style="font-size: 18px;">
-      @if (toastType() === 'success') {
-        ✅
-      } @else {
-        ⚠️
-      }
-    </span>
-    <span>{{ toastMessage() }}</span>
-  </div>
+  <div class="cm-toast" [class.cm-toast--error]="toastType() === 'error'" role="status">{{ toastMessage() }}</div>
 }

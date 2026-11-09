@@ -1,64 +1,72 @@
-<div class="glass-container">
-
-  <!-- 📱 زر القائمة للهواتف (في أعلى اليسار) -->
-  <button class="mobile-menu-toggle" (click)="toggleSidebar()" aria-label="Toggle Menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+<div class="shell">
 
   @if (isSidebarOpen()) {
-    <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+    <div class="scrim" (click)="toggleSidebar()" aria-hidden="true"></div>
   }
 
-  <!-- القائمة الجانبية -->
-  <aside class="glass-sidebar" [class.open]="isSidebarOpen()">
-    <div class="glass-brand">
-      <img src="favicon.svg" title="ContractMind Logo" alt="ContractMind Logo" width="75" height="75">
-      <h2>Contract<span>Mind</span></h2>
-      <small class="brand-tagline">AI Contract Intelligence</small>
-    </div>
-    
-    <nav class="glass-nav" (click)="closeSidebarOnMobile()">
-      <a routerLink="/contracts-archive" routerLinkActive="active" class="nav-item">Contracts Archive</a>
-      <a routerLink="/ai-legal-assistant" routerLinkActive="active" class="nav-item">AI Legal Assistant</a>
-      <a routerLink="/audit-logs" routerLinkActive="active" class="nav-item">Audit Logs</a>
+  <aside id="app-sidebar" class="sidebar" [class.open]="isSidebarOpen()">
+    <a class="wordmark" routerLink="/contracts-archive" (click)="closeSidebarOnMobile()">
+      <span class="wordmark-row">
+        <img src="favicon.svg" alt="" width="32" height="32">
+        <span class="wordmark-name">ContractMind</span>
+      </span>
+      <span class="wordmark-tag">Contract intelligence</span>
+    </a>
+    <div class="brand-rule" aria-hidden="true"></div>
+
+    <nav class="nav" aria-label="Main" (click)="closeSidebarOnMobile()">
+      <a routerLink="/contracts-archive" routerLinkActive="active" ariaCurrentWhenActive="page">Contracts</a>
+      <a routerLink="/ai-legal-assistant" routerLinkActive="active" ariaCurrentWhenActive="page">AI assistant</a>
+      <a routerLink="/audit-logs" routerLinkActive="active" ariaCurrentWhenActive="page">Audit log</a>
       @if (userRole() === 'Admin') {
-        <a routerLink="/user-management" routerLinkActive="active" class="nav-item">User Management</a>
+        <a routerLink="/user-management" routerLinkActive="active" ariaCurrentWhenActive="page">Users</a>
       }
     </nav>
 
-    <div class="glass-user">
-      <div class="user-avatar-glass">👩‍⚖️</div>
-      <div class="user-meta-glass">
-        <h4>{{ userName() }}</h4>
-        @if (userRole()?.toLowerCase() === 'admin') {
-          <span>Chief Legal Officer</span>
-        } @else if (userRole()?.toLowerCase() === 'manager') {
-          <span>Legal Operations Manager</span>
-        } @else {
-          <span>Legal Specialist</span> 
-        }
+    <div class="account">
+      <span class="monogram" aria-hidden="true">{{ initials() }}</span>
+      <div class="account-meta">
+        <p class="account-name">{{ userName() }}</p>
+        <p class="account-role">
+          @if (userRole()?.toLowerCase() === 'admin') {
+            Chief Legal Officer
+          } @else if (userRole()?.toLowerCase() === 'manager') {
+            Legal Operations Manager
+          } @else {
+            Legal Specialist
+          }
+        </p>
       </div>
     </div>
   </aside>
 
-  <main class="glass-main">
-    <header class="glass-header">
-      <div class="header-controls-glass">
-        <button class="btn-theme-toggle" (click)="toggleTheme()">
-          <span class="icon">{{ themeService.isDarkMode() ? '☀️' : '🌙' }}</span> 
-          {{ themeService.isDarkMode() ? 'Light' : 'Dark' }}
-        </button>
-        <button class="btn-teal-glow" (click)="onUploadClick()">
-          <span>+</span> Upload New Contract
-        </button>  
-      </div>
+  <main class="main">
+    <header class="topbar">
+      <button
+        class="cm-icon-btn menu-btn"
+        type="button"
+        (click)="toggleSidebar()"
+        aria-controls="app-sidebar"
+        [attr.aria-expanded]="isSidebarOpen()"
+        aria-label="Open menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="4" y1="7" x2="20" y2="7"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="17" x2="20" y2="17"></line>
+        </svg>
+      </button>
 
-      <!-- 🚪 زر الخروج (في أقصى اليمين دائماً) -->
-      <div class="header-logout-wrapper">
-        <button class="logout-circle-btn" (click)="logout()" title="Logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div class="topbar-actions">
+        <app-theme-toggle variant="text"></app-theme-toggle>
+        <button class="cm-btn cm-btn--primary" type="button" (click)="onUploadClick()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Upload contract
+        </button>
+        <button class="cm-icon-btn cm-icon-btn--danger" type="button" (click)="logout()" aria-label="Sign out" title="Sign out">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -67,13 +75,15 @@
       </div>
     </header>
 
-    <router-outlet></router-outlet>
+    <div class="page">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>
 
 @if (showUploadModal()) {
-  <app-upload-modal 
-    (close)="onModalCloseAttempt()" 
+  <app-upload-modal
+    (close)="onModalCloseAttempt()"
     (uploadingChange)="onUploadingChange($event)"
     (uploadSuccess)="handleUploadSuccess($event)">
   </app-upload-modal>

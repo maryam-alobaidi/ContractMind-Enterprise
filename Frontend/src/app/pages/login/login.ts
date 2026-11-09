@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { CommonModule } from '@angular/common';
+import { ThemeToggle } from '../../components/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ThemeToggle],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -31,22 +32,6 @@ export class Login implements OnInit {
         email: savedEmail,
         rememberDevice: true
       });
-    }
-     this.initializeTheme();
-  }
-
-
-  initializeTheme() {
-    // 1. البحث عن الثيم المخزن مسبقاً في الـ localStorage (مثلاً مفتاح 'theme' أو 'user-theme')
-    const savedTheme = localStorage.getItem('theme') || 'dark'; // افترضنا الداكن كافتراضي
-
-    // 2. تطبيق الكلاس المناسب على عنصر الـ html
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark-theme');
-      document.documentElement.classList.remove('light-theme');
-    } else {
-      document.documentElement.classList.add('light-theme');
-      document.documentElement.classList.remove('dark-theme');
     }
   }
 
@@ -95,7 +80,9 @@ export class Login implements OnInit {
         this.router.navigate(['/contracts-archive']);
       },
       error: (err) => {
-        const errorMsg = err.error?.message || 'Invalid email or password. Please try again.';
+        const errorMsg = err.status === 401
+          ? 'That email and password don’t match. Check both and try again.'
+          : (err.error?.message || "Couldn't reach the server. Check your connection and try again.");
         this.loginError.set(errorMsg);
         console.error('Login Failed', err);
       }

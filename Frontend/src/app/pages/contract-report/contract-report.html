@@ -1,79 +1,56 @@
-<div class="report-page-container">
-  <div class="report-page-card">
-    
-    <!-- رأس الصفحة -->
-    <div class="modal-header">
-      <div class="flex items-center gap-3">
-        <button class="btn-back" (click)="goBack()">← Back</button>
-        <h3>Contract Analysis Report</h3>
+<article class="report">
+  <button class="back" type="button" (click)="goBack()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Contracts
+  </button>
+
+  @if (isLoading()) {
+    <p class="status">Loading the report…</p>
+  } @else if (errorMessage()) {
+    <div class="status">
+      <p class="status-title">{{ errorMessage() }}</p>
+      <p>Go back to the contracts list and open the report again.</p>
+    </div>
+  } @else if (contract(); as c) {
+    <div class="report-grid" [class.is-high]="riskScore() > 50">
+
+      <div class="cm-sheet report-sheet">
+        <p class="doc-number">Contract No. {{ c.contractId || c.id }}</p>
+        <h1 class="doc-title" dir="auto">{{ c.fileName || 'Untitled contract' }}</h1>
+        <div class="cm-ornament" aria-hidden="true"><span>◆</span></div>
+        <p class="doc-meta">
+          Uploaded {{ c.uploadDate ? (c.uploadDate | date:'d MMMM y, HH:mm') : 'today' }}
+        </p>
+
+        <h2 class="section-title">Summary</h2>
+        <p class="summary" dir="auto">{{ c.summary || 'The AI did not return a summary for this contract.' }}</p>
       </div>
-      @if (contract()) {
-        <span class="teal-id">#{{ contract().contractId || contract().id }}</span>
-      }
+
+      <aside class="margin-note" aria-label="AI risk assessment">
+        <p class="note-label">AI risk score</p>
+        <div class="gauge" role="img" [attr.aria-label]="'AI risk score ' + riskScore() + ' out of 100'" [style.--score]="riskScore()">
+          <div class="gauge-center">
+            <span class="gauge-num">{{ riskScore() }}</span>
+            <span class="gauge-of">of 100</span>
+          </div>
+        </div>
+        <p class="note-verdict">{{ riskScore() > 50 ? 'High risk' : 'Low risk' }}</p>
+        <p class="note-text">
+          @if (riskScore() > 50) {
+            The AI rated this contract high risk. Read the summary before signing, and ask the assistant about specific clauses.
+          } @else {
+            The AI rated this contract low risk. Read the summary before signing.
+          }
+        </p>
+      </aside>
     </div>
 
-    @if (isLoading()) {
-      <div class="text-center py-12 text-gray-400">Loading contract report...</div>
-    } @else if (errorMessage()) {
-      <div class="text-center py-12 text-red-400">{{ errorMessage() }}</div>
-    } @else {
-      <!-- محتوى التقرير (قابل للطباعة) -->
-      <div class="printable-area space-y-4 mb-6">
-        
-        <!-- معلومات العقد -->
-        <div class="report-meta-box">
-          <div class="meta-item">
-            <span class="text-gray-400 text-sm">Document Name:</span>
-            <strong class="text-white text-sm font-medium">{{ contract().fileName || contract().FileName || 'Legal Contract Document' }}</strong>
-          </div>
-          <div class="meta-item">
-            <span class="text-gray-400 text-sm">Upload Date:</span>
-            <span class="text-gray-300 text-sm">{{ (contract().createdAt || contract().CreatedAt) ? ((contract().createdAt || contract().CreatedAt) | date:'yyyy-MM-dd HH:mm') : 'Just now' }}</span>
-          </div>
-        </div>
-
-        <!-- مؤشر المخاطر -->
-        <div class="risk-score-box">
-          <span class="text-gray-300 text-sm font-semibold">AI Risk Assessment:</span>
-          <span class="badge-teal" 
-                [class.low]="(contract().riskScore ?? contract().RiskScore) <= 50" 
-                [class.high]="(contract().riskScore ?? contract().RiskScore) > 50">
-            {{ (contract().riskScore ?? contract().RiskScore) <= 50 ? 'Low Risk' : 'High Risk' }} ({{ contract().riskScore ?? contract().RiskScore }}%)
-          </span>
-        </div>
-
-        <!-- ملخص الذكاء الاصطناعي التنفيذي -->
-        <div class="ai-summary-box">
-          <h4 class="text-teal-400 font-semibold text-sm mb-2">🤖 AI Executive Summary</h4>
-          <p class="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
-            {{ contract().summary || contract().Summary || 'No summary available for this contract.' }}
-          </p>
-        </div>
-
-      </div>
-
-   
-<div class="report-actions pt-4 border-t border-gray-800 flex justify-between items-center flex-wrap gap-3">
-  
-  <!-- مجموعة أزرار التحميل والطباعة في جهة -->
-<div class="flex items-center justify-center gap-2.5 flex-wrap w-full">
-  <button class="btn" (click)="printReport()">
-    🖨️ Print Report
-  </button>
-  
-  <button class="btn" (click)="exportReport()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-      <polyline points="7 10 12 15 17 10"></polyline>
-      <line x1="12" y1="15" x2="12" y2="3"></line>
-    </svg>
-    <span> Download PDF</span>
-  </button>
-</div>
-
-
-</div>
-    }
-
-  </div>
-</div>
+    <div class="report-actions">
+      <button class="cm-btn cm-btn--primary" type="button" (click)="askAi()">Ask AI about this contract</button>
+      <button class="cm-btn cm-btn--quiet" type="button" (click)="exportReport()">Download PDF</button>
+      <button class="cm-btn cm-btn--quiet" type="button" (click)="printReport()">Print</button>
+    </div>
+  }
+</article>

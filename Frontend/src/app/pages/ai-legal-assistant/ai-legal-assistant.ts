@@ -136,7 +136,7 @@ export class AiLegalAssistant implements OnInit, AfterViewChecked {
       const errorMsg = {
         messageId: Date.now() + 1,
         sender: 'Assistant',
-        messageText: err.error?.message || 'Sorry, I encountered an error while processing your request. Please try again.',
+        messageText: err.error?.message || "The assistant couldn't answer. Check your connection and ask again.",
         timestamp: new Date()
       };
 
@@ -207,6 +207,22 @@ export class AiLegalAssistant implements OnInit, AfterViewChecked {
   });
  }
 
+
+  presetQuestions = [
+    'What are my main obligations?',
+    'How can this contract be terminated?',
+    'Are there penalties, fees or late charges?',
+  ];
+
+  // Enter sends; Shift+Enter keeps a new line
+  onEnter(event: Event) {
+    const keyEvent = event as KeyboardEvent;
+    if (keyEvent.shiftKey) return;
+    keyEvent.preventDefault();
+    if (!this.isTyping()) {
+      this.sendMessage();
+    }
+  }
 
   sendPresetQuery(question: string) {
     this.userQuery.set(question);

@@ -95,6 +95,44 @@ ngOnInit() {
      });
    });
 
+   summaryLine = computed(() => {
+     const all = this.contracts();
+     if (this.isLoading()) return 'Every contract your team has uploaded, newest first.';
+     if (all.length === 0) return 'Nothing uploaded yet.';
+     const high = all.filter(c => c.riskScore > 50).length;
+     const total = `${all.length} ${all.length === 1 ? 'contract' : 'contracts'} on file.`;
+     if (high === 0) return `${total} None are marked high risk.`;
+     return `${total} ${high} ${high === 1 ? 'is' : 'are'} marked high risk.`;
+   });
+
+   highRiskCount = computed(() => this.contracts().filter(c => c.riskScore > 50).length);
+
+   averageRisk = computed(() => {
+     const all = this.contracts();
+     if (all.length === 0) return 0;
+     return Math.round(all.reduce((sum, c) => sum + (Number(c.riskScore) || 0), 0) / all.length);
+   });
+
+   uploadedThisMonth = computed(() => {
+     const now = new Date();
+     return this.contracts().filter(c => {
+       if (!c.uploadDate) return false;
+       const d = new Date(c.uploadDate);
+       return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+     }).length;
+   });
+
+   hasFilters = computed(() =>
+     !!(this.searchTerm() || this.selectedRisk() || this.startDate() || this.endDate())
+   );
+
+   clearFilters() {
+     this.searchTerm.set('');
+     this.selectedRisk.set('');
+     this.startDate.set('');
+     this.endDate.set('');
+   }
+
    // Signals للـ Toast
    showToast = signal<boolean>(false);
    toastMessage = signal<string>('Contract deleted successfully');
@@ -135,13 +173,14 @@ ngOnInit() {
          this.contracts.update(prev => prev.filter(c => (c.contractId || c.id) !== id));
 
      
-         this.triggerToast('Contract deleted successfully');
+         this.triggerToast('Contract deleted.');
 
-         
+
        },
        error: (err) => {
          console.error('Error deleting contract:', err);
-         this.triggerToast('Failed to delete contract, please try again');
+         this.cancelDelete();
+         this.triggerToast("Couldn't delete the contract. Try again.");
        }
      });
    }

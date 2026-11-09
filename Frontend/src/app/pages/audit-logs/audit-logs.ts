@@ -94,26 +94,72 @@ export class AuditLogs implements OnInit {
     this.filteredLogs.set(filtered);
   }
 
+  clearFilters() {
+    this.searchTerm.set('');
+    this.selectedAction.set('ALL');
+    this.startDate.set('');
+    this.endDate.set('');
+    this.filterLogs();
+  }
+
+  // Log entries are stored as "UPLOAD / file name", "DELETE / file name", "AI_CHAT / file name"
+  actionKind(log: any): 'upload' | 'delete' | 'chat' | 'other' {
+    const action: string = log?.action || '';
+    if (action.startsWith('UPLOAD')) return 'upload';
+    if (action.startsWith('DELETE')) return 'delete';
+    if (action.startsWith('AI_CHAT')) return 'chat';
+    return 'other';
+  }
+
+  actionLabel(log: any): string {
+    switch (this.actionKind(log)) {
+      case 'upload': return 'Uploaded';
+      case 'delete': return 'Deleted';
+      case 'chat': return 'Asked AI';
+      default: return (log?.action || '').split(' / ')[0] || 'Other';
+    }
+  }
+
+  actionDocument(log: any): string {
+    const parts = (log?.action || '').split(' / ');
+    return parts.length > 1 ? parts.slice(1).join(' / ') : '–';
+  }
+
+  private escapeHtml(value: unknown): string {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private csvCell(value: unknown): string {
+    return `"${String(value ?? '').replace(/"/g, '""')}"`;
+  }
+
   // 3. Export filtered logs to CSV
   exportLogs() {
     const logs = this.filteredLogs();
     if (logs.length === 0) {
-      this.triggerToast('No logs available to export for the selected range.', 'error');
+      this.triggerToast('No entries to export. Change the filters and try again.', 'error');
       return;
     }
 
-    const headers = ['LogID', 'UserID', 'Action', 'Date'];
+    const headers = ['Entry', 'When', 'Action', 'Document', 'User'];
     const csvRows = [
       headers.join(','),
       ...logs.map(log => [
-        log.logId || log.id,
-        log.userId || '1',
-        `"${log.action}"`,
-        `"${log.timestamp || log.createdAt}"`
+        this.csvCell(log.logId || log.id),
+        this.csvCell(log.timestamp || log.createdAt),
+        this.csvCell(this.actionLabel(log)),
+        this.csvCell(this.actionDocument(log)),
+        this.csvCell(log.userId ?? '')
       ].join(','))
     ];
 
-    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    // BOM so Excel opens Arabic and accented file names correctly
+    const blob = new Blob(['﻿' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
@@ -128,67 +174,55 @@ export class AuditLogs implements OnInit {
     const logsToPrint = this.filteredLogs();
     
     if (logsToPrint.length === 0) {
-      this.triggerToast('No logs available to print based on the current filter.', 'error');
+      this.triggerToast('No entries to print. Change the filters and try again.', 'error');
       return;
     }
-  
-    const printDate = new Date().toLocaleString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
 
-    const start = this.startDate() || 'All';
-    const end = this.endDate() || 'All';
+    const printDate = new Date().toLocaleString();
+    const start = this.escapeHtml(this.startDate() || 'the first entry');
+    const end = this.escapeHtml(this.endDate() || 'today');
 
     let printContent = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="utf-8">
-        <title>Audit Logs Report</title>
+        <title>ContractMind audit log</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; color: #111; background: #fff; }
-          .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 15px; }
-          .header h1 { margin: 0 0 5px 0; font-size: 22px; color: #1f2937; }
-          .meta-info { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 20px; background: #f9fafb; padding: 10px 15px; border-radius: 6px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-          th, td { border: 1px solid #d1d5db; padding: 10px 12px; text-align: left; font-size: 12px; }
-          th { background-color: #f3f4f6; color: #111; font-weight: bold; }
-          tr:nth-child(even) { background-color: #f9fafb; }
+          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 32px; color: #19213A; background: #fff; }
+          h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 24px; margin: 0 0 4px; }
+          .meta { font-size: 12px; color: #545E78; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #D6DBE4; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border-bottom: 1px solid #D6DBE4; padding: 8px 10px; text-align: left; font-size: 12px; }
+          th { color: #545E78; font-weight: 600; border-bottom-color: #B9C1CF; }
+          .deleted { color: #B8142C; }
         </style>
       </head>
       <body>
-        <div class="header">
-          <h1>ContractMind System - Audit Logs Report</h1>
-          <p style="margin: 0; font-size: 12px; color: #6b7280;">Official System Activity and Operations Record</p>
-        </div>
-        <div class="meta-info">
-          <div><strong>Printed At:</strong> ${printDate}</div>
-          <div><strong>Date Range:</strong> ${start} to ${end}</div>
-          <div><strong>Total Records:</strong> ${logsToPrint.length}</div>
-        </div>
+        <h1>Audit log</h1>
+        <div class="meta">${logsToPrint.length} entries from ${start} to ${end}. Printed ${printDate}.</div>
         <table>
           <thead>
             <tr>
-              <th>Log ID</th>
-              <th>User ID</th>
+              <th>No.</th>
+              <th>When</th>
               <th>Action</th>
-              <th>Timestamp</th>
+              <th>Document</th>
+              <th>User</th>
             </tr>
           </thead>
           <tbody>
     `;
 
     logsToPrint.forEach(log => {
+      const when = log.timestamp || log.createdAt;
       printContent += `
         <tr>
-          <td>${log.logId || log.id || '-'}</td>
-          <td>${log.userId || '1'}</td>
-          <td>${log.action || '-'}</td>
-          <td>${log.timestamp || log.createdAt || '-'}</td>
+          <td>${this.escapeHtml(log.logId || log.id || '–')}</td>
+          <td>${this.escapeHtml(when ? new Date(when).toLocaleString() : '–')}</td>
+          <td class="${this.actionKind(log) === 'delete' ? 'deleted' : ''}">${this.escapeHtml(this.actionLabel(log))}</td>
+          <td dir="auto">${this.escapeHtml(this.actionDocument(log))}</td>
+          <td>${this.escapeHtml(log.userId ?? '–')}</td>
         </tr>
       `;
     });
@@ -217,7 +251,7 @@ export class AuditLogs implements OnInit {
     const end = this.endDate();
 
     if (!start || !end) {
-      this.triggerToast('Please select both Start Date and End Date to clear records.', 'error');
+      this.triggerToast('Choose a From and a To date first. Only entries in that range are deleted.', 'error');
       return;
     }
 
@@ -241,13 +275,13 @@ export class AuditLogs implements OnInit {
     this.auditService.deleteAuditLogsByRange(deleteParams).subscribe({
       next: () => {
         this.cancelDeleteRange();
-        this.triggerToast('Audit logs cleared successfully for the selected range.');
+        this.triggerToast('Entries deleted.');
         this.loadLogs();
       },
       error: (err) => {
         console.error('Error deleting logs:', err);
         this.cancelDeleteRange();
-        this.triggerToast('Failed to delete audit logs, please try again.', 'error');
+        this.triggerToast("Couldn't delete the entries. Try again.", 'error');
       }
     });
   }

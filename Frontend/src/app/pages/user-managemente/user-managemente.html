@@ -1,187 +1,166 @@
-<div class="user-management-container">
-  
-  <!-- المخطط البياني في الأعلى مع مؤشرات الأدوار -->
-  <div class="analytics-card">
-    <div class="chart-section">
-      <div class="chart-wrapper">
-        <canvas #roleChartCanvas></canvas>
-        <div class="chart-center-text">
-          <span class="total-num">{{ totalUsers() }}</span>
-          <span class="total-label">Total Users</span>
-        </div>
+<section class="cm-page">
+  <header class="cm-page-head">
+    <div>
+      <h1>Users</h1>
+      <div class="cm-ornament" aria-hidden="true"><span>◆</span></div>
+      <p class="cm-lede">{{ summaryLine() }}</p>
+    </div>
+    <button class="cm-btn cm-btn--primary" type="button" (click)="openAddModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Add user
+    </button>
+  </header>
+
+  <!-- What each role can do, with how many people hold it -->
+  <dl class="cm-sheet roles">
+    @for (r of roleKey; track r.role) {
+      <div class="role-row">
+        <dt><span class="cm-tag" [class.cm-tag--solid]="r.role === 'Admin'">{{ r.role }}</span></dt>
+        <dd class="role-desc">{{ r.description }}</dd>
+        <dd class="role-count">{{ countFor(r.role) }} {{ countFor(r.role) === 1 ? 'person' : 'people' }}</dd>
       </div>
-    </div>
+    }
+  </dl>
 
-    <div class="roles-breakdown">
-      <h3 class="section-title">Roles & Access Distribution</h3>
-      <div class="stats-grid">
-        <div class="stat-box admin-box">
-          <div class="stat-header">
-            <span class="badge red">Admin</span>
-            <span class="stat-count">{{ adminCount() }}</span>
-          </div>
-          <p class="stat-desc">Full system access & user management</p>
-        </div>
-
-        <div class="stat-box manager-box">
-          <div class="stat-header">
-            <span class="badge blue">Manager</span>
-            <span class="stat-count">{{ managerCount() }}</span>
-          </div>
-          <p class="stat-desc">Contract management & read-only audit logs</p>
-        </div>
-
-        <div class="stat-box user-box">
-          <div class="stat-header">
-            <span class="badge green">User</span>
-            <span class="stat-count">{{ userCount() }}</span>
-          </div>
-          <p class="stat-desc">Contract viewing & AI Chat interaction</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- شريط البحث والتحكم -->
-  <div class="controls-bar">
-    <div class="search-filter-group">
-      <input 
-        type="text" 
-        class="teal-input search-input" 
-        placeholder="Search by name or email..." 
-        [ngModel]="searchTerm()" 
-        (ngModelChange)="searchTerm.set($event)" />
-
-    <select 
-  class="teal-input select-input" 
-  [ngModel]="selectedRoleFilter()" 
-  (ngModelChange)="selectedRoleFilter.set($event)">
-  <option value="ALL">⚪ All Roles</option>
-  <option value="Admin">🔴 Admin</option>
-  <option value="Manager">🔵 Manager</option>
-  <option value="User">🟢 User</option>
-</select>
-       <button class="refresh-icon-btn" (click)="loadUsers()" [disabled]="isLoading()" title="Refresh Users">
-           <span class="refresh-emoji" [class.is-spinning]="isLoading()">🔄</span>
-       </button>
-    </div>
-
-    <button class="btn-primary" (click)="openAddModal()">
-      <i class="fas fa-user-plus"></i> Add New User
+  <div class="filters" role="search">
+    <label class="cm-field search">
+      <span class="cm-field-label">Search</span>
+      <input type="search" class="cm-input" placeholder="Name or email" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+    </label>
+    <label class="cm-field">
+      <span class="cm-field-label">Role</span>
+      <select class="cm-input" [ngModel]="selectedRoleFilter()" (ngModelChange)="selectedRoleFilter.set($event)">
+        <option value="ALL">All roles</option>
+        <option value="Admin">Admin</option>
+        <option value="Manager">Manager</option>
+        <option value="User">User</option>
+      </select>
+    </label>
+    <button class="cm-btn cm-btn--quiet refresh" type="button" (click)="loadUsers()" [disabled]="isLoading()">
+      {{ isLoading() ? 'Refreshing…' : 'Refresh' }}
     </button>
   </div>
 
-  <!-- جدول البيانات الزجاجي الحديث -->
-  <div class="table-card glass-panel">
-    <div class="table-responsive">
-      <table class="data-table">
+  <div class="cm-sheet ledger-sheet">
+    @if (isLoading() && users().length === 0) {
+      <p class="cm-empty">Loading users…</p>
+    } @else if (filteredUsers().length === 0) {
+      <div class="cm-empty">
+        @if (users().length === 0) {
+          <p class="cm-empty-title">No users yet</p>
+          <p>Use <strong>Add user</strong> to give someone access.</p>
+        } @else {
+          <p class="cm-empty-title">No users match these filters</p>
+          <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="clearFilters()">Clear filters</button>
+        }
+      </div>
+    } @else {
+      <table class="cm-ledger people">
         <thead>
           <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Joined Date</th>
-            <th class="text-end">Actions</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Role</th>
+            <th scope="col">Joined</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
-          <!-- استخدام المعيار الحديث @for مع track -->
           @for (u of filteredUsers(); track u.userId || $index) {
             <tr>
-              <td>
-                <div class="user-info">
-                  <div class="avatar-circle">{{ u.fullName.charAt(0).toUpperCase() }}</div>
-                  <span class="user-name">{{ u.fullName }}</span>
-                </div>
-              </td>
-              <td>{{ u.email }}</td>
-              <td>
-                <span class="role-badge" [ngClass]="{
-                  'badge-admin': u.role === 'Admin',
-                  'badge-manager': u.role === 'Manager',
-                  'badge-user': u.role === 'User'
-                }">
-                  {{ u.role }}
+              <td class="col-name">
+                <span class="person">
+                  <span class="monogram" aria-hidden="true">{{ initialsOf(u.fullName) }}</span>
+                  <span class="person-name" dir="auto">{{ u.fullName }}</span>
                 </span>
               </td>
-              <td>{{ u.createdAt | date:'shortDate' }}</td>
-              <td class="text-end">
-                <button class="icon-action-btn edit-btn" (click)="openEditModal(u)" title="Edit">✏️</button>
-                <button class="icon-action-btn delete-btn" (click)="openDeleteModal(u)" title="Delete">🗑️</button>
-              </td>
-            </tr>
-          } @empty {
-            <!-- استخدام المعيار الحديث @empty للنتائج الفارغة -->
-            <tr>
-              <td colspan="5" class="empty-state">
-                No users found matching your criteria.
+              <td class="col-email">{{ u.email }}</td>
+              <td class="col-role"><span class="cm-tag" [class.cm-tag--solid]="u.role === 'Admin'">{{ u.role }}</span></td>
+              <td class="col-joined">{{ u.createdAt ? (u.createdAt | date:'d MMM y') : '–' }}</td>
+              <td class="col-actions">
+                <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="openEditModal(u)">Edit</button>
+                <button
+                  class="cm-icon-btn cm-icon-btn--danger"
+                  type="button"
+                  (click)="openDeleteModal(u)"
+                  [attr.aria-label]="'Remove ' + u.fullName"
+                  title="Remove user">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
               </td>
             </tr>
           }
         </tbody>
       </table>
+    }
+  </div>
+</section>
+
+@if (isFormModalOpen()) {
+  <div class="cm-backdrop" (click)="closeFormModal()">
+    <div class="cm-dialog" role="dialog" aria-modal="true" aria-labelledby="user-form-title" (click)="$event.stopPropagation()">
+      <h2 id="user-form-title">{{ isEditMode() ? 'Edit user' : 'Add user' }}</h2>
+
+      <form class="user-form" (ngSubmit)="saveUser()">
+        @if (formError()) {
+          <p class="cm-alert cm-alert--error" role="alert">{{ formError() }}</p>
+        }
+
+        <label class="cm-field">
+          <span class="cm-field-label">Full name</span>
+          <input type="text" class="cm-input" [(ngModel)]="currentUserForm().fullName" name="fullName" autocomplete="name" required />
+        </label>
+
+        <label class="cm-field">
+          <span class="cm-field-label">Work email</span>
+          <input type="email" class="cm-input" [(ngModel)]="currentUserForm().email" name="email" autocomplete="email" required />
+        </label>
+
+        <label class="cm-field">
+          <span class="cm-field-label">{{ isEditMode() ? 'New password' : 'Password' }}</span>
+          <input type="password" class="cm-input" [(ngModel)]="currentUserForm().passwordHash" name="password" autocomplete="new-password" [required]="!isEditMode()" />
+          <span class="hint">{{ isEditMode() ? 'Leave blank to keep the current password.' : 'At least 8 characters.' }}</span>
+        </label>
+
+        <label class="cm-field">
+          <span class="cm-field-label">Role</span>
+          <select class="cm-input" [(ngModel)]="currentUserForm().role" name="role">
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+          </select>
+        </label>
+
+        <div class="cm-dialog-actions">
+          <button type="button" class="cm-btn cm-btn--quiet" (click)="closeFormModal()">Cancel</button>
+          <button type="submit" class="cm-btn cm-btn--primary">{{ isEditMode() ? 'Save changes' : 'Add user' }}</button>
+        </div>
+      </form>
     </div>
   </div>
+}
 
- <!-- Modal إضافة / تعديل مستخدم باستخدام المعيار الحديث @if -->
-  @if (isFormModalOpen()) {
-    <div class="modal-backdrop">
-      <div class="modal-card glass-panel">
-        <h2>{{ isEditMode() ? 'Edit User' : 'Add New User' }}</h2>
-        
-        <!-- 🔴 إظهار رسالة الخطأ إن وجدت -->
-        @if (formError()) {
-          <div class="error-alert" style="background-color: #fee2e2; color: #ef4444; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; text-align: center; border: 1px solid #f87171;">
-            {{ formError() }}
-          </div>
-        }
-        
-        <form (ngSubmit)="saveUser()">
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" class="teal-input" [(ngModel)]="currentUserForm().fullName" name="fullName" required />
-          </div>
-
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" class="teal-input" [(ngModel)]="currentUserForm().email" name="email" required />
-          </div>
-
-          <div class="form-group">
-            <label>Password {{ isEditMode() ? '(Leave blank to keep unchanged)' : '' }}</label>
-            <input type="password" class="teal-input" [(ngModel)]="currentUserForm().passwordHash" name="password" [required]="!isEditMode()" />
-          </div>
-
-          <div class="form-group">
-            <label>Role</label>
-            <select class="teal-input teal-select" [(ngModel)]="currentUserForm().role" name="role">
-              <option value="Admin">🔴 Admin</option>
-              <option value="Manager">🔵 Manager</option>
-              <option value="User">🟢 User</option>
-            </select>
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" class="btn-secondary" (click)="closeFormModal()">Cancel</button>
-            <button type="submit" class="btn-primary">Save Changes</button>
-          </div>
-        </form>
+@if (isDeleteModalOpen()) {
+  <div class="cm-backdrop" (click)="closeDeleteModal()">
+    <div class="cm-dialog cm-dialog--danger" role="alertdialog" aria-modal="true" aria-labelledby="remove-title" aria-describedby="remove-desc" (click)="$event.stopPropagation()">
+      <h2 id="remove-title">Remove {{ userToDelete()?.fullName }}?</h2>
+      <p id="remove-desc">
+        They lose access straight away. <strong>Every contract they uploaded is deleted with their account,</strong>
+        including its AI chat history. This can't be undone.
+      </p>
+      @if (deleteError()) {
+        <p class="cm-alert cm-alert--error delete-error" role="alert">{{ deleteError() }}</p>
+      }
+      <div class="cm-dialog-actions">
+        <button type="button" class="cm-btn cm-btn--quiet" (click)="closeDeleteModal()">Cancel</button>
+        <button type="button" class="cm-btn cm-btn--danger" (click)="confirmDelete()">Remove user</button>
       </div>
     </div>
-  }
-
-  <!-- Modal تأكيد الحذف -->
-  @if (isDeleteModalOpen()) {
-    <div class="modal-backdrop">
-      <div class="modal-card glass-panel text-center">
-        <h3>Delete User</h3>
-        <p>Are you sure you want to delete <strong>{{ userToDelete()?.fullName }}</strong>?</p>
-        <div class="modal-actions center">
-          <button class="btn-secondary" (click)="closeDeleteModal()">Cancel</button>
-          <button class="btn-danger" (click)="confirmDelete()">Delete</button>
-        </div>
-      </div>
-    </div>
-  }
-
-</div>
+  </div>
+}

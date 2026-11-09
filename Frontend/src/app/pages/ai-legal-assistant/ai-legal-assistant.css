@@ -1,278 +1,233 @@
-/* --- الحاوية الرئيسية للشاشة المقسومة (ارتفاع أقل بقليل لمنع التمرير) --- */
-.contract-assistant-layout {
+/* Two panes, like a document with its review comments in the margin */
+
+.workspace {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-  height: calc(100vh - 140px); /* تقليل الارتفاع أكثر لضمان ملاءمة الشاشة تماماً */
-  max-height: calc(100vh - 140px);
-  background-color: var(--bg-main);
-  gap: 16px;
-  box-sizing: border-box;
-  overflow: hidden;
-
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-    height: auto;
-    max-height: none;
-    overflow: auto;
-  }
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+  gap: 1.5rem;
+  /* viewport minus the top bar and the page padding */
+  height: calc(100dvh - 4.25rem - 5rem);
+  min-height: 480px;
 }
 
-/* --- عارض العقد --- */
-.contract-viewer-pane {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+.doc-pane,
+.thread-pane {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-
-  .pane-header {
-    padding: 12px 16px; /* تقليل الحشوة العلوية والسفلية */
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0;
-  }
-
-  .contract-content {
-    flex: 1;
-    padding: 16px;
-    overflow-y: auto;
-    min-height: 0; /* منع تجاوز الحدود */
-    
-    .document-paper {
-      background-color: var(--bg-main);
-      border: 1px solid var(--border-color);
-      padding: 20px;
-      border-radius: 8px;
-      color: var(--text-primary);
-      white-space: pre-wrap;
-      line-height: 1.6;
-    }
-  }
+  min-height: 0;
 }
 
-/* --- نافذة المحادثة (AI Legal Assistant) --- */
-.chat-pane {
+.pane-head {
   display: flex;
-  flex-direction: column;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  height: 100%;
-  overflow: hidden;
-
-  .chat-header {
-    padding: 12px 16px; /* تقليل الحشوة */
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0;
-  }
-
-  /* مساحة الرسائل تتمدد وتاخذ المساحة المتاحة فقط */
-  .messages-area {
-    flex: 1;
-    padding: 16px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 0; /* ضروري جداً لكي لا يتمدد الجريد فوق الحد */
-
-    .message-wrapper {
-      display: flex;
-      width: 100%;
-
-      &.user {
-        justify-content: flex-end;
-        .message-bubble {
-          background-color: var(--accent-color);
-          color: #ffffff;
-        }
-      }
-
-      &.assistant {
-        justify-content: flex-start;
-        .message-bubble {
-          background-color: var(--bg-main);
-          color: var(--text-primary);
-          border: 1px solid var(--border-color);
-        }
-      }
-    }
-
-    .message-bubble {
-      max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      p { margin: 0 0 4px 0; }
-    }
-  }
-
-  /* شريط الأسئلة المقترحة */
-  .suggestions-bar {
-    flex-shrink: 0;
-    display: flex;
-    gap: 8px;
-    padding: 8px 16px;
-    overflow-x: auto;
-    background-color: var(--bg-card);
-    border-top: 1px solid var(--border-color);
-
-    .suggestion-chip {
-      background-color: var(--bg-main);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 5px 10px;
-      border-radius: 14px;
-      font-size: 0.8rem;
-      white-space: nowrap;
-      cursor: pointer;
-
-      &:hover {
-        background-color: var(--accent-color);
-        color: #ffffff;
-      }
-    }
-  }
-
-  /* صندوق إدخال الرسائل (مثبت في أسفل الكارت تماماً ومرئي دائماً) */
-  .chat-input-area {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background-color: var(--bg-card);
-    border-top: 1px solid var(--border-color);
-
-    textarea {
-      flex: 1;
-      background-color: var(--bg-main);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px 12px;
-      resize: none;
-      outline: none;
-      font-size: 0.95rem;
-      max-height: 70px;
-
-      &:focus {
-        border-color: var(--accent-color);
-      }
-    }
-
-    .send-btn {
-      background-color: var(--accent-color);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 18px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-
-      &:hover:not(:disabled) {
-        opacity: 0.9;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-  }
-}
-
-
-.contract-viewer-pane {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 1.25rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-
-  .pane-header {
-    margin-bottom: 1rem;
-    
-    h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
-    }
-  }
-
-  .contract-content {
-    flex: 1;
-    overflow-y: auto;
-    background-color: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-
-    .document-paper {
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      white-space: pre-wrap; /* للحفاظ على تنسيق الأسطر والفقرات في نص العقد */
-    }
-  }
-
-.btn-change-doc {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  width: 100%;
-  padding: 0.7rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0.2px;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.5rem;
+  margin-bottom: 0.75rem;
+}
 
-  /* النمط الهادئ والبسيط */
-  color: var(--text-primary);
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+.doc-title {
+  min-width: 0;
+  font-family: var(--font-doc);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thread-title {
+  font-family: var(--font-doc);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Document ---------- */
+
+.doc-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--shadow-sheet);
+}
+
+.doc-sheet {
+  max-width: 70ch;
+  margin: 0 auto;
+  padding: 2.25rem 2.5rem 3rem;
+  font-size: 0.975rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+
+/* ---------- Thread ---------- */
+
+.thread-pane {
+  border-inline-start: 1px solid var(--rule);
+  padding-inline-start: 1.5rem;
+}
+
+.thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.25rem 0.25rem 1rem 0;
+}
+
+.thread-empty {
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+
+.presets {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.preset {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--sheet);
+  color: var(--ink);
+  text-align: start;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
 
-  /* تنسيق وتفاعل أيقونة الـ SVG */
-  .doc-icon {
-    color: var(--text-secondary); /* لون هادئ في الوضع العادي */
-    transition: color 0.2s ease, transform 0.25s ease;
+.preset:hover:not(:disabled) {
+  border-color: var(--signature);
+  color: var(--signature);
+}
+
+.preset:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Each message is a comment: author line, then the text */
+.entry {
+  padding-inline-start: 0.9rem;
+  border-inline-start: 2px solid var(--rule-strong);
+}
+
+.entry--you {
+  border-inline-start-color: var(--gold);
+}
+
+.entry:not(.entry--you) .entry-author {
+  color: var(--gold-ink);
+}
+
+.entry-author {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.entry-author time {
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+
+.entry-text {
+  margin-top: 0.25rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The assistant answers in the document face; your questions stay in the interface face */
+/* Assistant answers sit on a raised card; your questions stay plain */
+.entry:not(.entry--you) {
+  padding: 0.85rem 1rem;
+  border-inline-start: none;
+  border-radius: 12px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+}
+
+.entry:not(.entry--you) .entry-text {
+  line-height: 1.7;
+}
+
+.entry--you .entry-text {
+  color: var(--ink);
+}
+
+.entry--pending .entry-text {
+  color: var(--ink-soft);
+  font-style: italic;
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ---------- Composer ---------- */
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.composer textarea {
+  flex: 1;
+  min-height: 2.75rem;
+  max-height: 9rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 960px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    min-height: 0;
   }
 
-  /* تأثير التحويم (Hover Effect) */
-  &:hover {
-    background-color: var(--bg-main);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-
-    .doc-icon {
-      color: var(--accent-color); /* يتحول لون الأيقونة مباشرة لنفس لون النص/Accent */
-      transform: rotate(180deg) scale(1.1); /* تدوير ناعم للأيقونة لإعطاء إيحاء بالتبديل */
-    }
+  .doc-scroll {
+    max-height: 45vh;
   }
 
-  /* تأثير الضغط (Active) */
-  &:active {
-    transform: scale(0.98);
-  }
-}}
-
-
-.ai-icon {
-    color: var(--accent-color);
-    transition: color 0.2s ease, transform 0.2s ease;
+  .doc-sheet {
+    padding: 1.5rem 1.25rem 2rem;
   }
 
- 
+  .thread-pane {
+    border-inline-start: none;
+    padding-inline-start: 0;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+  }
 
-  
+  .thread {
+    max-height: 60vh;
+  }
+
+  .doc-title {
+    font-size: var(--step-1);
+  }
+}

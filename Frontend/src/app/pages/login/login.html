@@ -1,68 +1,73 @@
-<div class="login-wrapper">
-  <div class="login-card">
-    <div class="login-header">
-      <div class="brand-logo-container">
-        <img src="favicon.svg" alt="ContractMind Logo" width="40" height="40">
-        <div class="brand-text">
-          <h2>Contract<span>Mind</span></h2>
-          <span class="brand-subtitle">AI Legal Enterprise</span>
-        </div>
-      </div>
-      <p>Secure Enterprise Legal Access</p>
+<main class="cm-auth">
+  <app-theme-toggle variant="icon" class="cm-auth-theme"></app-theme-toggle>
+
+  <aside class="cm-auth-panel">
+    <div class="cm-auth-brand">
+      <img src="favicon.svg" alt="" width="34" height="34">
+      <span>ContractMind</span>
     </div>
-    
-    
-    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
-      
-      <div class="input-group">
-        <label>Email Address</label>
-        <input type="email" formControlName="email" placeholder="attorney@gmail.com" 
-               [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)">
-        
-        @if (email?.invalid && (email?.dirty || email?.touched)) {
-          <div class="invalid-feedback">
-            @if (email?.errors?.['required']) {
-              <div>Email is required.</div>
-            }
-            @if (email?.errors?.['email']) {
-              <div>Please enter a valid email address.</div>
-            }
-          </div>
-        }
-      </div>
-      
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" formControlName="password" placeholder="••••••••••"
-               [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)">
-        
-        @if (password?.invalid && (password?.dirty || password?.touched)) {
-          <div class="invalid-feedback">
-            @if (password?.errors?.['required']) {
-              <div>Password is required.</div>
-            }
-            @if (password?.errors?.['minlength']) {
-              <div>Password must be at least 8 characters.</div>
-            }
-          </div>
-        }
-      </div>
+    <div class="cm-auth-pitch">
+      <p class="cm-auth-quote">Every clause read. Every risk weighed.</p>
+      <p class="cm-auth-sub">AI contract review for legal teams, in English, Spanish and Arabic.</p>
+    </div>
+    <p class="cm-auth-small">Personal details are masked before any text reaches the AI.</p>
+  </aside>
 
-      <div class="login-actions">
-        <label class="remember-me">
-          <input type="checkbox" formControlName="rememberDevice"> Remember this device
+  <div class="cm-auth-main">
+  <div class="cm-auth-inner">
+    <div class="cm-sheet cm-auth-sheet">
+      <h1 class="cm-auth-title">Sign in</h1>
+      <p class="cm-auth-lede">Use your work email and password.</p>
+
+      <form class="cm-auth-form" [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+        @if (loginError()) {
+          <p class="cm-alert cm-alert--error" role="alert">{{ loginError() }}</p>
+        }
+
+        <label class="cm-field">
+          <span class="cm-field-label">Email</span>
+          <input
+            type="email"
+            class="cm-input"
+            formControlName="email"
+            autocomplete="username"
+            placeholder="name@company.com"
+            [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)">
+          @if (email?.invalid && (email?.dirty || email?.touched)) {
+            <span class="cm-field-error">
+              @if (email?.errors?.['required']) { Enter your email. }
+              @else if (email?.errors?.['email']) { Enter a valid email, like name@company.com. }
+            </span>
+          }
         </label>
-        <a href="/forgot-password" class="forgot-pass">Forgot password?</a>
-      </div>
 
-      <button type="submit" class="btn-login" [disabled]="loginForm.invalid">
-        Sign In to Workspace
-      </button>
-    </form>
-      @if (loginError()) {
-      <div class="alert error-alert">
-        {{ loginError() }}
-      </div>
-    }
+        <label class="cm-field">
+          <span class="cm-field-label">Password</span>
+          <input
+            type="password"
+            class="cm-input"
+            formControlName="password"
+            autocomplete="current-password"
+            [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)">
+          @if (password?.invalid && (password?.dirty || password?.touched)) {
+            <span class="cm-field-error">
+              @if (password?.errors?.['required']) { Enter your password. }
+              @else if (password?.errors?.['minlength']) { Passwords have at least 8 characters. }
+            </span>
+          }
+        </label>
+
+        <div class="cm-auth-row">
+          <label class="cm-check">
+            <input type="checkbox" formControlName="rememberDevice">
+            Remember my email
+          </label>
+          <a routerLink="/forgot-password" class="cm-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="cm-btn cm-btn--primary">Sign in</button>
+      </form>
+    </div>
   </div>
-</div>
+  </div>
+</main>

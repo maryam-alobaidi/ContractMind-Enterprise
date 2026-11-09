@@ -1,11 +1,7 @@
-import { Component, OnInit, signal, computed, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Chart, registerables } from 'chart.js';
 import { User } from '../../services/user';
-
-Chart.register(...registerables);
 
 export interface UserModel {
   userId?: number;
@@ -16,6 +12,8 @@ export interface UserModel {
   createdAt?: string;
 }
 
+type Role = UserModel['role'];
+
 @Component({
   selector: 'app-user-managemente',
   standalone: true,
@@ -23,14 +21,10 @@ export interface UserModel {
   templateUrl: './user-managemente.html',
   styleUrl: './user-managemente.css',
 })
-export class UserManagemente implements OnInit, AfterViewInit {
+export class UserManagemente implements OnInit {
 
-  @ViewChild('roleChartCanvas') roleChartCanvas!: ElementRef<HTMLCanvasElement>;
-  chart: Chart | null = null;
+  private userService = inject(User);
 
-  private userService=inject(User);
-
-  // Signals للبيانات والفلترة
   users = signal<UserModel[]>([]);
   searchTerm = signal<string>('');
   selectedRoleFilter = signal<string>('ALL');
@@ -48,20 +42,44 @@ export class UserManagemente implements OnInit, AfterViewInit {
   });
 
   userToDelete = signal<UserModel | null>(null);
+  formError = signal<string | null>(null);
+  deleteError = signal<string | null>(null);
 
-  // Computed Signals لحساب الإحصائيات والفلترة تلقائياً
-  adminCount = computed(() => this.users().filter(u => u.role === 'Admin').length);
-  managerCount = computed(() => this.users().filter(u => u.role === 'Manager').length);
-  userCount = computed(() => this.users().filter(u => u.role === 'User').length);
-  totalUsers = computed(() => this.users().length);
+  // What each role can do in the app today
+  readonly roleKey: { role: Role; description: string }[] = [
+    { role: 'Admin', description: 'Everything, including deleting contracts, clearing the audit log and managing users.' },
+    { role: 'Manager', description: 'Uploads contracts and asks the AI, and can export and print the audit log.' },
+    { role: 'User', description: 'Uploads contracts, reads reports and asks the AI assistant.' },
+  ];
+
+  private counts = computed(() => {
+    const counts: Record<Role, number> = { Admin: 0, Manager: 0, User: 0 };
+    for (const u of this.users()) {
+      if (u.role in counts) counts[u.role]++;
+    }
+    return counts;
+  });
+
+  countFor(role: Role): number {
+    return this.counts()[role];
+  }
+
+  summaryLine = computed(() => {
+    const total = this.users().length;
+    if (this.isLoading() && total === 0) return 'People who can sign in to ContractMind.';
+    if (total === 0) return 'Nobody has access yet.';
+    const admins = this.counts().Admin;
+    const people = `${total} ${total === 1 ? 'person has' : 'people have'} access.`;
+    return `${people} ${admins} ${admins === 1 ? 'is an admin' : 'are admins'}.`;
+  });
 
   filteredUsers = computed(() => {
     let result = this.users();
     const search = this.searchTerm().toLowerCase().trim();
-    
+
     if (search) {
-      result = result.filter(u => 
-        u.fullName.toLowerCase().includes(search) || 
+      result = result.filter(u =>
+        u.fullName.toLowerCase().includes(search) ||
         u.email.toLowerCase().includes(search)
       );
     }
@@ -74,29 +92,31 @@ export class UserManagemente implements OnInit, AfterViewInit {
     return result;
   });
 
- 
-
- 
-
   ngOnInit(): void {
     this.loadUsers();
   }
 
-  ngAfterViewInit(): void {
-    this.initChart();
+  initialsOf(name: string): string {
+    return (name || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0].toUpperCase())
+      .join('') || '?';
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.selectedRoleFilter.set('ALL');
   }
 
   loadUsers() {
-
-  this.searchTerm.set('');
-  this.selectedRoleFilter.set('ALL');
-
+    this.clearFilters();
     this.isLoading.set(true);
-   return this.userService.loadUsers().subscribe({
+    return this.userService.loadUsers().subscribe({
       next: (data) => {
         this.users.set(data || []);
         this.isLoading.set(false);
-        this.updateChart();
       },
       error: (err) => {
         console.error('Error loading users:', err);
@@ -105,51 +125,15 @@ export class UserManagemente implements OnInit, AfterViewInit {
     });
   }
 
-  initChart(): void {
-    if (!this.roleChartCanvas) return;
-    const ctx = this.roleChartCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    this.chart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Admin', 'Manager', 'User'],
-        datasets: [{
-          data: [this.adminCount(), this.managerCount(), this.userCount()],
-          backgroundColor: ['#ef4444', '#3b82f6', '#10b981'],
-          borderWidth: 0,
-          hoverOffset: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        cutout: '75%'
-      }
-    });
-  }
-
-  updateChart(): void {
-    if (this.chart) {
-      this.chart.data.datasets[0].data = [
-        this.adminCount(),
-        this.managerCount(),
-        this.userCount()
-      ];
-      this.chart.update();
-    }
-  }
-
   openAddModal(): void {
-      this.formError.set('');
+    this.formError.set(null);
     this.isEditMode.set(false);
     this.currentUserForm.set({ fullName: '', email: '', passwordHash: '', role: 'User' });
     this.isFormModalOpen.set(true);
   }
 
   openEditModal(user: UserModel): void {
-    this.formError.set('');
+    this.formError.set(null);
     this.isEditMode.set(true);
     this.currentUserForm.set({
       userId: user.userId,
@@ -163,58 +147,58 @@ export class UserManagemente implements OnInit, AfterViewInit {
 
   closeFormModal(): void { this.isFormModalOpen.set(false); }
 
- 
-  formError = signal<string | null>(null);
-
   saveUser(): void {
-  const formData = this.currentUserForm();
-  this.formError.set(null);
+    const formData = this.currentUserForm();
+    this.formError.set(null);
 
+    if (!formData.fullName || formData.fullName.trim() === '') {
+      this.formError.set('Enter the full name.');
+      return;
+    }
 
-  if (!formData.fullName || formData.fullName.trim() === '') {
-    this.formError.set('Please enter the full name.');
-    return;
-  }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      this.formError.set('Enter a valid email address, like name@company.com.');
+      return;
+    }
 
-  // 2. التحقق من صحة البريد الإلكتروني (باستخدام Regex بسيط)
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!formData.email || !emailRegex.test(formData.email)) {
-    this.formError.set('Please enter a valid email address.');
-    return;
-  }
+    if (!this.isEditMode() && (!formData.passwordHash || formData.passwordHash.trim() === '')) {
+      this.formError.set('Enter a password for the new user.');
+      return;
+    }
 
-  if (formData.passwordHash && formData.passwordHash.trim() !== '' && formData.passwordHash.length < 8) {
-    this.formError.set('Password must be at least 8 characters long.');
-    return;
-  }
+    if (formData.passwordHash && formData.passwordHash.trim() !== '' && formData.passwordHash.length < 8) {
+      this.formError.set('The password needs at least 8 characters.');
+      return;
+    }
 
-
-  if (this.isEditMode() && formData.userId) {
-    this.userService.updateUser(formData.userId, formData).subscribe({
-      next: () => { 
-        this.loadUsers(); 
-        this.closeFormModal(); 
-      },
-      error: (err) => {
-        console.error('Error updating user:', err);
-        this.formError.set(err.error?.message || 'Failed to update user.');
-      }
-    });
-  } else {
-    this.userService.createUser(formData).subscribe({
-      next: () => { 
-        this.loadUsers(); 
-        this.closeFormModal(); 
-      },
-      error: (err) => {
-        console.error('Error creating user:', err);
-        this.formError.set(err.error?.message || 'Failed to create user.');
-      }
-    });
-  }
+    if (this.isEditMode() && formData.userId) {
+      this.userService.updateUser(formData.userId, formData).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeFormModal();
+        },
+        error: (err) => {
+          console.error('Error updating user:', err);
+          this.formError.set(err.error?.message || "Couldn't save the changes. Try again.");
+        }
+      });
+    } else {
+      this.userService.createUser(formData).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeFormModal();
+        },
+        error: (err) => {
+          console.error('Error creating user:', err);
+          this.formError.set(err.error?.message || "Couldn't add the user. Try again.");
+        }
+      });
+    }
   }
 
   openDeleteModal(user: UserModel): void {
+    this.deleteError.set(null);
     this.userToDelete.set(user);
     this.isDeleteModalOpen.set(true);
   }
@@ -230,11 +214,10 @@ export class UserManagemente implements OnInit, AfterViewInit {
 
     this.userService.deleteUser(user.userId).subscribe({
       next: () => { this.loadUsers(); this.closeDeleteModal(); },
-      error: (err) => console.error('Error deleting user:', err)
+      error: (err) => {
+        console.error('Error deleting user:', err);
+        this.deleteError.set(err.error?.message || "Couldn't remove the user. Try again.");
+      }
     });
   }
-
-
-
-
 }

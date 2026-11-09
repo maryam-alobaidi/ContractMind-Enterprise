@@ -3,10 +3,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ɵInternalForm
 import { Auth } from '../../services/auth';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ThemeToggle } from '../../components/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-forgot-password',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ThemeToggle],
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.css',
 })
@@ -32,7 +33,7 @@ export class ForgotPassword {
   onSubmit(){
 
     if(this.forgotForm.invalid){
-      this.forgotForm.markAllAsTouched;
+      this.forgotForm.markAllAsTouched();
       return;
     }
 
@@ -46,11 +47,11 @@ export class ForgotPassword {
     return this.authService.forgotPassword(emailValue).subscribe({
       next:(response)=>{
         this.isLoading=false;
-        this.successMessage="The password reset link has been successfully sent to your email!";
+        this.successMessage = `Check your inbox. If ${emailValue} is registered, a reset link is on its way. It works for one hour.`;
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Something went wrong; please try again later.';
+        this.errorMessage = err.error?.message || "Couldn't send the link. Check your connection and try again.";
       }
     })
   }

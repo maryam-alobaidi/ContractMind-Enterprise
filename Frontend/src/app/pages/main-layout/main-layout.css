@@ -1,611 +1,257 @@
-.glass-brand {
+/* App shell: sidebar on the desk, pages as sheets on the right */
+
+.shell {
   display: flex;
-  flex-direction: column; 
-  align-items: center;    
-  text-align: center;     
-  gap: 12px;              
-  margin-bottom: 40px;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
 }
 
-.glass-container {
-  display: flex;
-  height: 97vh;
-  /* اعتماد على لون الخلفية المتغير حسب الثيم */
-  background: var(--bg-main);
-  color: var(--text-primary);
-  transition: background 0.3s ease, color 0.3s ease;
-}
+/* ---------- Sidebar ---------- */
 
-.glass-sidebar {
-  width: 280px;
-  background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  border-right: 1px solid var(--border-color);
+/* Dark side panel with a soft violet glow at the top */
+.sidebar {
+  position: relative;
+  width: 256px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  transition: background 0.3s ease, border-color 0.3s ease;
+  gap: 1.75rem;
+  padding: 1.5rem 0 1.25rem;
+  background:
+    radial-gradient(90% 35% at 20% 0%, rgba(124, 108, 255, 0.18), transparent 70%),
+    var(--forest);
+  color: var(--forest-ink);
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.glass-brand h2 {
-  color: var(--text-primary);
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 40px;
-}
-
-.glass-brand span {
-  color: #14b8a6;
-}
-
-.glass-nav {
+.wordmark {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex-grow: 1;
-}
-
-.nav-item {
-  color: var(--text-secondary);
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0 1.4rem;
+  color: var(--forest-ink);
   text-decoration: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
+}
+
+.wordmark-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.wordmark-name {
+  font-family: var(--font-doc);
+  font-size: 1.2rem;
   font-weight: 600;
-  transition: all 0.2s ease;
+  letter-spacing: -0.02em;
 }
 
-.nav-item:hover, .nav-item.active {
-  background: rgba(20, 184, 166, 0.15);
-  color: #14b8a6;
-  border-left: 3px solid #14b8a6;
+.wordmark-tag {
+  padding-inline-start: 2.65rem;
+  font-size: 0.75rem;
+  color: var(--forest-ink-soft);
 }
 
-.glass-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-color);
+.brand-rule {
+  display: none;
 }
 
-.user-avatar-glass {
-  font-size: 24px;
-  background: rgba(20, 184, 166, 0.1);
-  padding: 8px;
-  border-radius: 50%;
-}
-
-.user-meta-glass h4 {
-  font-size: 14px;
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
-.user-meta-glass span {
-  font-size: 12px;
-  color: #14b8a6;
-}
-
-.glass-main {
-  flex-grow: 1;
-  padding: 40px;
-  overflow-y: auto;
-
-  /* إخفاء شريط التمرير لمتصفحات Chrome, Safari و Opera */
-  &::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
-  /* إخفاء شريط التمرير لمتصفح Firefox */
-  scrollbar-width: none;
-}
-.glass-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center; 
-  width: 100%;          
-  max-width: 100%;      
-  margin-bottom: 36px;
-  padding: 0 4px;      
-  box-sizing: border-box;
-}
-.header-title-glass h1 {
-  font-size: 28px;
-  color: var(--text-primary);
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.header-title-glass p {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.header-controls-glass {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-/* زر تبديل الوضع */
-.btn-theme-toggle {
-  background: rgba(20, 184, 166, 0.1);
-  color: #14b8a6;
-  border: 1px solid rgba(20, 184, 166, 0.3);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-theme-toggle:hover {
-  background: rgba(20, 184, 166, 0.2);
-}
-
-.lang-switch-glass {
-  display: flex;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.lang-pill {
-  background: transparent;
-  color: var(--text-secondary);
-  border: none;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.lang-pill.active, .lang-pill:hover {
-  background: #14b8a6;
-  color: #06090f;
-}
-
-.btn-teal-glow {
-  background: rgba(20, 184, 166, 0.1);
-  color: var(--text-primary);
-  border: 1px solid #14b8a6;
-  padding: 12px 22px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
-  transition: all 0.3s ease;
-}
-
-.btn-teal-glow:hover {
-  background: #14b8a6;
-  color: #06090f;
-}
-
-
-
-/* ==========================================
-   تعديلات التجاوب مع الشاشات المتوسطة (Tablet)
-   ========================================== */
-@media (max-width: 1024px) {
-  .glass-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* ==========================================
-   تعديلات التجاوب مع الهواتف المحمولة (Mobile)
-   ========================================== */
-@media (max-width: 768px) {
-  .glass-container {
-    flex-direction: column;
-    height: auto;
-    overflow-y: auto;
-  }
-
-  .glass-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    padding: 16px;
-  }
-
-  .glass-brand h2 {
-    margin-bottom: 20px;
-  }
-
-  .glass-main {
-    padding: 20px;
-  }
-
-  .glass-kpi-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .glass-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .header-controls-glass {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .glass-table-wrap {
-    overflow-x: auto;
-  }
-  
-  .teal-table {
-    min-width: 600px;
-  }
-}
-
-app-upload-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-}
-
-
-
-/* الحاوية الخاصة ببيانات المستخدم وزر الخروج */
-.glass-user {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 14px;
-  background: var(--user-card-bg, rgba(255, 255, 255, 0.08));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--user-card-border, rgba(0, 0, 0, 0.08));
-  margin-top: auto;
-}
-
-.user-meta-glass {
+.nav {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  gap: 0.25rem;
   flex-grow: 1;
+  padding: 0 0.85rem;
 }
 
-/* لون اسم المستخدم: يتكيف تلقائياً (داكن في اللايت مود، وأبيض في الدارك مود) */
-.user-meta-glass h4 {
-  margin: 0;
-  font-size: 14px;
+.nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px;
+  color: var(--forest-ink-soft);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.nav a::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav a:hover {
+  color: var(--forest-ink);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Active page: violet glass pill with a glowing dot */
+.nav a.active {
+  color: #FFFFFF;
+  background: linear-gradient(90deg, rgba(124, 108, 255, 0.28), rgba(124, 108, 255, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(124, 108, 255, 0.35);
+}
+
+.nav a.active::before {
+  background: #A99BFF;
+  box-shadow: 0 0 10px 2px rgba(169, 155, 255, 0.7);
+}
+
+.nav a:focus-visible {
+  outline-color: #A99BFF;
+  outline-offset: -2px;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0.85rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.monogram {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C6CFF, #22D3EE);
+  font-family: var(--font-doc);
   font-weight: 600;
-  color: var(--text-color); /* لون داكن وواضح للوضع الفاتح */
+  font-size: 0.8rem;
+  color: #FFFFFF;
+}
+
+.account-meta {
+  min-width: 0;
+}
+
+.account-name {
+  font-weight: 600;
+  font-size: var(--step--1);
+  color: var(--forest-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.user-meta-glass span {
-  font-size: 11px;
-  color: var(--text-muted); /* لون رمادي هادئ ومقروء */
+.account-role {
+  font-size: 0.75rem;
+  color: var(--forest-ink-soft);
 }
 
-/* 🟢 زر الخروج بحجم متوسط وأنيق */
-.logout-circle-btn {
-  width: 35px;  
-  height: 35px;
-  border-radius: 50%;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+/* ---------- Main column ---------- */
+
+.main {
+  flex-grow: 1;
+  min-width: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  flex-shrink: 0;
-  
-  
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.466), 
-              inset 0 0 10px rgba(239, 68, 68, 0.15);
-}
-
-
-.logout-circle-btn:hover {
-  background: #ef4444;
-  color: #ffffff;
-
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5), 
-              0 0 15px rgba(239, 68, 68, 0.3);
-}
-
-
-
-/* 🌙 دعم الوضع الداكن (Dark Mode) في حال كان مشروعك يفعله عبر فئة .dark أو .dark-mode */
-.dark .user-meta-glass h4,
-body.dark-mode .user-meta-glass h4,
-[data-theme="dark"] .user-meta-glass h4 {
-  color: #ffffff; /* يتحول للأبيض تلقائياً في الدارك مود */
-}
-
-.dark .user-meta-glass span,
-body.dark-mode .user-meta-glass span,
-[data-theme="dark"] .user-meta-glass span {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* التجاوب مع الشاشات الصغيرة */
-@media (max-width: 768px) {
-  .glass-user {
-    padding: 10px;
-    justify-content: center;
-  }
-  .user-meta-glass {
-    display: none; /* إخفاء النص في الجوال والاحتفاظ بالصورة والزر بحجمه المتوسط */
-  }
-}
-
-/* 🍔 زر القائمة للرئيسية (مخفي في الشاشات الكبيرة) */
-.mobile-menu-toggle {
-  display: none;
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1100;
-  background: var(--bg-card, #1e293b);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-radius: 8px;
-  width: 42px;
-  height: 42px;
-  cursor: pointer;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
 }
 
-.mobile-menu-toggle span {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background-color: #14b8a6;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-/* طبقة تعتيم الخلفية عند فتح القائمة في الجوال */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
+.topbar {
+  position: sticky;
   top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 999;
-}
-
-/* ==========================================
-   تعديلات التجاوب مع الهواتف والشاشات المتوسطة
-   ========================================== */
-@media (max-width: 768px) {
-  .mobile-menu-toggle {
-    display: flex; /* إظهار زر الخطوط في الهواتف */
-  }
-
-  .sidebar-overlay {
-    display: block; /* إظهار التعتيم عند الفتح */
-  }
-
-  .glass-container {
-    flex-direction: row; /* الحفاظ على تخطيط الحاوية */
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /* جعل القائمة الجانبية منزلقة (Off-canvas Sidebar) */
-  .glass-sidebar {
-    position: fixed;
-    top: 0;
-    left: -280px; /* إخفاء القائمة كلياً خارج الشاشة من اليسار */
-    width: 280px;
-    height: 100%;
-    z-index: 1000;
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
-  }
-
-  /* عند تفعيل حالة الفتح، تتحرك القائمة لتظهر داخل الشاشة */
-  .glass-sidebar.open {
-    left: 0;
-  }
-
-  .glass-main {
-    padding: 20px;
-    padding-top: 80px; /* ترك مساحة لزر القائمة العلوي */
-    width: 100%;
-    overflow-y: auto;
-  }
-  
-  .user-meta-glass {
-    display: flex !important; /* إعادة إظهار بيانات المستخدم داخل القائمة المنسدلة بالموبايل لتبدو منظمة */
-  }
-}
-
-
-/* تنسيق الهيدر الافتراضي للشاشات الكبيرة */
-.glass-header {
+  z-index: 50;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 36px;
-  padding: 0 4px;
-  box-sizing: border-box;
+  gap: 1rem;
+  padding: 0.85rem 2.5rem;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
 }
 
-.header-controls-glass {
+.menu-btn {
+  display: none;
+}
+
+.topbar-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 0.75rem;
+  margin-inline-start: auto;
 }
 
-/* 📱 تنسيق الشاشات الصغيرة والهواتف (Mobile & Tablet) */
-@media (max-width: 768px) {
-  .glass-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background: var(--bg-main);
-    backdrop-filter: blur(10px);
-    z-index: 1050;
-    padding: 12px 60px; /* ترك مساحة في اليمين واليسار للأزرار الثابتة */
-    margin-bottom: 0;
-    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    justify-content: center; /* توسط أزرار التحكم (الثيم والرفع) داخل الهيدر */
-  }
-
-  /* 🍔 زر المنيو ثابت في أقصى اليسار */
-  .mobile-menu-toggle {
-    display: flex;
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 1100;
-  }
-
-  /* 🚪 زر الخروج ثابت في أقصى اليمين ومقابل لزر المنيو تماماً */
-  .header-logout-wrapper {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index: 1100;
-  }
-
-  /* تصغير أزرار التحكم قليلاً في الموبايل لتتخذ وضعاً متناسقاً */
-  .header-controls-glass {
-    gap: 8px;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .btn-theme-toggle {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
-
-  .btn-teal-glow {
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-
-  /* ترك مساحة للمحتوى الرئيسي لكي لا يختفي تحت الهيدر العلوي */
-  .glass-main {
-    padding-top: 80px !important;
-  }
+.page {
+  flex-grow: 1;
+  padding: 2rem 2.5rem 3rem;
 }
 
-/* ==========================================
-   إصلاح الطبقات (Z-Index Hierarchy) للشاشات الصغيرة
-   ========================================== */
-@media (max-width: 768px) {
-  
-  /* 1. الهيدر العلوي يأخذ طبقة متوسطة */
-  .glass-header {
+app-upload-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+/* ---------- Small screens: off-canvas sidebar ---------- */
+
+.scrim {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background: var(--bg-main);
-    backdrop-filter: blur(10px);
-    z-index: 1000; /* طبقة أقل من القائمة */
-    padding: 12px 60px;
-    margin-bottom: 0;
-    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    justify-content: center;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 200;
+    width: min(280px, 85vw);
+    box-shadow: var(--shadow-sheet);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.25s;
   }
 
-  /* 2. طبقة التعتيم (Overlay) يجب أن تكون تحت القائمة مباشرة ولكن فوق الهيدر والمحتوى */
-  .sidebar-overlay {
+  :host-context([dir="rtl"]) .sidebar {
+    transform: translateX(100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s;
+  }
+
+  .scrim {
     display: block;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 2000; /* 🌟 أعلى من الهيدر لتعتيم الشاشة بالكامل عند الفتح */
+    inset: 0;
+    z-index: 150;
+    background: var(--scrim);
   }
 
-  /* 3. القائمة الجانبية عند فتحها تطفو كلياً في الطبقة العليا فوق الهيدر والكل */
-  .glass-sidebar {
-    position: fixed;
-    top: 0;
-    left: -280px;
-    width: 280px;
-    height: 100%;
-    z-index: 2100; /* 🌟 أعلى طبقة على الإطلاق لتعلو فوق الهيدر وزر الخروج */
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  .menu-btn {
+    display: inline-flex;
   }
 
-  /* عند تفعيل حالة الفتح، تظهر القائمة فوق كل عناصر الصفحة */
-  .glass-sidebar.open {
-    left: 0;
+  .topbar {
+    padding: 0.6rem 1rem;
   }
 
-  /* 4. أزرار الهيدر الثבתة (المنيو والخروج) */
-  .mobile-menu-toggle {
-    display: flex;
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 1050;
-  }
-
-  .header-logout-wrapper {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index: 1050;
-  }
-
-  .glass-main {
-    padding-top: 80px !important;
+  .page {
+    padding: 1.25rem 1rem 2.5rem;
   }
 }
 
-.glass-brand h2 {
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin: 0.5rem 0 0.15rem;
-}
-
-.glass-brand h2 span {
-  background: linear-gradient(90deg, #2dd4bf, #14b8a6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.brand-tagline {
-  display: block;
-  font-size: 0.7rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+@media (max-width: 520px) {
+  .topbar-actions {
+    gap: 0.4rem;
+  }
 }

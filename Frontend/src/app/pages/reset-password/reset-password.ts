@@ -1,38 +1,37 @@
-
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { ThemeToggle } from '../../components/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, ThemeToggle],
   templateUrl: './reset-password.html',
   styleUrl: './reset-password.css',
 })
 export class ResetPassword implements OnInit {
-private route = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private authService = inject(Auth);
 
-  private authService=inject(Auth);
-
-  // Define reactive state using Angular Signals
   newPassword = signal('');
   confirmPassword = signal('');
   successMessage = signal('');
   errorMessage = signal('');
+  isSaving = signal(false);
+  linkMissing = signal(false);
 
   private email = '';
   private token = '';
 
   ngOnInit(): void {
-    // Capture email and token from query parameters securely
+    // The emailed link carries the email and a one-time token
     this.route.queryParams.subscribe(params => {
       this.email = params['email'] || '';
       this.token = params['token'] || '';
+      this.linkMissing.set(!this.email || !this.token);
     });
   }
 
@@ -41,7 +40,7 @@ private route = inject(ActivatedRoute);
     this.errorMessage.set('');
 
     if (this.newPassword() !== this.confirmPassword()) {
-      this.errorMessage.set('Passwords do not match.');
+      this.errorMessage.set("The two passwords don't match.");
       return;
     }
 
@@ -51,17 +50,18 @@ private route = inject(ActivatedRoute);
       newPassword: this.newPassword()
     };
 
-    // Submit payload to .NET 9 API endpoint
-    
+    this.isSaving.set(true);
     this.authService.resetPassword(payload).subscribe({
       next: () => {
-        this.successMessage.set('Password has been reset successfully! Redirecting to login...');
+        this.isSaving.set(false);
+        this.successMessage.set('Password saved. Taking you to sign in…');
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Failed to reset password. The link may have expired.');
+        this.isSaving.set(false);
+        this.errorMessage.set(err.error?.message || 'This reset link has expired or was already used.');
       }
     });
   }

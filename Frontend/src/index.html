@@ -5,7 +5,25 @@
   <title>ContractMind</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    // Apply the theme before the first paint so the page never flashes the wrong mode.
+    // Same rule as the Theme service: saved choice first, otherwise dark.
+    (function () {
+      var dark = true;
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved) dark = saved === 'dark';
+      } catch (e) {}
+      var root = document.documentElement;
+      root.classList.add(dark ? 'dark-theme' : 'light-theme');
+      root.style.colorScheme = dark ? 'dark' : 'light';
+    })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Sora:wght@400..700&display=swap">
 </head>
 <body>
   <app-root></app-root>

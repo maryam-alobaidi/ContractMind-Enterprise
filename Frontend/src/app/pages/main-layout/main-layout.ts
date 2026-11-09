@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Theme } from '../../services/theme';
 import { Language } from '../../services/language';
 import { Auth } from '../../services/auth';
@@ -6,6 +6,7 @@ import { Contract } from '../../services/contract';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UploadModal } from '../upload-modal/upload-modal';
+import { ThemeToggle } from '../../components/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-main-layout',
@@ -15,7 +16,8 @@ import { UploadModal } from '../upload-modal/upload-modal';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    UploadModal
+    UploadModal,
+    ThemeToggle
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
@@ -31,6 +33,15 @@ export class MainLayout {
   userName = this.authService.userName;
   userRole = this.authService.userRole;
 
+  initials = computed(() =>
+    (this.userName() || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0].toUpperCase())
+      .join('') || '?'
+  );
+
   showUploadModal = signal(false);
   isModalUploading = signal(false);
   isSidebarOpen = signal<boolean>(false);
@@ -40,7 +51,7 @@ export class MainLayout {
   }
 
   closeSidebarOnMobile() {
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= 900) {
       this.isSidebarOpen.set(false);
     }
   }

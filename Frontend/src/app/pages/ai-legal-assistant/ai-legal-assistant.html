@@ -1,84 +1,71 @@
-<!-- 🟢 نافذة اختيار العقد تظهر تلقائياً إذا لم يتم تحديد عقد بعد -->
 @if (showSelectModal()) {
-  <app-select-contract-modal 
-    (onSelect)="onContractSelected($event)" 
+  <app-select-contract-modal
+    (onSelect)="onContractSelected($event)"
     (onClose)="handleModalClose()">
   </app-select-contract-modal>
 }
 
-<!-- الشاشة المقسومة الرئيسية (تظهر عند اختيار العقد) -->
-<div class="contract-assistant-layout">
-  
-  <!-- القسم الثاني: المساعد الذكي والمحادثة (AI Chat Pane) -->
-  <div class="chat-pane">
-    <div class="chat-header">
-      <div class="assistant-info">
-        <span class="status-dot"></span>
-        <h3>  <svg class="ai-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-         <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
-         <path d="M12 12L2.5 7.5"></path>
-         <path d="M12 12v9.5"></path>
-       </svg> AI Legal Assistant</h3>
-           </div>
-    </div>
+<div class="workspace">
 
-    <!-- سجل المحادثة -->
-    <div class="messages-area" #scrollContainer>
-      @for (msg of messages(); track msg.messageId) {
-        <div class="message-wrapper" [ngClass]="msg.sender.toLowerCase()">
-          <div class="message-bubble">
-            <p>{{ msg.messageText }}</p>
-            <span class="timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+  <!-- The contract, read like a document -->
+  <section class="doc-pane" aria-labelledby="doc-title">
+    <header class="pane-head">
+      <h1 id="doc-title" class="doc-title" dir="auto">{{ contractFileName() || 'No contract selected' }}</h1>
+      <button class="cm-btn cm-btn--quiet cm-btn--sm" type="button" (click)="openSelectContractModal()">Switch contract</button>
+    </header>
+    <div class="doc-scroll">
+      <div class="doc-sheet" dir="auto">{{ contractText() || 'Loading the contract text…' }}</div>
+    </div>
+  </section>
+
+  <!-- The conversation, set in the margin like review comments -->
+  <section class="thread-pane" aria-labelledby="thread-title">
+    <header class="pane-head">
+      <h2 id="thread-title" class="thread-title">Ask about this contract</h2>
+    </header>
+
+    <div class="thread" #scrollContainer aria-live="polite">
+      @if (messages().length === 0 && !isTyping()) {
+        <div class="thread-empty">
+          <p>Ask in English, Spanish or Arabic. Answers are based only on this contract's text.</p>
+          <div class="presets">
+            @for (q of presetQuestions; track q) {
+              <button class="preset" type="button" (click)="sendPresetQuery(q)" [disabled]="!contractId()">{{ q }}</button>
+            }
           </div>
+        </div>
+      }
+
+      @for (msg of messages(); track msg.messageId) {
+        <div class="entry" [class.entry--you]="msg.sender?.toLowerCase() === 'user'">
+          <p class="entry-author">
+            {{ msg.sender?.toLowerCase() === 'user' ? 'You' : 'ContractMind' }}
+            <time>{{ msg.timestamp | date:'shortTime' }}</time>
+          </p>
+          <p class="entry-text" dir="auto">{{ msg.messageText }}</p>
         </div>
       }
 
       @if (isTyping()) {
-        <div class="message-wrapper assistant">
-          <div class="message-bubble typing-indicator">
-            <span>.</span><span>.</span><span>.</span>
-          </div>
+        <div class="entry entry--pending">
+          <p class="entry-author">ContractMind</p>
+          <p class="entry-text">Reading the contract…</p>
         </div>
       }
     </div>
 
-  
-
-    <!-- صندوق إدخال الرسائل -->
-    <div class="chat-input-area">
-      <textarea 
-        [(ngModel)]="userQuery" 
-        (keydown.enter)="$event.preventDefault(); sendMessage()" 
-        placeholder="Ask anything about this contract..." 
-        rows="1">
+    <div class="composer">
+      <label class="sr-only" for="question">Your question</label>
+      <textarea
+        id="question"
+        class="cm-input"
+        [(ngModel)]="userQuery"
+        (keydown.enter)="onEnter($event)"
+        placeholder="Ask a question. Shift+Enter adds a new line."
+        rows="2"
+        dir="auto">
       </textarea>
-      <button class="send-btn" (click)="sendMessage()" [disabled]="!userQuery().trim()">
-        Send
-      </button>
+      <button class="cm-btn cm-btn--primary" type="button" (click)="sendMessage()" [disabled]="!userQuery().trim() || isTyping()">Ask</button>
     </div>
-  </div>
-
-  <!-- القسم الأول: عارض العقد (Contract Viewer) -->
-  <div class="contract-viewer-pane">
-    <div class="pane-header">
-      <h2> <span class="contract-icon">📄</span> Contract Document / {{contractFileName()}}</h2>
-    
-    </div>
-    <div class="contract-content">
-      <div class="document-paper">
-        <p>{{ contractText() || 'Loading contract text...' }}</p>
-      </div>
-    </div>
-      <button class="btn-change-doc" (click)="openSelectContractModal()" type="button">
-  <svg class="doc-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    <polyline points="14 2 14 8 20 8"></polyline>
-    <path d="M10 13l-2 2 2 2"></path>
-    <path d="M14 17l2-2-2-2"></path>
-  </svg>
-  <span>Choose another Document</span>
-</button>
-  </div>
-
-
+  </section>
 </div>

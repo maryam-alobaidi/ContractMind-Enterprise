@@ -1,9 +1,130 @@
-/* إعدادات عامة */
+/* ==========================================================================
+   ContractMind design tokens
+   Concept: a modern dark workspace. Near-black canvas, softly raised
+   surfaces, an electric violet accent with a cyan gradient partner,
+   and glowing coral / mint signals for risk.
+   Dark is the default; light mode keeps the same structure.
+   (Token names are historical: --gold = accent, --forest = side panel.)
+   ========================================================================== */
+
+:root,
+html.dark-theme {
+  /* Surfaces */
+  --paper: #0A0B10;          /* app canvas */
+  --sheet: #12141C;          /* cards, tables, panes */
+  --sheet-sunk: #0E1017;     /* inputs, quiet fills */
+
+  /* Side panel (sidebar, sign-in panel) */
+  --forest: #0D0F16;
+  --forest-raised: #1A1D29;
+  --forest-ink: #ECEEF5;
+  --forest-ink-soft: #8B90A5;
+
+  /* Text and lines */
+  --ink: #ECEEF5;
+  --ink-soft: #9499AD;
+  --ink-faint: #6E7389;
+  --rule: #20242F;
+  --rule-strong: #2E3344;
+
+  /* Accent */
+  --gold: #7C6CFF;           /* violet accent */
+  --gold-bright: #A99BFF;
+  --gold-ink: #B3A7FF;       /* accent as text */
+  --accent-2: #22D3EE;       /* cyan, gradient partner */
+  --accent-gradient: linear-gradient(135deg, #7C6CFF 0%, #5B8CFF 55%, #22D3EE 100%);
+
+  /* Actions */
+  --signature: #7C6CFF;
+  --signature-ink: #FFFFFF;
+  --signature-wash: rgba(124, 108, 255, 0.16);
+
+  /* Risk */
+  --redline: #FF5C7A;        /* coral: high risk, destructive */
+  --redline-wash: rgba(255, 92, 122, 0.14);
+  --stet: #34D399;           /* mint: low risk */
+  --stet-wash: rgba(52, 211, 153, 0.14);
+
+  --shadow-sheet: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 24px 48px -24px rgba(0, 0, 0, 0.85);
+  --glow-accent: 0 8px 28px -6px rgba(124, 108, 255, 0.55);
+  --scrim: rgba(3, 4, 8, 0.72);
+}
+
+html.light-theme {
+  --paper: #F5F6FA;
+  --sheet: #FFFFFF;
+  --sheet-sunk: #F1F2F7;
+
+  /* The side panel stays dark in light mode for contrast */
+  --forest: #0D0F16;
+  --forest-raised: #1A1D29;
+  --forest-ink: #ECEEF5;
+  --forest-ink-soft: #8B90A5;
+
+  --ink: #0F1222;
+  --ink-soft: #565C73;
+  --ink-faint: #7C8299;
+  --rule: #E4E6EF;
+  --rule-strong: #D0D3E0;
+
+  --gold: #5B4BFF;
+  --gold-bright: #A99BFF;
+  --gold-ink: #4A3AE6;
+  --accent-2: #0EA5C6;
+  --accent-gradient: linear-gradient(135deg, #5B4BFF 0%, #4C7DFF 55%, #0EA5C6 100%);
+
+  --signature: #5B4BFF;
+  --signature-ink: #FFFFFF;
+  --signature-wash: #ECEAFF;
+
+  --redline: #E11D48;
+  --redline-wash: #FFE8EE;
+  --stet: #059669;
+  --stet-wash: #E3F7EF;
+
+  --shadow-sheet: 0 1px 2px rgba(15, 18, 34, 0.05), 0 16px 36px -20px rgba(15, 18, 34, 0.25);
+  --glow-accent: 0 8px 24px -8px rgba(91, 75, 255, 0.5);
+  --scrim: rgba(15, 18, 34, 0.5);
+}
+
+:root {
+  /* Type: Sora for headings and figures, Geist for the interface and text,
+     IBM Plex Sans Arabic for Arabic in both. */
+  --font-ui: 'Geist', 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  --font-doc: 'Sora', 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+
+  /* Scale (≈1.25 ratio) */
+  --step--1: 0.8125rem;  /* 13px */
+  --step-0: 0.9375rem;   /* 15px */
+  --step-1: 1.1875rem;   /* 19px */
+  --step-2: 1.5rem;      /* 24px */
+  --step-3: 1.875rem;    /* 30px */
+  --step-4: 2.375rem;    /* 38px */
+
+  --radius-sheet: 16px;
+  --radius-control: 10px;
+
+  /* Legacy names still used by the pages that were not redesigned */
+  --bg-main: var(--paper);
+  --bg-card: var(--sheet);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-soft);
+  --text-main: var(--ink);
+  --text-color: var(--ink);
+  --text-muted: var(--ink-soft);
+  --border-color: var(--rule);
+  --glass-sidebar: var(--paper);
+  --accent-color: var(--signature);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 html, body {
@@ -12,45 +133,776 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ==========================================
-   1. الثيم الداكن (Dark Theme - المحدث بألوان الدردشة الفاخرة)
-   ========================================== */
-:root, html.dark-theme {
-  --bg-main: #0f172a;        /* الخلفية العامة للتطبيق (نفس خلفية الشات) */
-  --bg-card: #1e293b;        /* خلفية الكروت والأسطح (تشابه --chat-surface) */
-  --text-primary: #f8fafc;   /* النصوص الأساسية بوضوح تام */
-  --text-secondary: #94a3b8; /* النصوص الفرعية المريحة للعين */
-  --border-color: #334155;   /* الحدود الأنيقة الفاصلة بين العناصر */
-  --glass-sidebar: #1e293b;  /* خلفية القوائم الجانبية إن وجدت */
-  --accent-color: #14b8a6;   /* اللون المميز (الأزرق الحيوي للأزرار والروابط) */
-}
-
-/* ==========================================
-   2. الثيم الفاتح (Light Theme)
-   ========================================== */
-html.light-theme {
-  --bg-main: #f3f4f6;
-  --bg-card: #ffffff;        /* أبيض صافي للكروت والجداول */
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --border-color: #e5e7eb;
-  --glass-sidebar: #ffffff;
-  --accent-color: #14b8a6;
-}
-
-/* تطبيق المتغيرات العامة على جسم التطبيق بالكامل */
+/* Set the face once on body so children inherit it
+   (a font-family on * would stop serif blocks from passing their face down) */
 body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-ui);
+  /* Cormorant defaults to old-style figures (30 looks like "3o"); use lining figures everywhere */
+  font-variant-numeric: lining-nums;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* فرض لون الكروت والجداول العامة ديناميكياً بناءً على الثيم النشط */
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signature);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Generic surfaces still referenced by older pages */
 .glass-card,
 .glass-table-wrap {
-  background-color: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid var(--border-color) !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  background-color: var(--sheet) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--rule) !important;
+  box-shadow: var(--shadow-sheet);
+}
+
+/* ==========================================================================
+   Shared components (prefixed cm- so they never collide with page styles)
+   ========================================================================== */
+
+.cm-sheet {
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--shadow-sheet);
+}
+
+.cm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
+  font-size: var(--step-0);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.cm-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Primary: accent gradient with a soft glow */
+.cm-btn--primary {
+  background: var(--accent-gradient);
+  color: var(--signature-ink);
+  box-shadow: var(--glow-accent);
+  font-weight: 600;
+}
+
+.cm-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 10px 32px -6px color-mix(in srgb, var(--gold) 70%, transparent);
+}
+
+.cm-btn--primary:disabled {
+  box-shadow: none;
+}
+
+.cm-btn--quiet {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+
+.cm-btn--quiet:hover:not(:disabled) {
+  background: var(--sheet-sunk);
+  border-color: var(--ink-soft);
+}
+
+.cm-btn--danger {
+  background: var(--redline);
+  color: #FFFFFF;
+}
+
+html.dark-theme .cm-btn--danger {
+  color: var(--paper);
+}
+
+.cm-btn--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--redline) 85%, var(--ink));
+}
+
+.cm-btn--sm {
+  min-height: 2rem;
+  padding: 0.3rem 0.75rem;
+  font-size: var(--step--1);
+}
+
+.cm-btn svg,
+.cm-icon-btn svg {
+  flex-shrink: 0;
+}
+
+.cm-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.cm-icon-btn:hover {
+  background: var(--sheet-sunk);
+  border-color: var(--rule);
+  color: var(--ink);
+}
+
+.cm-icon-btn--danger:hover {
+  background: var(--redline-wash);
+  border-color: transparent;
+  color: var(--redline);
+}
+
+/* Risk mark: a diamond (filled = high, open = low), the score, and a word,
+   so colour is never the only signal */
+.cm-risk {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  color: var(--stet);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.cm-risk--high {
+  color: var(--redline);
+}
+
+/* The mark renders as a glowing dot (its text glyph is hidden) */
+.cm-risk-mark {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 10px 1px currentColor;
+  font-size: 0;
+  align-self: center;
+}
+
+.cm-risk-score {
+  min-width: 1.6rem;
+  font-family: var(--font-doc);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.cm-risk-label {
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+/* Fields */
+.cm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cm-field-label {
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.cm-input {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--sheet);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  font-size: var(--step-0);
+}
+
+.cm-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.cm-input:focus {
+  outline: none;
+  border-color: var(--signature);
+  box-shadow: 0 0 0 3px var(--signature-wash);
+}
+
+html.dark-theme .cm-input {
+  color-scheme: dark;
+}
+
+.cm-input.is-invalid {
+  border-color: var(--redline);
+}
+
+.cm-input.is-invalid:focus {
+  box-shadow: 0 0 0 3px var(--redline-wash);
+}
+
+.cm-field-error {
+  font-size: var(--step--1);
+  color: var(--redline);
+}
+
+.cm-link {
+  color: var(--signature);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.cm-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ==========================================================================
+   Page structure shared by the workspace pages
+   ========================================================================== */
+
+.cm-page {
+  max-width: 1120px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cm-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cm-page-head h1 {
+  font-family: var(--font-doc);
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* A short glowing gradient bar under each page title */
+.cm-ornament {
+  width: 2.75rem;
+  height: 3px;
+  margin-top: 0.85rem;
+  border-radius: 3px;
+  background: var(--accent-gradient);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+.cm-ornament span {
+  display: none;
+}
+
+.cm-lede {
+  margin-top: 0.4rem;
+  color: var(--ink-soft);
+}
+
+.cm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+/* Ledger: the shared table style (hairline rows on a sheet) */
+.cm-ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.cm-ledger th {
+  padding: 0.8rem 1rem;
+  text-align: start;
+  font-size: var(--step--1);
+  font-weight: 500;
+  color: var(--ink-faint);
+  background: transparent;
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+
+.cm-ledger td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+
+.cm-ledger tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cm-ledger tbody tr:hover td {
+  background: var(--sheet-sunk);
+}
+
+/* A redline change bar in the margin of a flagged row */
+.cm-ledger tbody tr.is-flagged td:first-child {
+  box-shadow: inset 3px 0 0 var(--redline);
+}
+
+[dir="rtl"] .cm-ledger tbody tr.is-flagged td:first-child {
+  box-shadow: inset -3px 0 0 var(--redline);
+}
+
+.cm-ledger-foot {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+
+.cm-num {
+  color: var(--ink-faint);
+  font-size: var(--step--1);
+}
+
+.cm-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  font-size: var(--step--1);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.cm-tag--solid {
+  background: var(--signature-wash);
+  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+  color: var(--gold-ink);
+}
+
+.cm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 2.5rem 1.5rem;
+  color: var(--ink-soft);
+  max-width: 60ch;
+}
+
+.cm-empty-title {
+  font-family: var(--font-doc);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Dialogs, alerts, toasts
+   ========================================================================== */
+
+.cm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--scrim);
+  animation: cm-fade-in 0.15s ease-out;
+}
+
+.cm-dialog {
+  width: min(460px, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: 1.75rem;
+  background: var(--sheet);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--shadow-sheet), 0 0 0 1px color-mix(in srgb, var(--gold) 25%, transparent);
+}
+
+.cm-dialog--danger {
+  box-shadow: var(--shadow-sheet), 0 0 0 1px color-mix(in srgb, var(--redline) 35%, transparent);
+}
+
+
+.cm-dialog h2 {
+  font-family: var(--font-doc);
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.6rem;
+}
+
+.cm-dialog p {
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.cm-dialog strong {
+  color: var(--ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.cm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.cm-alert {
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-control);
+  border-inline-start: 3px solid;
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+.cm-alert--error {
+  background: var(--redline-wash);
+  border-color: var(--redline);
+  color: var(--ink);
+}
+
+.cm-alert--success {
+  background: var(--stet-wash);
+  border-color: var(--stet);
+  color: var(--ink);
+}
+
+.cm-toast {
+  position: fixed;
+  inset-block-end: 1.5rem;
+  inset-inline-end: 1.5rem;
+  z-index: 950;
+  max-width: min(420px, calc(100vw - 2rem));
+  padding: 0.75rem 1.1rem;
+  background: var(--forest-raised);
+  color: var(--forest-ink);
+  border: 1px solid var(--rule-strong);
+  border-inline-start: 3px solid var(--gold);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-sheet);
+  font-weight: 500;
+  animation: cm-fade-in 0.15s ease-out;
+}
+
+.cm-toast--error {
+  border-inline-start: 4px solid var(--redline);
+}
+
+@keyframes cm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   Sign-in pages: one sheet on the desk
+   ========================================================================== */
+
+.cm-auth {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  background: var(--paper);
+}
+
+/* Left: the green panelled wall with the brand */
+.cm-auth-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.5rem 3rem;
+  /* Aurora: soft violet and cyan light behind the panel */
+  background:
+    radial-gradient(60% 50% at 15% 85%, rgba(124, 108, 255, 0.45), transparent 70%),
+    radial-gradient(50% 45% at 85% 20%, rgba(34, 211, 238, 0.28), transparent 70%),
+    radial-gradient(40% 40% at 70% 75%, rgba(91, 140, 255, 0.25), transparent 70%),
+    var(--forest);
+  color: var(--forest-ink);
+  overflow: hidden;
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Fine grid over the aurora */
+.cm-auth-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(80% 70% at 50% 50%, #000 40%, transparent 100%);
+  pointer-events: none;
+}
+
+.cm-auth-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cm-auth-panel .cm-auth-brand {
+  justify-content: flex-start;
+  margin: 0;
+  color: var(--forest-ink);
+}
+
+.cm-auth-pitch {
+  max-width: 28rem;
+}
+
+.cm-auth-quote {
+  font-family: var(--font-doc);
+  font-size: clamp(2.1rem, 3.4vw, 3.1rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  background: linear-gradient(180deg, #FFFFFF 30%, #A99BFF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cm-auth-sub {
+  margin-top: 1.25rem;
+  color: var(--forest-ink-soft);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+.cm-auth-small {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--forest-ink-soft);
+  font-size: var(--step--1);
+}
+
+.cm-auth-small::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #34D399;
+  box-shadow: 0 0 10px #34D399;
+}
+
+/* Right: the form on the parchment desk */
+.cm-auth-main {
+  display: grid;
+  place-items: center;
+  padding: 3rem 1.25rem;
+}
+
+.cm-auth-inner {
+  width: min(400px, 100%);
+}
+
+@media (max-width: 900px) {
+  .cm-auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .cm-auth-panel {
+    padding: 1.25rem 1.25rem 1.5rem;
+    gap: 0.75rem;
+  }
+
+  .cm-auth-small {
+    display: none;
+  }
+
+  .cm-auth-quote {
+    font-size: 1.6rem;
+  }
+
+  .cm-auth-sub {
+    margin-top: 0.4rem;
+    font-size: var(--step-0);
+  }
+
+  .cm-auth-main {
+    place-items: start center;
+    padding: 1.75rem 1rem 2.5rem;
+  }
+}
+
+/* Light/dark switch in the corner of the sign-in pages */
+.cm-auth-theme {
+  position: fixed;
+  top: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 10;
+}
+
+@media (max-width: 900px) {
+  /* On small screens the switch sits on the green band */
+  .cm-auth-theme .cm-icon-btn {
+    color: var(--forest-ink);
+  }
+
+  .cm-auth-theme .cm-icon-btn:hover {
+    background: var(--forest-raised);
+    border-color: transparent;
+    color: var(--gold-bright);
+  }
+}
+
+/* Smooth the switch between modes (skipped under reduced motion below) */
+body {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cm-auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.cm-auth-brand span {
+  font-family: var(--font-doc);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.cm-auth-sheet {
+  padding: 2.25rem 2.25rem 2rem;
+}
+
+.cm-auth-title {
+  font-family: var(--font-doc);
+  font-size: 1.85rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.cm-auth-lede {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.cm-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.cm-auth-form .cm-btn {
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+.cm-auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.cm-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+}
+
+.cm-check input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--signature);
+}
+
+.cm-auth-foot {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: var(--step--1);
+}
+
+.cm-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+[dir="rtl"] .cm-back-link svg {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 480px) {
+  .cm-auth-sheet {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .cm-page-head h1 {
+    font-size: var(--step-3);
+  }
+}
+
+/* ==========================================================================
+   Motion preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
