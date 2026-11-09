@@ -1,8 +1,12 @@
 ﻿using ContractMindModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContractMind.API.Controllers
 {
+    // Raw access to every chat message across all contracts: Admin only.
+    // Regular users read a contract's chat through api/Contracts/History/{contractId}.
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ChatHistoryController : ControllerBase

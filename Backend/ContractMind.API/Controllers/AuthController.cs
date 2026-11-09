@@ -122,8 +122,8 @@ namespace ContractMind.API.Controllers
             await clsUsers.SavePasswordResetToken(model.Email, resetToken, tokenExpires);
 
 
-            var resetLink = $"http://localhost:4200/reset-password?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(resetToken)}";
-
+            var frontendUrl = _configuration["FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:4200";
+            var resetLink = $"{frontendUrl}/reset-password?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(resetToken)}";
             //send email
             var subject = "ContractMind - Password Reset Request";
             var message = $"<h3>Reset Your Password</h3><p>Click the link below to reset your password:</p><p><a href='{resetLink}'>Reset Password</a></p>";

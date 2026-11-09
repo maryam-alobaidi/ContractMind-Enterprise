@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ContractMind.API.Controllers
 {
+    [Authorize] // any logged-in user can view logs; changing them is Admin-only
     [Route("api/[controller]")]
     [ApiController]
     public class AuditLogsController : ControllerBase
@@ -38,6 +39,7 @@ namespace ContractMind.API.Controllers
 
        
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateAuditLog([FromBody] auditLogsModel model)
         {
             if (model == null)
@@ -74,6 +76,7 @@ namespace ContractMind.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteLogsByDateRange([FromQuery] string startDate, [FromQuery] string endDate)
         {
             if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))

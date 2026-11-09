@@ -4,11 +4,13 @@ using ContractMindModel;
 using DocumentFormat.OpenXml.Packaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text;
 using Tesseract;
 
 namespace ContractMind.API.Controllers
 {
+    [Authorize] // every endpoint requires a logged-in user; stricter roles are set per action
     [Route("api/[controller]")]
     [ApiController]
     public class ContractsController : ControllerBase
@@ -21,6 +23,13 @@ namespace ContractMind.API.Controllers
         {
             _aiService = aiService;
             _privacyService = privacyService;
+        }
+
+        // Reads the user id from the JWT, so callers cannot act on behalf of another user.
+        private int GetCurrentUserId()
+        {
+            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(idClaim, out var id) ? id : -1;
         }
 
 
@@ -65,7 +74,6 @@ namespace ContractMind.API.Controllers
 
 
         [HttpPost]
-        [Authorize]// for every one who login the program
         public async Task<IActionResult> CreateContract([FromBody] contractsModel model)
         {
             if (model == null)
@@ -75,7 +83,7 @@ namespace ContractMind.API.Controllers
 
             clsContracts newContract = new clsContracts
             {
-                UserId = model.UserId ?? -1,
+                UserId = GetCurrentUserId(),
                 FileName = model.FileName,
                 FilePath = model.FilePath,
                 ExtractedText = model.ExtractedText,
@@ -95,6 +103,7 @@ namespace ContractMind.API.Controllers
 
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateContract(int id, [FromBody] contractsModel model)
         {
             if (model == null)
@@ -148,13 +157,13 @@ namespace ContractMind.API.Controllers
 
             clsAuditLogs auditLogs = new clsAuditLogs()
             {
-                UserId = contract.UserId,
+                UserId = GetCurrentUserId(),
                 Action= $"DELETE / {fileName}",
                 Timestamp=DateTime.Now
 
             };
 
-            auditLogs.Save();
+            await auditLogs.Save();
 
             return Ok(new { message = "Contract deleted successfully." });
         }
@@ -162,7 +171,6 @@ namespace ContractMind.API.Controllers
         [HttpPost("upload-and-analyze")]
         public async Task<IActionResult> UploadAndAnalyzeContract(
              [FromForm] IFormFile file,
-             [FromForm] int userId,
              [FromForm] string language = "en")
         {
             try
@@ -289,7 +297,7 @@ namespace ContractMind.API.Controllers
 
                 clsContracts newContract = new clsContracts
                 {
-                    UserId = userId > 0 ? userId : -1,
+                    UserId = GetCurrentUserId(),
                     FileName = file.FileName,
                     FilePath = "uploads/" + uniqueFileName,
                     ExtractedText = extractedText,
@@ -299,6 +307,20 @@ namespace ContractMind.API.Controllers
                 };
 
                 await newContract.Save();
+
+                var fileName = newContract.FileName?.Length > 60
+                 ? newContract.FileName.Substring(0, 60) + "..."
+                 : newContract.FileName;
+                var action = $"UPLOAD / {fileName}";
+               
+
+                var auditLog = new clsAuditLogs
+                {
+                    UserId = newContract.UserId,
+                    Action = action,
+                    Timestamp = DateTime.Now
+                };
+                await auditLog.Save();
 
                 return Ok(new
                 {
@@ -424,7 +446,7 @@ namespace ContractMind.API.Controllers
                   : contract.FileName;
                 var auditLog = new clsAuditLogs
                 {
-                    UserId = contract.UserId,
+                    UserId = GetCurrentUserId(),
                     Action = $"AI_CHAT / {fileName}",
 
                     Timestamp = DateTime.Now
